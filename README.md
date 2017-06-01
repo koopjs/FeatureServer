@@ -86,19 +86,42 @@ FeatureServer.query(geojson, options)
 ```
 
 ### FeatureServer.serverInfo
-Generate version `10.21` Geoservices-like server info
+Generate version `10.21` Geoservices server info
 ```js
-FeatureServer.serverInfo()
+const server = {
+  name: 'Koop server',
+  description: 'Layers translated by Koop',
+  layers: [
+    {
+      type: 'FeatureCollection',
+      features: [
+        {
+  "type": "Feature",
+  "geometry": {
+    "type": "Point",
+    "coordinates": [125.6, 10.1]
+  },
+  "properties": {
+    "name": "Dinagat Islands"
+  }
+}
+      ]
+      }
+    }
+  ]
+}
+
+FeatureServer.serverInfo(server)
 ```
 
 ### FeatureServer.layerInfo
-Generate version `10.21` Geoservices-like information about a single layer
+Generate version `10.21` Geoservices information about a single layer
 ```js
 FeatureServer.layerInfo(geojson, options)
 ```
 
 ### FeatureServer.layers
-Generate version `10.21` Geoservices-like information about one or many layers
+Generate version `10.21` Geoservices information about one or many layers
 
 Can pass a single geojson object or an array of geojson objects
 ```js

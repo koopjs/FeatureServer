@@ -7,8 +7,15 @@ function layerInfo (geojson, params) {
   return Templates.render('layer', geojson, params)
 }
 
-function serverInfo () {
-  return Templates.render('server')
+function serverInfo (server, params) {
+  let layers
+  if (server.type === 'FeatureCollection') {
+    layers = [layerInfo(server, params)]
+  } else {
+    layers = server.layers.map(layer => layerInfo(layer, params))
+  }
+
+  return Templates.render('server', { description: server.description, layers })
 }
 
 function serviceInfo (geojson, params = {}) {
@@ -42,14 +49,14 @@ function layers (data, params) {
   let json
   if (!data.length) {
     params.extent = Utils.getExtent(data)
-    params.geometryType = Utils.getGeomType((data && data.features) ? data.features[0] : null)
+    params.geometryType = Utils.getGeomType(data && data.features ? data.features[0] : null)
     layerJson = Templates.render('layer', data, params)
     json = { layers: [layerJson], tables: [] }
   } else {
     json = { layers: [], tables: [] }
     data.forEach(function (layer, i) {
       params.extent = Utils.getExtent(layer)
-      params.geometryType = Utils.getGeomType((layer && layer.features) ? layer.features[0] : null)
+      params.geometryType = Utils.getGeomType(layer && layer.features ? layer.features[0] : null)
       layerJson = Templates.render('layer', layer, params)
       // TODO move this to a rendered template
       layerJson.id = i
