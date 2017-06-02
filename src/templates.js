@@ -52,7 +52,7 @@ function render (template, featureCollection = {}, options = {}) {
 
 function renderServer (server, { layers, tables }) {
   const json = _.cloneDeep(templates.server)
-  json.fullExtent = json.initialExtent = server.extent || json.fullExtent
+  json.fullExtent = json.initialExtent = computeExtent(server.extent || json.fullExtent)
   json.serviceDescription = server.description
   json.layers = layers
   json.tables = tables
@@ -68,6 +68,21 @@ function computeSpatialReference (sr) {
     return {
       wkid: sr.wkid || sr.latestWkid,
       latestWkid: sr.latestWkid || sr.wkid
+    }
+  }
+}
+
+function computeExtent (input) {
+  if (input.xmin) return input
+  if (!Array.isArray(input) || !Array.isArray(input[0])) throw new Error('invalid extent')
+  return {
+    xmin: input[0][0],
+    ymin: input[0][1],
+    xmax: input[1][0],
+    ymax: input[1][1],
+    spatialReference: {
+      wkid: 4326,
+      latestWkid: 4326
     }
   }
 }

@@ -2,6 +2,7 @@ const FeatureServer = require('../src')
 const polyData = require('./fixtures/polygon.json')
 const data = require('./fixtures/snow.json')
 const should = require('should')
+const _ = require('lodash')
 
 describe('Info operations', () => {
   describe('server info', () => {
@@ -10,6 +11,19 @@ describe('Info operations', () => {
       server.layers.length.should.equal(1)
       server.initialExtent.xmin.should.equal(-108.9395)
       server.fullExtent.xmin.should.equal(-108.9395)
+    })
+
+    it('should support a passed in extent and description', () => {
+      const input = {
+        description: 'test',
+        extent: [[11, 12], [13, 14]],
+        layers: [_.cloneDeep(data)]
+      }
+      const server = FeatureServer.serverInfo(input)
+      server.serviceDescription.should.equal('test')
+      server.layers.length.should.equal(1)
+      server.initialExtent.xmin.should.equal(11)
+      server.initialExtent.ymax.should.equal(14)
     })
   })
 
