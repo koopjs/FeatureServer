@@ -3,6 +3,6 @@ module.exports = {
   MultiPoint: 'esriGeometryMultipoint',
   LineString: 'esriGeometryPolyline',
   MultiLineString: 'esriGeometryPolyline',
-  Polygon: 'esriGeometryPolyline',
-  MultiPolygon: 'esriGeometryPolyline'
+  Polygon: 'esriGeometryPolygon',
+  MultiPolygon: 'esriGeometryPolygon'
 }
