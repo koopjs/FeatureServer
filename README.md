@@ -6,13 +6,6 @@
 [![travis][travis-image]][travis-url]
 [![Greenkeeper badge][greenkeeper-image]][greenkeeper-url]
 
-[npm-image]: https://img.shields.io/npm/v/featureserver.svg?style=flat-square
-[npm-url]: https://www.npmjs.com/package/featureserver
-[travis-image]: https://img.shields.io/travis/FeatureServer/FeatureServer.svg?style=flat-square
-[travis-url]: https://travis-ci.org/FeatureServer/FeatureServer
-[greenkeeper-image]: https://badges.greenkeeper.io/FeatureServer/FeatureServer.svg
-[greenkeeper-url]: https://greenkeeper.io/
-
 ## Usage
 
 This is meant to be used as a plugin to Express
@@ -96,17 +89,16 @@ const server = {
       type: 'FeatureCollection',
       features: [
         {
-  "type": "Feature",
-  "geometry": {
-    "type": "Point",
-    "coordinates": [125.6, 10.1]
-  },
-  "properties": {
-    "name": "Dinagat Islands"
-  }
-}
+          type: 'Feature',
+          geometry: {
+            type: 'Point',
+            coordinates: [125.6, 10.1]
+          },
+          properties: {
+            name: 'Dinagat Islands'
+          }
+        }
       ]
-      }
     }
   ]
 }
@@ -120,10 +112,18 @@ Generate version `10.21` Geoservices information about a single layer
 FeatureServer.layerInfo(geojson, options)
 ```
 
-### FeatureServer.layers
+### FeatureServer.layersInfo
 Generate version `10.21` Geoservices information about one or many layers
 
 Can pass a single geojson object or an array of geojson objects
 ```js
-FeatureServer.layers(geojson, options)
+FeatureServer.layersInfo([geojson], options)
 ```
+
+
+[npm-image]: https://img.shields.io/npm/v/featureserver.svg?style=flat-square
+[npm-url]: https://www.npmjs.com/package/featureserver
+[travis-image]: https://img.shields.io/travis/FeatureServer/FeatureServer.svg?style=flat-square
+[travis-url]: https://travis-ci.org/FeatureServer/FeatureServer
+[greenkeeper-image]: https://badges.greenkeeper.io/FeatureServer/FeatureServer.svg
+[greenkeeper-url]: https://greenkeeper.io/

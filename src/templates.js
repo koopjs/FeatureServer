@@ -7,7 +7,6 @@ module.exports = { render, renderServer }
 const templates = {
   server: require('../templates/server.json'),
   layer: require('../templates/layer.json'),
-  service: require('../templates/service.json'),
   features: require('../templates/features.json'),
   statistics: require('../templates/statistics.json')
 }
@@ -51,10 +50,12 @@ function render (template, featureCollection = {}, options = {}) {
   return json
 }
 
-function renderServer (server) {
+function renderServer (server, { layers, tables }) {
   const json = _.cloneDeep(templates.server)
-  json.description = json.description
-  json.layers = json.layers
+  json.fullExtent = json.initialExtent = server.extent || json.fullExtent
+  json.serviceDescription = server.description
+  json.layers = layers
+  json.tables = tables
   return json
 }
 

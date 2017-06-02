@@ -9,7 +9,7 @@ const app = express()
 let data
 
 const serverHander = (req, res) => {
-  FeatureServer.route({
+  FeatureServer.route(req, res, {
     description: 'test',
     layers: [data, data]
   })
@@ -25,6 +25,20 @@ describe('Routing feature server requests', () => {
   beforeEach(() => {
     data = _.cloneDeep(snow)
     data.name = 'Snow'
+  })
+
+  describe('Server Info', () => {
+    it('should properly route and handle a server info request`', done => {
+      request(app)
+        .get('/FeatureServer?f=json')
+        .expect(res => {
+          res.body.serviceDescription.should.equal('test')
+          res.body.layers.length.should.equal(2)
+          Array.isArray(res.body.tables).should.equal(true)
+        })
+        .expect('Content-Type', /json/)
+        .expect(200, done)
+    })
   })
 
   describe('Query', () => {
@@ -53,19 +67,6 @@ describe('Routing feature server requests', () => {
             })
             .length.should.equal(1)
           should.exist(res.body.extent)
-        })
-        .expect('Content-Type', /json/)
-        .expect(200, done)
-    })
-  })
-
-  describe('Server Info', () => {
-    it('should properly route and handle a server info request`', done => {
-      request(app)
-        .get('/FeatureServer?f=json')
-        .expect(res => {
-          res.body.description.should.equal('test')
-          res.body.layers.length.should.equal(2)
         })
         .expect('Content-Type', /json/)
         .expect(200, done)
