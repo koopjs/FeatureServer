@@ -200,6 +200,15 @@ describe('Query operatons', () => {
         const expected = require('./fixtures/stats-out-single.json')
         JSON.stringify(response).should.equal(JSON.stringify(expected))
       })
+
+      it('should convert a string to a date type', () => {
+        const input = require('./fixtures/stats-date-no-metadata.json')
+        const response = FeatureServer.query({statistics: input.statistics})
+        // response.features[0].attributes.dateField.should.equal(1497578316179)
+        response.fields[0].type.should.equal('esriFieldTypeDate')
+
+        console.log(response)
+      })
     })
 
     describe('calculating from geojson', function () {
