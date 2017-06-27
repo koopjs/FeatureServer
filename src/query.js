@@ -2,6 +2,7 @@ const Templates = require('./templates')
 const Winnow = require('winnow')
 const Utils = require('./utils')
 const _ = require('lodash')
+const moment = require('moment')
 
 module.exports = query
 
@@ -94,7 +95,12 @@ function createFieldAliases (stats) {
 }
 
 function createStatFeatures (stats) {
+  stats = _.cloneDeep(stats)
+  console.log(stats)
   return stats.map(attributes => {
+    for (var key in attributes) {
+      if (key === 'dateField') attributes[key] = new Date(attributes[key]).getTime()
+    }
     return { attributes }
   })
 }
@@ -115,9 +121,11 @@ function createStatFields (stats) {
 }
 
 function detectType (value) {
+  console.log('value: ', value)
   if (!value) return null
-  else if (typeof value === 'string') return 'esriFieldTypeString'
   else if (typeof value === 'number') return 'esriFieldTypeDouble'
+  else if (typeof value === 'string' && moment(value, [moment.ISO_8601], true).isValid()) return 'esriFieldTypeDate'
+  else return 'esriFieldTypeString'
 }
 
 function idsOnly (data, options = {}) {

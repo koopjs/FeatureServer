@@ -2,7 +2,8 @@
   "type": "FeatureCollection",
   "statistics": [
     {
-      "dateField": "2017-06-16T01:58:36.179Z"
+      "dateField": "2017-06-16T01:58:36.179Z",
+      "test_field": "test_value"
     }
   ]
 }
