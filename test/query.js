@@ -208,7 +208,7 @@ describe('Query operatons', () => {
         response.features[0].attributes.dateField.should.equal(1497578316179)
         response.fields[0].type.should.equal('esriFieldTypeDate')
       })
-      
+
       it('should convert a date string type to a date type', () => {
         const response = FeatureServer.query({statistics: statsDateNoMeta.statistics})
         response.features[0].attributes.dateField.should.equal(1497578316179)
