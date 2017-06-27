@@ -125,7 +125,7 @@ function detectType (value) {
   if (!value) return null
   else if (typeof value === 'number') return 'esriFieldTypeDouble'
   else if (typeof value === 'string' && moment(value, [moment.ISO_8601], true).isValid()) return 'esriFieldTypeDate'
-  else return 'esriFieldTypeString'
+  else if (typeof value === 'string') return 'esriFieldTypeString'
 }
 
 function idsOnly (data, options = {}) {
