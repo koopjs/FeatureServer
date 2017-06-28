@@ -1,8 +1,6 @@
 const Templates = require('./templates')
 const Winnow = require('winnow')
 const Utils = require('./utils')
-const _ = require('lodash')
-const moment = require('moment')
 
 module.exports = query
 
@@ -17,7 +15,7 @@ function query (data, params = {}) {
   // TODO clean up this series of if statements
   if (data.filtersApplied && data.filtersApplied.geometry) delete params.geometry
   if ((data.filtersApplied && data.filtersApplied.where) || params.where === '1=1') delete params.where
-  if (data.statistics) return statisticsResponse(data.statistics)
+  if (data.statistics) return Templates.renderStatistics(data)
   if (params.returnCountOnly && data.count) return { count: data.count }
 
   if (params.f !== 'geojson') params.toEsri = true
@@ -74,57 +72,6 @@ function queryStatistics (data, params) {
     return { attributes: row }
   })
   return Templates.render('statistics', statResponse, params)
-}
-
-function statisticsResponse (stats) {
-  if (!Array.isArray(stats)) stats = [stats]
-  return {
-    displayFieldName: '',
-    fieldAliases: createFieldAliases(stats),
-    fields: createStatFields(stats),
-    features: createStatFeatures(stats)
-  }
-}
-
-function createFieldAliases (stats) {
-  const fields = Object.keys(stats[0])
-  return fields.reduce((aliases, field) => {
-    aliases[field] = field
-    return aliases
-  }, {})
-}
-
-function createStatFeatures (stats) {
-  return stats.map(attributes => {
-    for (var key in attributes) {
-      if (attributes[key] instanceof Date || moment(attributes[key], [moment.ISO_8601], true).isValid()) {
-        attributes[key] = new Date(attributes[key]).getTime()
-      }
-    }
-    return { attributes }
-  })
-}
-
-function createStatFields (stats) {
-  return Object.keys(stats[0]).map(field => {
-    const sample = _.find(stats, s => {
-      return stats[field] !== null
-    })
-    const statField = {
-      name: field,
-      type: detectType(sample[field]),
-      alias: field
-    }
-    if (statField.type === 'esriFieldTypeString') statField.length = 254
-    return statField
-  }, {})
-}
-
-function detectType (value) {
-  if (!value) return null
-  else if (typeof value === 'number') return 'esriFieldTypeDouble'
-  else if (typeof value === 'string' && moment(value, [moment.ISO_8601], true).isValid()) return 'esriFieldTypeDate'
-  else if (typeof value === 'string') return 'esriFieldTypeString'
 }
 
 function idsOnly (data, options = {}) {
