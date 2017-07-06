@@ -1,6 +1,6 @@
 const Utils = require('./utils.js')
 const { renderLayer, renderServer } = require('./templates')
-const geometryMap = require('./geometry-map')
+const { geometryMap } = require('./geometry')
 
 module.exports = { serverInfo, layerInfo, layersInfo }
 

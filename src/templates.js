@@ -1,13 +1,8 @@
 const _ = require('lodash')
-const {
-  isTable,
-  computeSpatialReference,
-  computeExtent,
-  createFieldAliases,
-  createStatFields,
-  createStatFeatures
-} = require('./utils')
-const field = require('./field')
+const moment = require('moment')
+const { isTable } = require('./utils')
+const { computeFieldObject, createFieldAliases, createStatFields } = require('./field')
+const { computeSpatialReference, computeExtent } = require('./geometry')
 
 module.exports = { renderLayer, renderFeatures, renderStatistics, renderServer, renderStats }
 
@@ -49,7 +44,7 @@ function renderLayer (featureCollection = {}, options = {}) {
   if (json.name && metadata.name) json.name = metadata.name
   if (json.description && metadata.description) json.description = metadata.description
   if (json.extent && metadata.extent) json.extent = computeExtent(metadata.extent)
-  if (json.fields) json.fields = field.computeFieldObject(data, 'layer', options)
+  if (json.fields) json.fields = computeFieldObject(data, 'layer', options)
   if (json.type) json.type = isTable(json, data) ? 'Table' : 'Feature Layer'
   if (json.drawingInfo) json.drawingInfo.renderer = renderers[json.geometryType]
   if (json.timeInfo) json.timeInfo = metadata.timeInfo
@@ -66,7 +61,7 @@ function renderFeatures (featureCollection = {}, options = {}) {
 
   if (json.geometryType) json.geometryType = options.geometryType
   if (json.spatialReference) json.spatialReference = computeSpatialReference(options.spatialReference)
-  if (json.fields) json.fields = field.computeFieldObject(data, 'layer', options)
+  if (json.fields) json.fields = computeFieldObject(data, 'layer', options)
   if (json.features) json.features = data.features
   return json
 }
@@ -76,7 +71,7 @@ function renderStatistics (featureCollection = {}, options = {}) {
   const data = featureCollection
   if (!json) throw new Error('Unsupported operation')
 
-  if (json.fields) json.fields = field.computeFieldObject(data, 'statistics', options)
+  if (json.fields) json.fields = computeFieldObject(data, 'statistics', options)
   if (json.features) json.features = data.features
   return json
 }
@@ -95,11 +90,25 @@ function renderServer (server, { layers, tables }) {
 function renderStats (data) {
   let stats = data.statistics
   if (!Array.isArray(stats)) stats = [stats]
-  const fields = data.metadata ? field.computeFieldObject(data) : createStatFields(stats)
+  const fields = data.metadata ? computeFieldObject(data) : createStatFields(stats)
   return {
     displayFieldName: '',
     fieldAliases: createFieldAliases(stats),
     fields,
     features: createStatFeatures(stats)
   }
+}
+
+function createStatFeatures (stats) {
+  return stats.map(attributes => {
+    const transformed = Object.keys(attributes).reduce((attrs, key) => {
+      if (attributes[key] instanceof Date || moment(attributes[key], [moment.ISO_8601], true).isValid()) {
+        attrs[key] = new Date(attributes[key]).getTime()
+      } else {
+        attrs[key] = attributes[key]
+      }
+      return attrs
+    }, {})
+    return { attributes: transformed }
+  })
 }
