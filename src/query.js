@@ -1,5 +1,5 @@
-const Templates = require('./templates')
 const Winnow = require('winnow')
+const { renderFeatures, renderTheStatistics, renderStatistics } = require('./templates')
 const Utils = require('./utils')
 
 module.exports = query
@@ -15,7 +15,7 @@ function query (data, params = {}) {
   // TODO clean up this series of if statements
   if (data.filtersApplied && data.filtersApplied.geometry) delete params.geometry
   if ((data.filtersApplied && data.filtersApplied.where) || params.where === '1=1') delete params.where
-  if (data.statistics) return Templates.renderStatistics(data)
+  if (data.statistics) return renderStatistics(data)
   if (params.returnCountOnly && data.count) return { count: data.count }
 
   if (params.f !== 'geojson') params.toEsri = true
@@ -55,7 +55,7 @@ function geoservicesPostQuery (data, queriedData, params) {
     // TODO should these be calculated using the whole dataset?
     params.spatialReference = params.outSR
     params.attributeSample = data.features[0] && data.features[0].properties
-    return Templates.render('features', queriedData, params)
+    return renderFeatures(queriedData, params)
   }
 }
 
@@ -71,7 +71,7 @@ function queryStatistics (data, params) {
   statResponse.features = features.map(row => {
     return { attributes: row }
   })
-  return Templates.render('statistics', statResponse, params)
+  return renderTheStatistics(statResponse, params)
 }
 
 function idsOnly (data, options = {}) {
