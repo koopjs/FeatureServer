@@ -9,7 +9,7 @@ const {
 } = require('./utils')
 const field = require('./field')
 
-module.exports = { renderLayer, renderFeatures, renderTheStatistics, renderServer, renderStatistics }
+module.exports = { renderLayer, renderFeatures, renderStatistics, renderServer, renderStats }
 
 const templates = {
   layer: require('../templates/layer.json'),
@@ -71,7 +71,7 @@ function renderFeatures (featureCollection = {}, options = {}) {
   return json
 }
 
-function renderTheStatistics (featureCollection = {}, options = {}) {
+function renderStatistics (featureCollection = {}, options = {}) {
   const json = _.cloneDeep(templates.statistics)
   const data = featureCollection
   if (!json) throw new Error('Unsupported operation')
@@ -92,7 +92,7 @@ function renderServer (server, { layers, tables }) {
   return json
 }
 
-function renderStatistics (data) {
+function renderStats (data) {
   let stats = data.statistics
   if (!Array.isArray(stats)) stats = [stats]
   const fields = data.metadata ? field.computeFieldObject(data) : createStatFields(stats)

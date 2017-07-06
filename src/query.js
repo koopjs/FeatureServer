@@ -1,5 +1,5 @@
 const Winnow = require('winnow')
-const { renderFeatures, renderTheStatistics, renderStatistics } = require('./templates')
+const { renderFeatures, renderStatistics, renderStats } = require('./templates')
 const Utils = require('./utils')
 
 module.exports = query
@@ -15,7 +15,7 @@ function query (data, params = {}) {
   // TODO clean up this series of if statements
   if (data.filtersApplied && data.filtersApplied.geometry) delete params.geometry
   if ((data.filtersApplied && data.filtersApplied.where) || params.where === '1=1') delete params.where
-  if (data.statistics) return renderStatistics(data)
+  if (data.statistics) return renderStats(data)
   if (params.returnCountOnly && data.count) return { count: data.count }
 
   if (params.f !== 'geojson') params.toEsri = true
@@ -59,6 +59,17 @@ function geoservicesPostQuery (data, queriedData, params) {
   }
 }
 
+function idsOnly (data, options = {}) {
+  const oidField = options.idField || 'OBJECTID'
+  return data.features.reduce(
+    (resp, f) => {
+      resp.objectIds.push(f.attributes[oidField])
+      return resp
+    },
+    { objectIdField: oidField, objectIds: [] }
+  )
+}
+
 function queryStatistics (data, params) {
   // This little dance is in place because the stat response from Winnow is different
   // TODO make winnow come out as expected
@@ -71,16 +82,5 @@ function queryStatistics (data, params) {
   statResponse.features = features.map(row => {
     return { attributes: row }
   })
-  return renderTheStatistics(statResponse, params)
-}
-
-function idsOnly (data, options = {}) {
-  const oidField = options.idField || 'OBJECTID'
-  return data.features.reduce(
-    (resp, f) => {
-      resp.objectIds.push(f.attributes[oidField])
-      return resp
-    },
-    { objectIdField: oidField, objectIds: [] }
-  )
+  return renderStatistics(statResponse, params)
 }

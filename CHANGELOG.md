@@ -5,6 +5,9 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ## Unreleased
 ### Fixed
 * Save id property when rendering layer
+### Changed
+* Reorganize templates.js into individual render functions
+* Renamed renderStatistics to renderStats for render function consistency
 
 ## [2.3.6] - 2017-06-28
 ### Fixed
