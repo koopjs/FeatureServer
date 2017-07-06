@@ -63,7 +63,7 @@ describe('Info operations', () => {
   })
 
   describe('getting layer info without features', () => {
-    it.only('should work with only metadata', () => {
+    it('should work with only metadata', () => {
       const input = {
         metadata: {
           id: 15,
