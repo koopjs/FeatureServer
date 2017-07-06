@@ -1,9 +1,7 @@
 const _ = require('lodash')
 const moment = require('moment')
 
-module.exports = createStatFields
-
-function createStatFields (stats) {
+module.exports = function (stats) {
   return Object.keys(stats[0]).map(field => {
     const sample = _.find(stats, s => {
       return stats[field] !== null

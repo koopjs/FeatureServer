@@ -1,6 +1,4 @@
-module.exports = computeExtent
-
-function computeExtent (input) {
+module.exports = function (input) {
   let coords
   if (input.xmin) return input
   if (Array.isArray(input)) {
