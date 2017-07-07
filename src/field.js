@@ -79,7 +79,12 @@ function computeFieldObject (data, template, options) {
   if (!metadata.fields && data.statistics) return computeFields(data.statistics[0], template, options).fields
   else if (!metadata.fields) return computeAggFieldObject(data, template, options)
 
-  const fields = metadata.fields.map(field => {
+  var outFields = options.outFields.split(",")
+  var metadataFields = metadata.fields.filter((field) => {
+    if(outFields.indexOf(field.name) > -1){ return field }
+  });
+
+  const fields = metadataFields.map(field => {
     if (field.name === metadata.idField || field.name.toLowerCase() === 'objectid') oid = true
     const template = _.cloneDeep(templates.field)
     return Object.assign({}, template, {
