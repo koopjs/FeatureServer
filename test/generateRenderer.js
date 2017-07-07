@@ -1,6 +1,6 @@
 /* global describe, it, beforeEach */
 const _ = require('lodash')
-const { multipartRamp, algorithmicRamp } = require('../src/colorRamps')
+const { multipartRamp, algorithmicRamp } = require('../generateRenderer/colorRamps')
 const algorithmicColorRamp = require('./fixtures/ramp-algorithmic.json')
 const multipartColorRamp = require('./fixtures/ramp-multipart.json')
 

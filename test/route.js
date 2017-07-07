@@ -90,6 +90,14 @@ describe('Routing feature server requests', () => {
     })
   })
 
+  describe('generateRenderer', () => {
+    it('should properly route and handle generating a renderer', done => {
+      request(app)
+        .get('/FeatureServer/0/generateRenderer?f=json')
+        .expect(200, done)
+    })
+  })
+
   describe('Layer Info', () => {
     it('should properly route and handle a layer info request`', done => {
       request(app)
