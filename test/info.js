@@ -66,7 +66,6 @@ describe('Info operations', () => {
     it('should work with only metadata', () => {
       const input = {
         metadata: {
-          id: 15,
           name: 'test',
           description: 'test',
           extent: [[11, 12], [13, 14]],
@@ -80,7 +79,6 @@ describe('Info operations', () => {
         }
       }
       const layer = FeatureServer.layerInfo(input, {})
-      layer.id.should.equal(15)
       layer.name.should.equal('test')
       layer.description.should.equal('test')
       layer.extent.xmin.should.equal(11)

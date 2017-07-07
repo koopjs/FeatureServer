@@ -38,7 +38,7 @@ function renderLayer (featureCollection = {}, options = {}) {
   if (json.fullExtent) json.fullExtent = json.initialExtent = json.extent = metadata.extent || options.extent
   else if (json.extent) json.extent = metadata.extent || options.extent
 
-  json.id = metadata.id || 0
+  json.id = parseInt(options.layer) || 0
   if (json.geometryType) json.geometryType = options.geometryType
   if (json.spatialReference) json.spatialReference = computeSpatialReference(options.spatialReference)
   if (json.name && metadata.name) json.name = metadata.name
