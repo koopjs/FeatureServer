@@ -25,6 +25,8 @@ function route (req, res, geojson, options) {
   switch (method) {
     case 'query':
       return execQuery(req, res, geojson, options)
+    // case 'generateRenderer':
+      // return ()
     default:
       return execInfo(req, res, method, geojson)
   }
