@@ -75,15 +75,16 @@ function isInt (value) {
 function computeFieldObject (data, template, options) {
   let oid = false
   const metadata = data.metadata || {}
+  let metadataFields = metadata.fields
+  if (!metadataFields && data.statistics) return computeFields(data.statistics[0], template, options).fields
+  else if (!metadataFields) return computeAggFieldObject(data, template, options)
 
-  if (!metadata.fields && data.statistics) return computeFields(data.statistics[0], template, options).fields
-  else if (!metadata.fields) return computeAggFieldObject(data, template, options)
-
-  var outFields = options.outFields.split(",")
-  var metadataFields = metadata.fields.filter((field) => {
-    if(outFields.indexOf(field.name) > -1){ return field }
-  });
-
+  if(options.outFields){
+    var outFields = options.outFields.split(",")
+    metadataFields = metadata.fields.filter((field) => {
+      if(outFields.indexOf(field.name) > -1){ return field }
+    });
+  }
   const fields = metadataFields.map(field => {
     if (field.name === metadata.idField || field.name.toLowerCase() === 'objectid') oid = true
     const template = _.cloneDeep(templates.field)
@@ -93,7 +94,6 @@ function computeFieldObject (data, template, options) {
       alias: field.alias || field.name
     })
   })
-
   if (!oid) fields.push(templates.objectIDField)
   return fields
 }
