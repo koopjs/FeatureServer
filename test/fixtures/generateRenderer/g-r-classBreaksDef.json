@@ -1,0 +1,6 @@
+{
+  "type": "classBreaksDef",
+  "classificationField": "daily snow total",
+  "classificationMethod": "ClassifyEqualInterval",
+  "breakCount": 9,
+}

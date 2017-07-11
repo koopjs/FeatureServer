@@ -48,11 +48,12 @@ function execQuery (req, res, geojson, options) {
 function execGenerateRenderer (req, res, geojson, options) {
   let response
   try {
-    response = FsGenerateRenderer(geojson, req.params || {})
+    response = FsGenerateRenderer(geojson, req.query || {})
   } catch (e) {
     if (process.env.NODE_ENV === 'test') console.trace(e)
     return res.status(500).json({ error: e.message })
   }
+  // TODO: determine if these need to change
   if (req.query.callback) res.send(`${req.query.callback}(${JSON.stringify(response)})`)
   else res.status(200).json(response)
 }

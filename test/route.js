@@ -90,14 +90,6 @@ describe('Routing feature server requests', () => {
     })
   })
 
-  describe('generateRenderer', () => {
-    it('should properly route and handle generating a renderer', done => {
-      request(app)
-        .get('/FeatureServer/0/generateRenderer?f=json')
-        .expect(200, done)
-    })
-  })
-
   describe('Layer Info', () => {
     it('should properly route and handle a layer info request`', done => {
       request(app)
@@ -128,6 +120,25 @@ describe('Routing feature server requests', () => {
           res.body.layers[0].name.should.equal('Snow')
         })
         .expect('Content-Type', /json/)
+        .expect(200, done)
+    })
+  })
+
+  describe('generateRenderer', () => {
+    it('should properly route and handle generating a color ramp', done => {
+      request(app)
+        .get('/FeatureServer/3/generateRenderer?' +
+        'classificationDef={' +
+          '"type": "classBreaksDef",' +
+          '"classificationField": "daily snow total",' +
+          '"classificationMethod": "equalInterval",' +
+          '"breakCount": 9}&' +
+          'where=&' +
+          'gdbVersion=&' +
+          'f=json')
+        .expect(res => {
+          res.body.length.should.equal(9)
+        })
         .expect(200, done)
     })
   })

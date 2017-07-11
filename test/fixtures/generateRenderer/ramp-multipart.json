@@ -5,22 +5,22 @@
       "type": "algorithmic",
       "fromColor": [0, 255, 0],
       "toColor": [0, 0, 255],
-      "algorithm": "esriHSVAlgorithm",
-      "numBreaks": 9
+      "algorithm": "HSVAlgorithm",
+      "breakCount": 9
     },
     {
       "type": "algorithmic",
       "fromColor": [0, 255, 0],
       "toColor": [0, 0, 255],
-      "algorithm": "esriCIELabAlgorithm",
-      "numBreaks": 9
+      "algorithm": "CIELabAlgorithm",
+      "breakCount": 9
     },
     {
       "type": "algorithmic",
       "fromColor": [0, 255, 0],
       "toColor": [0, 0, 255],
-      "algorithm": "esriLabLChAlgorithm",
-      "numBreaks": 7
+      "algorithm": "LabLChAlgorithm",
+      "breakCount": 7
     }
   ]
 }
