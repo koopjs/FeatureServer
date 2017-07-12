@@ -1,4 +1,4 @@
-const { algorithmicRamp } = require('./colorRamps')
+const { renderRenderers } = require('../templates')
 
 module.exports = generateRenderer
 
@@ -10,17 +10,5 @@ module.exports = generateRenderer
  * @param {function} callback
  */
 function generateRenderer (data, params = {}) {
-  return createClassification(data, params)
-}
-
-function createClassification (data, params) {
-  const classification = params.classificationDef
-  if (classification.type === 'classBreaksDef') {
-    if (classification.breakCount) {
-      classification.valueCount = data.features.length
-      return algorithmicRamp(classification)
-    }
-  } else if (classification.type === 'uniqueValuesDef') {
-  } else {
-  }
+  return renderRenderers(data, params)
 }

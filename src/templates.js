@@ -3,8 +3,9 @@ const moment = require('moment')
 const { isTable } = require('./utils')
 const { computeFieldObject, createFieldAliases, createStatFields } = require('./field')
 const { computeSpatialReference, computeExtent } = require('./geometry')
+const { algorithmicColorRamp } = require('./generateRenderer/colorRamps')
 
-module.exports = { renderLayer, renderFeatures, renderStatistics, renderServer, renderStats }
+module.exports = { renderLayer, renderFeatures, renderStatistics, renderServer, renderStats, renderRenderers }
 
 const templates = {
   layer: require('../templates/layer.json'),
@@ -18,7 +19,8 @@ const templates = {
 const renderers = {
   esriGeometryPolygon: require('../templates/renderers/polygon.json'),
   esriGeometryPolyline: require('../templates/renderers/line.json'),
-  esriGeometryPoint: require('../templates/renderers/point.json')
+  esriGeometryPoint: require('../templates/renderers/point.json'),
+  classBreaksDef: require('../templates/renderers/classBreaksDef.json')
 }
 
 /**
@@ -111,4 +113,45 @@ function createStatFeatures (stats) {
     }, {})
     return { attributes: transformed }
   })
+}
+
+function renderRenderers (data, options = {}) {
+  // TODO: add check for renderer type (i.e., point, polyline, polygon)
+  // TODO: handle other options (e.g., [remaining] classificationDef=& where=& gdbVersion=&)
+  const classification = options.classificationDef
+
+  let json = {}
+  if (classification.type === 'classBreaksDef') {
+    json = _.cloneDeep(renderers.classBreaksDef)
+    json.field = classification.classificationField
+    json.classificationMethod = classification.classificationMethod
+
+    if (data.statistics) {
+      const stats = data.statistics
+      const classBreaks = stats.map(attributes => {
+        if (attributes.classBreaks) { return attributes.classBreaks } // TODO: find a better way to grab classBreaks from stats
+      })[0].sort((a, b) => a - b) // sort class breaks
+      json.minValue = classBreaks[0]
+      json.classBreakInfos = createClassBreakInfos(json.minValue, classBreaks, options)
+    } else { // TODO: winnow calculate class breaks statistics
+    }
+  } else if (classification.type === 'uniqueValueDef') console.log('uniqueValueDef classification')
+  return json
+}
+
+function createClassBreakInfos (minValue, classBreaks, options) {
+  // TODO: handle other options
+  options.breakCount = classBreaks.length - 1
+  const colorRamps = algorithmicColorRamp(options)
+
+  return classBreaks.map((breaks, index) => {
+    const json = _.cloneDeep(renderers.esriGeometryPoint)
+    delete json.type // TODO: determine if this is necessary
+    json.classMaxValue = breaks
+    const classMinValue = classBreaks[index - 1] || minValue // TODO: set as json.classMinValue if not optional
+    json.label = `${classMinValue}-${json.classMaxValue}` // TODO: Handle precision so that boundary values aren't in two classes
+    json.description = ''
+    json.symbol.color = colorRamps[index - 1]
+    return json
+  }).slice(1)
 }

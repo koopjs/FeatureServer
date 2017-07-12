@@ -1,6 +1,6 @@
 const chroma = require('chroma-js')
 
-module.exports = { multipartRamp, algorithmicRamp }
+module.exports = { multipartColorRamp, algorithmicColorRamp }
 
 /**
 *
@@ -9,13 +9,13 @@ module.exports = { multipartRamp, algorithmicRamp }
 * @param {array} options
 * @return {array} algorithmic colorRamps
 */
-function multipartRamp (options) {
+function multipartColorRamp (options) {
   let {
     type = 'multipart',
     colorRamps
   } = options
   if (!type === 'multipart' && colorRamps.length < 1) return
-  return colorRamps.map((colorRamp) => { return algorithmicRamp(colorRamp) })
+  return colorRamps.map((colorRamp) => { return algorithmicColorRamp(colorRamp) })
 }
 
 /**
@@ -25,7 +25,8 @@ function multipartRamp (options) {
 * @param {array} options
 * @return {array} colorRamp
 */
-function algorithmicRamp (options) {
+function algorithmicColorRamp (options) {
+  // TODO: add value count check for a uniqueValueDef color ramp
   const {
     type = 'algorithmic',
     colorRamps,

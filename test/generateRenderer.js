@@ -1,19 +1,19 @@
 /* global describe, it, beforeEach */
 const _ = require('lodash')
-const { multipartRamp, algorithmicRamp } = require('../src/generateRenderer/colorRamps')
-const algorithmicColorRamp = require('./fixtures/generateRenderer/ramp-algorithmic.json')
-const multipartColorRamp = require('./fixtures/generateRenderer/ramp-multipart.json')
+const { multipartColorRamp, algorithmicColorRamp } = require('../src/generateRenderer/colorRamps')
+const algorithmicRamp = require('./fixtures/generateRenderer/ramp-algorithmic.json')
+const multipartRamp = require('./fixtures/generateRenderer/ramp-multipart.json')
 
 describe('Generate renderer operations', () => {
   describe('when creating a color ramp that is', () => {
     describe('algorithmic', () => {
       let options
       beforeEach(() => {
-        options = _.cloneDeep(algorithmicColorRamp)
+        options = _.cloneDeep(algorithmicRamp)
       })
       it('should use default values', () => {
         ['type', 'toColor', 'fromColor', 'algorithm', 'breakCount'].forEach((key) => delete options[key])
-        const response = algorithmicRamp(options)
+        const response = algorithmicColorRamp(options)
         response.length.should.equal(7)
         response[0].should.deepEqual([0, 255, 0])
         response[2].should.deepEqual([0, 255, 170])
@@ -21,7 +21,7 @@ describe('Generate renderer operations', () => {
       })
       describe('using the HSV algorithm', () => {
         it('should return correct hsv color ramp', () => {
-          const response = algorithmicRamp(options)
+          const response = algorithmicColorRamp(options)
           response.should.be.an.instanceOf(Array)
           response.length.should.equal(9)
           response[3].should.be.an.instanceOf(Array)
@@ -30,19 +30,19 @@ describe('Generate renderer operations', () => {
         })
         it('should return correct number of breaks', () => {
           options.breakCount = 13
-          const response = algorithmicRamp(options)
+          const response = algorithmicColorRamp(options)
           response.length.should.equal(13)
         })
         it('should change ramp colors when toColor is changed', () => {
           options.toColor = [50, 173, 23]
-          const response = algorithmicRamp(options)
+          const response = algorithmicColorRamp(options)
           response[3].should.deepEqual([ 25, 223, 10 ])
         })
       })
       describe('using the LAB algorithm', () => {
         it('should return correct lab color ramp', () => {
           options.algorithm = 'CIELabAlgorithm'
-          const response = algorithmicRamp(options)
+          const response = algorithmicColorRamp(options)
           response.should.be.an.instanceOf(Array)
           response.length.should.equal(9)
           response[3].should.be.an.instanceOf(Array)
@@ -53,7 +53,7 @@ describe('Generate renderer operations', () => {
       describe('using the LCH algorithm', () => {
         it('should return correct lch color ramp', () => {
           options.algorithm = 'LabLChAlgorithm'
-          const response = algorithmicRamp(options)
+          const response = algorithmicColorRamp(options)
           response.should.be.an.instanceOf(Array)
           response.length.should.equal(9)
           response[3].should.be.an.instanceOf(Array)
@@ -65,15 +65,15 @@ describe('Generate renderer operations', () => {
     describe('multipart', () => {
       let options
       beforeEach(() => {
-        options = _.cloneDeep(multipartColorRamp)
+        options = _.cloneDeep(multipartRamp)
       })
       it('should return multiple color ramps', () => {
-        const response = multipartRamp(options)
+        const response = multipartColorRamp(options)
         response.should.be.an.instanceOf(Array)
         response.length.should.equal(3)
       })
       it('should return correct color ramps that have different algorithms', () => {
-        const response = multipartRamp(options)
+        const response = multipartColorRamp(options)
         response[2].should.be.an.instanceOf(Array)
         response[2].length.should.equal(7)
         response[0][7].should.deepEqual([ 0, 64, 255 ])

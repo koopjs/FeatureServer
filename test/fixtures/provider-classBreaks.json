@@ -1,0 +1,11 @@
+{
+  "type": "FeatureCollection",
+  "metadata": {
+    "name": "GDeltGKG"
+  },
+  "statistics": [
+    {
+      "classBreaks": [80, 147, 174, 195, 218, 240, 270, 307, 260, 558]
+    }
+  ]
+}

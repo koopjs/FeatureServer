@@ -69,7 +69,7 @@ describe('Routing feature server requests', () => {
       data = require('./fixtures/provider-statistics.json')
       request(app)
         .get(
-          '/FeatureServer/0/query?f=json' +
+          '/FeatureServer/0/query?f=json&' +
             'geometry={"xmin":-15576031.875835987,"ymin":-14167144.570483988,"xmax":15576031.875835987,"ymax":14167144.570483988}&' +
             'geometryType=esriGeometryEnvelope&' +
             'inSR=102100&' +
@@ -125,19 +125,23 @@ describe('Routing feature server requests', () => {
   })
 
   describe('generateRenderer', () => {
-    it('should properly route and handle generating a color ramp', done => {
+    it.only('should properly route and handle when a provider passes in statistics', done => {
+      data = require('./fixtures/provider-classBreaks.json')
       request(app)
         .get('/FeatureServer/3/generateRenderer?' +
         'classificationDef={' +
           '"type": "classBreaksDef",' +
           '"classificationField": "daily snow total",' +
-          '"classificationMethod": "equalInterval",' +
+          '"classificationMethod": "esriClassifyEqualInterval",' +
           '"breakCount": 9}&' +
           'where=&' +
           'gdbVersion=&' +
           'f=json')
         .expect(res => {
-          res.body.length.should.equal(9)
+          res.body.type.should.equal('classBreaks')
+          res.body.classBreakInfos.length.should.equal(9)
+          res.body.classBreakInfos[0].symbol.color.should.deepEqual([0, 255, 0])
+          res.body.classBreakInfos[8].symbol.color.should.deepEqual([0, 0, 255])
         })
         .expect(200, done)
     })
