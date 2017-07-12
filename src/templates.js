@@ -3,9 +3,9 @@ const moment = require('moment')
 const { isTable } = require('./utils')
 const { computeFieldObject, createFieldAliases, createStatFields } = require('./field')
 const { computeSpatialReference, computeExtent } = require('./geometry')
-const { algorithmicColorRamp } = require('./generateRenderer/colorRamps')
+const { createClassBreakInfos } = require('./generateRenderer/createClassification')
 
-module.exports = { renderLayer, renderFeatures, renderStatistics, renderServer, renderStats, renderRenderers }
+module.exports = { renderLayer, renderFeatures, renderStatistics, renderServer, renderStats, renderRenderers, renderRenderersStats }
 
 const templates = {
   layer: require('../templates/layer.json'),
@@ -20,7 +20,11 @@ const renderers = {
   esriGeometryPolygon: require('../templates/renderers/polygon.json'),
   esriGeometryPolyline: require('../templates/renderers/line.json'),
   esriGeometryPoint: require('../templates/renderers/point.json'),
-  classBreaksDef: require('../templates/renderers/classBreaksDef.json')
+  classBreaks: require('../templates/renderers/classBreaks.json'),
+  uniqueValues: require('../templates/renderers/uniqueValues.json'),
+  classBreakInfo: require('../templates/renderers/classBreakInfo.json'),
+  uniqueValueInfo: require('../templates/renderers/uniqueValueInfo.json'),
+  fillSymbol: require('../templates/renderers/fill-symbol.json')
 }
 
 /**
@@ -117,41 +121,23 @@ function createStatFeatures (stats) {
 
 function renderRenderers (data, options = {}) {
   // TODO: add check for renderer type (i.e., point, polyline, polygon)
-  // TODO: handle other options (e.g., [remaining] classificationDef=& where=& gdbVersion=&)
-  const classification = options.classificationDef
-
-  let json = {}
-  if (classification.type === 'classBreaksDef') {
-    json = _.cloneDeep(renderers.classBreaksDef)
-    json.field = classification.classificationField
-    json.classificationMethod = classification.classificationMethod
-
-    if (data.statistics) {
-      const stats = data.statistics
-      const classBreaks = stats.map(attributes => {
-        if (attributes.classBreaks) { return attributes.classBreaks } // TODO: find a better way to grab classBreaks from stats
-      })[0].sort((a, b) => a - b) // sort class breaks
-      json.minValue = classBreaks[0]
-      json.classBreakInfos = createClassBreakInfos(json.minValue, classBreaks, options)
-    } else { // TODO: winnow calculate class breaks statistics
-    }
-  } else if (classification.type === 'uniqueValueDef') console.log('uniqueValueDef classification')
-  return json
+  // TODO: handle options (e.g., [remaining] classificationDef=& where=& gdbVersion=&)
 }
 
-function createClassBreakInfos (minValue, classBreaks, options) {
-  // TODO: handle other options
-  options.breakCount = classBreaks.length - 1
-  const colorRamps = algorithmicColorRamp(options)
+function renderRenderersStats (data) {
+  let stats = data.statistics
 
-  return classBreaks.map((breaks, index) => {
-    const json = _.cloneDeep(renderers.esriGeometryPoint)
-    delete json.type // TODO: determine if this is necessary
-    json.classMaxValue = breaks
-    const classMinValue = classBreaks[index - 1] || minValue // TODO: set as json.classMinValue if not optional
-    json.label = `${classMinValue}-${json.classMaxValue}` // TODO: Handle precision so that boundary values aren't in two classes
-    json.description = ''
-    json.symbol.color = colorRamps[index - 1]
+  const classBreaks = stats.map(attributes => {
+    if (attributes.classBreaks) { return attributes.classBreaks } // TODO: find a better way to grab classBreaks from stats
+  })[0].sort((a, b) => a - b) // sort class breaks
+
+  // if class breaks found, use classBreaks template
+  if (classBreaks) {
+    const json = _.cloneDeep(renderers.classBreaks)
+    json.minValue = classBreaks[0][0] // lower bound of first class break
+    json.classBreakInfos = createClassBreakInfos(classBreaks)
     return json
-  }).slice(1)
+  } else {
+    // TODO: handle other statistics
+  }
 }

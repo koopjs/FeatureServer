@@ -1,4 +1,4 @@
-const { renderRenderers } = require('../templates')
+const { renderRenderers, renderRenderersStats } = require('../templates')
 
 module.exports = generateRenderer
 
@@ -10,5 +10,6 @@ module.exports = generateRenderer
  * @param {function} callback
  */
 function generateRenderer (data, params = {}) {
-  return renderRenderers(data, params)
+  if (data.statistics) return renderRenderersStats(data)
+  return renderRenderers(data, params) // TODO: use winnow to calculate class breaks statistics
 }

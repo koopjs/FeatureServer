@@ -1,7 +1,7 @@
 {
   "type" : "classBreaks",
   "field" : "",
-  "classificationMethod" : "esriClassifyesriClassifyEqualInterval",
+  "classificationMethod": "",
   "minValue" : 0,
   "classBreakInfos" : []
 }

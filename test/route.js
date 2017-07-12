@@ -125,24 +125,42 @@ describe('Routing feature server requests', () => {
   })
 
   describe('generateRenderer', () => {
-    it.only('should properly route and handle when a provider passes in statistics', done => {
+    it('should properly route and handle when a provider passes in class breaks statistics', done => {
       data = require('./fixtures/provider-classBreaks.json')
       request(app)
-        .get('/FeatureServer/3/generateRenderer?' +
-        'classificationDef={' +
-          '"type": "classBreaksDef",' +
-          '"classificationField": "daily snow total",' +
-          '"classificationMethod": "esriClassifyEqualInterval",' +
-          '"breakCount": 9}&' +
-          'where=&' +
-          'gdbVersion=&' +
-          'f=json')
+        .get('/FeatureServer/3/generateRenderer?')
         .expect(res => {
           res.body.type.should.equal('classBreaks')
           res.body.classBreakInfos.length.should.equal(9)
           res.body.classBreakInfos[0].symbol.color.should.deepEqual([0, 255, 0])
+          res.body.classBreakInfos[0].label.should.equal('80-147')
+          res.body.classBreakInfos[4].symbol.color.should.deepEqual([0, 255, 255])
           res.body.classBreakInfos[8].symbol.color.should.deepEqual([0, 0, 255])
         })
+        .expect('Content-Type', /json/)
+        .expect(200, done)
+    })
+    it('should ignore options when statistics are passed in', done => {
+      data = require('./fixtures/provider-classBreaks.json')
+      request(app)
+        .get('/FeatureServer/3/generateRenderer?' +
+       'classificationDef={' +
+         '"type": "classBreaksDef",' +
+         '"classificationField": "daily snow total",' +
+         '"classificationMethod": "esriClassifyEqualInterval",' +
+         '"breakCount": 9}&' +
+         'where=&' +
+         'gdbVersion=&' +
+         'f=json')
+        .expect(res => {
+          res.body.type.should.equal('classBreaks')
+          res.body.classBreakInfos.length.should.equal(9)
+          res.body.classBreakInfos[0].symbol.color.should.deepEqual([0, 255, 0])
+          res.body.classBreakInfos[0].label.should.equal('80-147')
+          res.body.classBreakInfos[4].symbol.color.should.deepEqual([0, 255, 255])
+          res.body.classBreakInfos[8].symbol.color.should.deepEqual([0, 0, 255])
+        })
+        .expect('Content-Type', /json/)
         .expect(200, done)
     })
   })
