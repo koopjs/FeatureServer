@@ -1,4 +1,6 @@
-const { renderRenderers, renderRenderersStats } = require('../templates')
+const Winnow = require('winnow')
+const { renderRenderers } = require('../templates')
+const { createBreaks } = require('./breaks')
 
 module.exports = generateRenderer
 
@@ -10,6 +12,27 @@ module.exports = generateRenderer
  * @param {function} callback
  */
 function generateRenderer (data, params = {}) {
-  if (data.statistics) return renderRenderersStats(data)
-  return renderRenderers(data, params) // TODO: use winnow to calculate class breaks statistics
+  const options = {}
+  options.params = params
+  if (data.statistics) {
+    let stats = data.statistics
+    options.classBreaks = stats.map(attributes => {
+      if (attributes.classBreaks) { return attributes.classBreaks } // TODO: find a better way to grab classBreaks from stats
+    })[0].sort((a, b) => a - b) // sort class breaks
+  } else if (params.classificationDef) {
+    const queriedData = Winnow.query(data, params)
+    const features = queriedData.features
+
+    if (features === undefined || features.length === 0) return // if there are no features, return
+
+    const classification = params.classificationDef
+    if (classification.type === 'classBreaksDef') {
+      options.classBreaks = createBreaks(features, classification)
+    } else if (classification.type === 'uniqueValuesDef') {
+      // TODO: handle unique values & potentially call a different renderer
+    }
+  } else {
+    console.log('error')
+  }
+  return renderRenderers(options)
 }

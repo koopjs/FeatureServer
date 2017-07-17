@@ -3,9 +3,9 @@ const moment = require('moment')
 const { isTable } = require('./utils')
 const { computeFieldObject, createFieldAliases, createStatFields } = require('./field')
 const { computeSpatialReference, computeExtent } = require('./geometry')
-const { createClassBreakInfos } = require('./generateRenderer/createClassification')
+const { createClassBreakInfos } = require('./generateRenderer/createClassificationInfos')
 
-module.exports = { renderLayer, renderFeatures, renderStatistics, renderServer, renderStats, renderRenderers, renderRenderersStats }
+module.exports = { renderLayer, renderFeatures, renderStatistics, renderServer, renderStats, renderRenderers }
 
 const templates = {
   layer: require('../templates/layer.json'),
@@ -21,10 +21,7 @@ const renderers = {
   esriGeometryPolyline: require('../templates/renderers/line.json'),
   esriGeometryPoint: require('../templates/renderers/point.json'),
   classBreaks: require('../templates/renderers/classBreaks.json'),
-  uniqueValues: require('../templates/renderers/uniqueValues.json'),
-  classBreakInfo: require('../templates/renderers/classBreakInfo.json'),
-  uniqueValueInfo: require('../templates/renderers/uniqueValueInfo.json'),
-  fillSymbol: require('../templates/renderers/fill-symbol.json')
+  uniqueValues: require('../templates/renderers/uniqueValues.json')
 }
 
 /**
@@ -119,25 +116,19 @@ function createStatFeatures (stats) {
   })
 }
 
-function renderRenderers (data, options = {}) {
+function renderRenderers (options = {}) {
   // TODO: add check for renderer type (i.e., point, polyline, polygon)
-  // TODO: handle options (e.g., [remaining] classificationDef=& where=& gdbVersion=&)
-}
+  // TODO: handle options (e.g., uniqueValuesDef', gdbVersion=&)
 
-function renderRenderersStats (data) {
-  let stats = data.statistics
+  const json = _.cloneDeep(renderers.classBreaks)
 
-  const classBreaks = stats.map(attributes => {
-    if (attributes.classBreaks) { return attributes.classBreaks } // TODO: find a better way to grab classBreaks from stats
-  })[0].sort((a, b) => a - b) // sort class breaks
-
-  // if class breaks found, use classBreaks template
-  if (classBreaks) {
-    const json = _.cloneDeep(renderers.classBreaks)
-    json.minValue = classBreaks[0][0] // lower bound of first class break
-    json.classBreakInfos = createClassBreakInfos(classBreaks)
-    return json
-  } else {
-    // TODO: handle other statistics
+  if (options.params.classificationDef) {
+    const classification = options.params.classificationDef
+    json.field = classification.classificationField
+    json.classificationMethod = classification.classificationMethod
+    json.minValue = options.classBreaks[0][0] // lower bound of first class break
   }
+
+  json.classBreakInfos = createClassBreakInfos(options)
+  return json
 }

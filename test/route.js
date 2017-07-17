@@ -144,11 +144,11 @@ describe('Routing feature server requests', () => {
       data = require('./fixtures/provider-classBreaks.json')
       request(app)
         .get('/FeatureServer/3/generateRenderer?' +
-       'classificationDef={' +
-         '"type": "classBreaksDef",' +
-         '"classificationField": "daily snow total",' +
-         '"classificationMethod": "esriClassifyEqualInterval",' +
-         '"breakCount": 9}&' +
+        'classificationDef={' +
+          '"type": "classBreaksDef",' +
+          '"classificationField": "daily snow total",' +
+          '"classificationMethod": "esriClassifyEqualInterval",' +
+          '"breakCount": 9}&' +
          'where=&' +
          'gdbVersion=&' +
          'f=json')
@@ -159,6 +159,34 @@ describe('Routing feature server requests', () => {
           res.body.classBreakInfos[0].label.should.equal('80-147')
           res.body.classBreakInfos[4].symbol.color.should.deepEqual([0, 255, 255])
           res.body.classBreakInfos[8].symbol.color.should.deepEqual([0, 0, 255])
+        })
+        .expect('Content-Type', /json/)
+        .expect(200, done)
+    })
+    it('should properly route and handle a generate renderer request', done => {
+      request(app)
+        .get('/FeatureServer/3/generateRenderer?' +
+        'classificationDef={' +
+          '"type": "classBreaksDef",' +
+          '"classificationField": "daily snow total",' +
+          '"classificationMethod": "esriClassifyEqualInterval",' +
+          '"breakCount": 7,' +
+          '"colorRamp": {' +
+            '"type": "algorithmic",' +
+            '"fromColor": [0, 100, 0, 255],' +
+            '"toColor": [0, 0, 255, 255],' +
+            '"algorithm": "esriHSVAlgorithm"}' +
+          '}&' +
+         'where=latitude<39&' +
+         'gdbVersion=&' +
+         'f=json')
+        .expect(res => {
+          res.body.type.should.equal('classBreaks')
+          res.body.classBreakInfos.length.should.equal(7)
+          res.body.classBreakInfos[0].symbol.color.should.deepEqual([0, 100, 0])
+          res.body.classBreakInfos[0].label.should.equal('0-0.8285714285714285')
+          res.body.classBreakInfos[3].symbol.color.should.deepEqual([0, 177, 178])
+          res.body.classBreakInfos[6].symbol.color.should.deepEqual([0, 0, 255])
         })
         .expect('Content-Type', /json/)
         .expect(200, done)

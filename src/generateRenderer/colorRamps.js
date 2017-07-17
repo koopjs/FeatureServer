@@ -1,6 +1,6 @@
 const chroma = require('chroma-js')
 
-module.exports = { multipartColorRamp, algorithmicColorRamp }
+module.exports = { createMultipartRamp, createAlgorithmicRamp }
 
 /**
 *
@@ -9,13 +9,10 @@ module.exports = { multipartColorRamp, algorithmicColorRamp }
 * @param {array} options
 * @return {array} algorithmic colorRamps
 */
-function multipartColorRamp (options) {
-  let {
-    type = 'multipart',
-    colorRamps
-  } = options
-  if (!type === 'multipart' && colorRamps.length < 1) return
-  return colorRamps.map((colorRamp) => { return algorithmicColorRamp(colorRamp) })
+function createMultipartRamp (options) {
+  const { type = 'multipart', colorRamps } = options.rampDetails
+  if (!type === 'multipart' && !colorRamps.length >= 1) return
+  return colorRamps.map((colorRamp) => { return createAlgorithmicRamp(colorRamp) })
 }
 
 /**
@@ -25,31 +22,17 @@ function multipartColorRamp (options) {
 * @param {array} options
 * @return {array} colorRamp
 */
-function algorithmicColorRamp (options) {
-  // TODO: add value count check for a uniqueValueDef color ramp
-  const {
-    type = 'algorithmic',
-    colorRamps,
-    fromColor = [0, 255, 0],
-    toColor = [0, 0, 255],
-    algorithm = 'HSVAlgorithm',
-    breakCount = 7,
-    valueCount
-  } = options
-  if (!type === 'algorithmic' || (!type === 'multipart' && !colorRamps.length >= 1)) return
-  if (valueCount < breakCount) {
-    // TODO: cleaner handle when number of values is less than breaks
-    console.log('More breaks than available data.')
-    return
-  }
+function createAlgorithmicRamp (options) {
+  const { rampDetails, breakCount = 7 } = options
+  if (!rampDetails.type === 'algorithmic') return
+  let colorRamp = chroma.scale([rampDetails.fromColor.slice(0, 3), rampDetails.toColor.slice(0, 3)])
 
-  let colorRamp = chroma.scale([fromColor, toColor])
-  switch (algorithm) {
-    case 'HSVAlgorithm': // using HSV & hsl interchangeably
+  switch (rampDetails.algorithm) {
+    case 'esriHSVAlgorithm': // using HSV & hsl interchangeably
       return colorRamp.mode('hsl').colors(breakCount, 'rgb')
-    case 'CIELabAlgorithm':
+    case 'esriCIELabAlgorithm':
       return colorRamp.mode('lab').colors(breakCount, 'rgb')
-    case 'LabLChAlgorithm':
+    case 'esriLabLChAlgorithm':
       return colorRamp.mode('lch').colors(breakCount, 'rgb')
     default:
       return colorRamp.mode('hsl').colors(breakCount, 'rgb')
