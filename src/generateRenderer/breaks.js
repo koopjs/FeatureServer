@@ -33,7 +33,7 @@ function calculateBreaks (values, options) {
     case 'esriClassifyGeometricalInterval': return undefined
     case 'esriClassifyStandardDeviation':
       if (options.standardDeviationInterval) {
-        // TODO: either use a different library to classify, or find how to integrate interval
+        // TODO: either use a different library to classify, or find how to integrate interval into calculation
         return classifier.classify('std_deviation')
       } else {
         // handle when a user doesn't add a standard deviation interval

@@ -28,19 +28,16 @@ function createUniqueValueInfos () {
 }
 
 function createColorRamp (options) {
-  console.log(options)
   const rampOptions = {
     rampDetails: _.cloneDeep(renderers.algorithmicColorRamp),
     breakCount: options.classBreaks.length
   }
-  // TODO: tidy this up
+  // TODO: tidy this up, but don't alter this check
   // if the user has passed in classification options
   if (options.params.classificationDef) {
     const classification = options.params.classificationDef
     if (classification.colorRamp) rampOptions.rampDetails = classification.colorRamp
   }
-
-  console.log(rampOptions)
 
   if (rampOptions.rampDetails.type === 'multipart' && rampOptions.rampDetails.colorRamps) {
     return createMultipartRamp(rampOptions)

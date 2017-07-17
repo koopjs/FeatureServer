@@ -1,8 +1,8 @@
 /* global describe, it, beforeEach */
 const _ = require('lodash')
-const { createAlgorithmicRamp } = require('../src/generateRenderer/colorRamps')
+const { createMultipartRamp, createAlgorithmicRamp } = require('../src/generateRenderer/colorRamps')
 const algorithmicRamp = require('./fixtures/generateRenderer/ramp-algorithmic.json')
-// const multipartRamp = require('./fixtures/generateRenderer/ramp-multipart.json')
+const multipartRamp = require('./fixtures/generateRenderer/ramp-multipart.json')
 
 describe('Generate renderer operations', () => {
   describe('when creating a color ramp that is', () => {
@@ -88,25 +88,25 @@ describe('Generate renderer operations', () => {
         })
       })
     })
-    // describe('multipart', () => {
-    //   let options
-    //   options = {}
-    //   options.rampDetails = _.cloneDeep(multipartRamp)
-    //   options.breakCount = 9
-    //   it('should return multiple color ramps', () => {
-    //     const response = createMultipartRamp(options)
-    //     response.should.be.an.instanceOf(Array)
-    //     response.length.should.equal(3)
-    //   })
-    //   it('should return correct color ramps that have different algorithms', () => {
-    //     const response = createMultipartRamp(options)
-    //     response[2].should.be.an.instanceOf(Array)
-    //     response[2].length.should.equal(7)
-    //     response[0][7].should.deepEqual([ 0, 64, 255 ])
-    //     response[1][7].should.deepEqual([ 83, 58, 233 ])
-    //     response[0].length.should.equal(response[1].length)
-    //     response[1].length.should.not.equal(response[2].length)
-    //   })
-    // })
+    describe('multipart', () => {
+      let options
+      options = {}
+      options.rampDetails = _.cloneDeep(multipartRamp)
+      options.breakCount = 9
+      it('should return multiple color ramps', () => {
+        const response = createMultipartRamp(options)
+        response.should.be.an.instanceOf(Array)
+        response.length.should.equal(3)
+      })
+      it('should return correct color ramps that have different algorithms', () => {
+        const response = createMultipartRamp(options)
+        response[2].should.be.an.instanceOf(Array)
+        response[2].length.should.equal(9)
+        response[0][7].should.deepEqual([ 0, 64, 255 ])
+        response[1][7].should.deepEqual([ 83, 58, 233 ])
+        response[0].length.should.equal(response[1].length)
+        response[1].length.should.equal(response[2].length) // TODO: allow differnt breakCounts for each ramp?
+      })
+    })
   })
 })
