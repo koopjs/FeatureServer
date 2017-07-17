@@ -15,7 +15,7 @@ function generateRenderer (data, params = {}) {
   const options = {}
   options.params = params
   if (data.statistics) {
-    let stats = data.statistics
+    const stats = data.statistics
     options.classBreaks = stats.map(attributes => {
       if (attributes.classBreaks) { return attributes.classBreaks } // TODO: find a better way to grab classBreaks from stats
     })[0].sort((a, b) => a - b) // sort class breaks
