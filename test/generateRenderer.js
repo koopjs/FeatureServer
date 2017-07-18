@@ -1,19 +1,24 @@
 /* global describe, it, beforeEach */
 const _ = require('lodash')
-const { multipartColorRamp, algorithmicColorRamp } = require('../src/generateRenderer/colorRamps')
+const data = require('./fixtures/snow.json')
+const generateRenderer = require('../src/generateRenderer')
+const { createMultipartRamp, createAlgorithmicRamp } = require('../src/generateRenderer/colorRamps')
 const algorithmicRamp = require('./fixtures/generateRenderer/ramp-algorithmic.json')
 const multipartRamp = require('./fixtures/generateRenderer/ramp-multipart.json')
+const classBreaksDef = require('./fixtures/generateRenderer/classBreaksDef.json')
 
 describe('Generate renderer operations', () => {
   describe('when creating a color ramp that is', () => {
     describe('algorithmic', () => {
       let options
       beforeEach(() => {
-        options = _.cloneDeep(algorithmicRamp)
+        options = {}
+        options.rampDetails = _.cloneDeep(algorithmicRamp)
+        options.breakCount = 9
       })
-      it('should use default values', () => {
-        ['type', 'toColor', 'fromColor', 'algorithm', 'breakCount'].forEach((key) => delete options[key])
-        const response = algorithmicColorRamp(options)
+      it('should use default breakCount', () => {
+        delete options.breakCount
+        const response = createAlgorithmicRamp(options)
         response.length.should.equal(7)
         response[0].should.deepEqual([0, 255, 0])
         response[2].should.deepEqual([0, 255, 170])
@@ -21,7 +26,7 @@ describe('Generate renderer operations', () => {
       })
       describe('using the HSV algorithm', () => {
         it('should return correct hsv color ramp', () => {
-          const response = algorithmicColorRamp(options)
+          const response = createAlgorithmicRamp(options)
           response.should.be.an.instanceOf(Array)
           response.length.should.equal(9)
           response[3].should.be.an.instanceOf(Array)
@@ -30,56 +35,99 @@ describe('Generate renderer operations', () => {
         })
         it('should return correct number of breaks', () => {
           options.breakCount = 13
-          const response = algorithmicColorRamp(options)
+          const response = createAlgorithmicRamp(options)
           response.length.should.equal(13)
         })
         it('should change ramp colors when toColor is changed', () => {
-          options.toColor = [50, 173, 23]
-          const response = algorithmicColorRamp(options)
+          options.rampDetails.toColor = [50, 173, 23]
+          const response = createAlgorithmicRamp(options)
           response[3].should.deepEqual([ 25, 223, 10 ])
         })
       })
       describe('using the LAB algorithm', () => {
+        beforeEach(() => {
+          options.rampDetails.algorithm = 'esriCIELabAlgorithm'
+        })
         it('should return correct lab color ramp', () => {
-          options.algorithm = 'CIELabAlgorithm'
-          const response = algorithmicColorRamp(options)
+          const response = createAlgorithmicRamp(options)
           response.should.be.an.instanceOf(Array)
           response.length.should.equal(9)
           response[3].should.be.an.instanceOf(Array)
           response[3].length.should.equal(3)
           response[3].should.deepEqual([ 123, 174, 141 ])
         })
+        it('should return correct number of breaks', () => {
+          options.breakCount = 13
+          const response = createAlgorithmicRamp(options)
+          response.length.should.equal(13)
+        })
+        it('should change ramp colors when toColor is changed', () => {
+          options.rampDetails.toColor = [50, 173, 23]
+          const response = createAlgorithmicRamp(options)
+          response[3].should.deepEqual([ 35, 224, 14 ])
+        })
       })
       describe('using the LCH algorithm', () => {
+        beforeEach(() => {
+          options.rampDetails.algorithm = 'esriLabLChAlgorithm'
+        })
         it('should return correct lch color ramp', () => {
-          options.algorithm = 'LabLChAlgorithm'
-          const response = algorithmicColorRamp(options)
+          const response = createAlgorithmicRamp(options)
           response.should.be.an.instanceOf(Array)
           response.length.should.equal(9)
           response[3].should.be.an.instanceOf(Array)
           response[3].length.should.equal(3)
           response[3].should.deepEqual([ 0, 206, 237 ])
         })
+        it('should return correct number of breaks', () => {
+          options.breakCount = 13
+          const response = createAlgorithmicRamp(options)
+          response.length.should.equal(13)
+        })
+        it('should change ramp colors when toColor is changed', () => {
+          options.rampDetails.toColor = [50, 173, 23]
+          const response = createAlgorithmicRamp(options)
+          response[3].should.deepEqual([ 37, 224, 13 ])
+        })
       })
     })
     describe('multipart', () => {
       let options
       beforeEach(() => {
-        options = _.cloneDeep(multipartRamp)
+        options = {}
+        options.rampDetails = _.cloneDeep(multipartRamp)
+        options.breakCount = 9
       })
       it('should return multiple color ramps', () => {
-        const response = multipartColorRamp(options)
+        const response = createMultipartRamp(options)
         response.should.be.an.instanceOf(Array)
         response.length.should.equal(3)
       })
       it('should return correct color ramps that have different algorithms', () => {
-        const response = multipartColorRamp(options)
+        const response = createMultipartRamp(options)
         response[2].should.be.an.instanceOf(Array)
-        response[2].length.should.equal(7)
+        response[2].length.should.equal(9)
         response[0][7].should.deepEqual([ 0, 64, 255 ])
         response[1][7].should.deepEqual([ 83, 58, 233 ])
         response[0].length.should.equal(response[1].length)
-        response[1].length.should.not.equal(response[2].length)
+        response[1].length.should.equal(response[2].length) // TODO: allow differnt breakCounts for each ramp?
+      })
+    })
+  })
+  describe.only('when classification', () => {
+    describe('does not exist', () => {
+      it('should throw an error', () => {
+        const options = {
+        }
+        const response = generateRenderer(data, options)
+        response.should.deepEqual({})
+      })
+    })
+    describe('has normalization', () => {
+      it('should return normalized values', () => {
+        const options = classBreaksDef
+        const response = generateRenderer(data, options)
+        response.classBreaksInfo.length.should.equal(9)
       })
     })
   })
