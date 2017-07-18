@@ -114,7 +114,7 @@ describe('Generate renderer operations', () => {
       })
     })
   })
-  describe.only('when classification', () => {
+  describe('when classification', () => {
     describe('does not exist', () => {
       it('should throw an error', () => {
         const options = {
@@ -125,9 +125,15 @@ describe('Generate renderer operations', () => {
     })
     describe('has normalization', () => {
       it('should return normalized values', () => {
-        const options = classBreaksDef
+        const options = {
+          classificationDef: classBreaksDef
+        }
         const response = generateRenderer(data, options)
-        response.classBreaksInfo.length.should.equal(9)
+        console.log('response: ', response)
+        response.type.should.equal('classBreaks')
+        response.minValue.should.equal(0)
+        response.classBreakInfos.length.should.equal(9)
+        response.classBreakInfos[0].classMinValue.should.equal(0)
       })
     })
   })

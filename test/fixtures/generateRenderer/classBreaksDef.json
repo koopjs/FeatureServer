@@ -1,7 +1,7 @@
 {
   "type": "classBreaksDef",
   "classificationField": "daily snow total",
-  "classificationMethod": "ClassifyesriClassifyEqualInterval",
+  "classificationMethod": "esriClassifyEqualInterval",
   "breakCount": 9,
   "normalizationType": "esriNormalizeByLog",
   "baseSymbol": {
