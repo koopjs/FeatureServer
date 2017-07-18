@@ -12,6 +12,7 @@ module.exports = generateRenderer
  * @param {function} callback
  */
 function generateRenderer (data, params = {}) {
+  if (Object.keys(params).length === 0) return params // TODO: better error handling, don't just return empty
   const options = {}
   options.params = params
 

@@ -1,6 +1,0 @@
-{
-  "type": "classBreaksDef",
-  "classificationField": "daily snow total",
-  "classificationMethod": "ClassifyesriClassifyEqualInterval",
-  "breakCount": 9,
-}

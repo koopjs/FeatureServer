@@ -1,8 +1,11 @@
 /* global describe, it, beforeEach */
 const _ = require('lodash')
+const data = require('./fixtures/snow.json')
+const generateRenderer = require('../src/generateRenderer')
 const { createMultipartRamp, createAlgorithmicRamp } = require('../src/generateRenderer/colorRamps')
 const algorithmicRamp = require('./fixtures/generateRenderer/ramp-algorithmic.json')
 const multipartRamp = require('./fixtures/generateRenderer/ramp-multipart.json')
+const classBreaksDef = require('./fixtures/generateRenderer/classBreaksDef.json')
 
 describe('Generate renderer operations', () => {
   describe('when creating a color ramp that is', () => {
@@ -90,9 +93,11 @@ describe('Generate renderer operations', () => {
     })
     describe('multipart', () => {
       let options
-      options = {}
-      options.rampDetails = _.cloneDeep(multipartRamp)
-      options.breakCount = 9
+      beforeEach(() => {
+        options = {}
+        options.rampDetails = _.cloneDeep(multipartRamp)
+        options.breakCount = 9
+      })
       it('should return multiple color ramps', () => {
         const response = createMultipartRamp(options)
         response.should.be.an.instanceOf(Array)
@@ -106,6 +111,23 @@ describe('Generate renderer operations', () => {
         response[1][7].should.deepEqual([ 83, 58, 233 ])
         response[0].length.should.equal(response[1].length)
         response[1].length.should.equal(response[2].length) // TODO: allow differnt breakCounts for each ramp?
+      })
+    })
+  })
+  describe.only('when classification', () => {
+    describe('does not exist', () => {
+      it('should throw an error', () => {
+        const options = {
+        }
+        const response = generateRenderer(data, options)
+        response.should.deepEqual({})
+      })
+    })
+    describe('has normalization', () => {
+      it('should return normalized values', () => {
+        const options = classBreaksDef
+        const response = generateRenderer(data, options)
+        response.classBreaksInfo.length.should.equal(9)
       })
     })
   })
