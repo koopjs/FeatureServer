@@ -17,6 +17,8 @@ function generateRenderer (data, params = {}) {
   let breaks = {}
   const classification = params.classificationDef
 
+  // TODO: throw an error if input values of classification field are non-numeric
+
   if (data.statistics) {
     const stats = data.statistics
     breaks = stats.map(attributes => {

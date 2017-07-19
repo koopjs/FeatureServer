@@ -11,10 +11,11 @@ const renderers = {
 }
 
 function createClassBreakInfos (breaks, classification) {
-  const type = 1
+  const type = 1 // TODO: use this to get the geometry type for creating a symbol
+  const inputRamp = classification && classification.colorRamp ? classification.colorRamp : undefined
+  const colorRamp = createColorRamp(breaks, inputRamp)
   let baseSymbol
   if (classification && classification.baseSymbol) baseSymbol = classification.baseSymbol
-  const colorRamp = createColorRamp(breaks, classification)
 
   return breaks.map((currBreak, index) => {
     const json = _.cloneDeep(renderers.classBreakInfo)
@@ -31,19 +32,11 @@ function createUniqueValueInfos () {
 
 }
 
-function createColorRamp (breaks, classification) {
-  const ramp = classification !== undefined ? classification.colorRamp : _.cloneDeep(renderers.algorithmicColorRamp)
+function createColorRamp (breaks, inputRamp) {
   const rampOptions = {
-    rampDetails: ramp,
+    rampDetails: inputRamp || _.cloneDeep(renderers.algorithmicColorRamp),
     breakCount: breaks.length
   }
-  // // TODO: tidy this up, but don't alter this check
-  // // if the user has passed in classification options
-  // if (options.params.classificationDef) {
-  //   const classification = options.params.classificationDef
-  //   if (classification.colorRamp) rampOptions.rampDetails = classification.colorRamp
-  // }
-
   if (rampOptions.rampDetails.type === 'multipart' && rampOptions.rampDetails.colorRamps) {
     return createMultipartRamp(rampOptions)
   } else if (rampOptions.rampDetails.type === 'algorithmic') {
