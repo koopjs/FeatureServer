@@ -13,23 +13,23 @@ module.exports = generateRenderer
  */
 function generateRenderer (data, params = {}) {
   if (Object.keys(params).length === 0 && !data.statistics) return params // TODO: better error handling, don't just return empty
-  const options = {}
-  options.params = params
+
+  let breaks = {}
+  const classification = params.classificationDef
 
   if (data.statistics) {
     const stats = data.statistics
-    options.classBreaks = stats.map(attributes => {
+    breaks = stats.map(attributes => {
       if (attributes.classBreaks) { return attributes.classBreaks } // TODO: find a better way to grab classBreaks from stats
     })[0].sort((a, b) => a - b) // sort class breaks
-  } else if (options.params.classificationDef) {
-    const queriedData = Winnow.query(data, options.params)
+  } else if (classification) {
+    const queriedData = Winnow.query(data, params)
     const features = queriedData.features
 
-    if (features === undefined || features.length === 0) return // if there are no features, return
+    if (queriedData.features === undefined || queriedData.features.length === 0) return // if there are no features, return
 
-    const classification = options.params.classificationDef
     if (classification.type === 'classBreaksDef') {
-      options.classBreaks = createBreaks(features, classification)
+      breaks = createBreaks(features, classification)
       // TODO: HANDLE GEOMETRY TYPE
     } else if (classification.type === 'uniqueValuesDef') {
       // TODO: handle unique values & potentially call a different renderer
@@ -37,5 +37,5 @@ function generateRenderer (data, params = {}) {
   } else {
     console.log('error')
   }
-  return renderRenderers(options)
+  return renderRenderers(breaks, classification)
 }

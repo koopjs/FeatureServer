@@ -3,20 +3,17 @@ const Classifier = require('classybrew')
 module.exports = { createBreaks }
 
 function createBreaks (features, classification) {
-  const values = getFeatureValues(features, classification)
+  const values = getValues(features, classification.classificationField)
   if (classification.breakCount > values.length) classification.breakCount = values.length // make sure there aren't more breaks than values
   return calculateBreaks(values, features, classification)
     .map((value, index, array) => { return [array[index - 1] || array[0], value] }).slice(1)
 }
 
-function getFeatureValues (features, options) {
+function getValues (features, field) {
   // TODO: should featureCollection metadata fields be checked too?
   return features.map((feature, index) => {
     const properties = feature.properties || feature.attributes // TODO: should this conditional be an option?
-
-    const key = Object.keys(properties).filter(property => {
-      return property === options.classificationField
-    })
+    const key = Object.keys(properties).filter(property => { return property === field })
     return Number(properties[key])
   })
 }
@@ -49,8 +46,8 @@ function normalizeValues (values, features, options) {
   switch (normType) {
     case 'esriNormalizeByField':
       if (!options.normalizationField || options.normalizationField) return
-      const normField = options.normalizationField
-      return (normField + values)
+      const normValues = getValues(features, options.normalizationField)
+      return values.map((value, index) => { return value / normValues[index] }) // TODO: handle non-integer division
     case 'esriNormalizeByLog': return values.map(value => {
       return value === 0 || Math.log(value) <= 0 ? 0 : (Math.log(value) * Math.LOG10E || 0)
     })

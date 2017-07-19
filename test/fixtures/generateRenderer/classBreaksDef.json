@@ -3,13 +3,12 @@
   "classificationField": "daily snow total",
   "classificationMethod": "esriClassifyEqualInterval",
   "breakCount": 9,
-  "normalizationType": "esriNormalizeByLog",
   "baseSymbol": {
     "type": "esriSLS",
     "style": "esriSLSSolid",
     "width": 2
   },
-  "colorRamps": {
+  "colorRamp": {
     "type": "algorithmic",
     "fromColor": [115,76,0,255],
     "toColor": [255,25,86,255],

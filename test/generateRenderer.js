@@ -2,12 +2,99 @@
 const _ = require('lodash')
 const data = require('./fixtures/snow.json')
 const generateRenderer = require('../src/generateRenderer')
+const { createClassBreakInfos } = require('../src/generateRenderer/createClassificationInfos')
 const { createMultipartRamp, createAlgorithmicRamp } = require('../src/generateRenderer/colorRamps')
+
 const algorithmicRamp = require('./fixtures/generateRenderer/ramp-algorithmic.json')
 const multipartRamp = require('./fixtures/generateRenderer/ramp-multipart.json')
 const classBreaksDef = require('./fixtures/generateRenderer/classBreaksDef.json')
+const classBreakInfos = require('./fixtures/generateRenderer/classBreakInfos.json')
+const statsClassBreaks = require('./fixtures/generateRenderer/provider-statistics-with-classBreaks.json')
 
 describe('Generate renderer operations', () => {
+  describe('when statistics are passed in', () => {
+    it('should properly return renderer', () => {
+      const options = {}
+      const data = statsClassBreaks
+      const response = generateRenderer(data, options)
+      console.log(response)
+    })
+  })
+  describe('when classification', () => {
+    describe('does not exist', () => {
+      it('should throw an error', () => {
+        const options = {
+        }
+        const response = generateRenderer(data, options)
+        response.should.deepEqual({})
+      })
+    })
+
+    describe('has correct parameters', () => {
+      it('should properly return a renderer', () => {
+        const options = {
+          classificationDef: classBreaksDef
+        }
+        const response = generateRenderer(data, options)
+        response.type.should.equal('classBreaks')
+        response.minValue.should.equal(0)
+        response.classBreakInfos.length.should.equal(9)
+        response.classBreakInfos[0].classMinValue.should.equal(0)
+        response.classBreakInfos[0].label.should.equal('0-1.4555555555555555')
+        response.classBreakInfos[0].symbol.color.should.deepEqual([115, 76, 0])
+        response.classBreakInfos[4].symbol.color.should.deepEqual([198, 39, 0])
+        response.classBreakInfos[8].symbol.color.should.deepEqual([255, 25, 86])
+        response.classBreakInfos[0].symbol.type.should.equal('esriSLS')
+      })
+      it('should use a default symbol and color ramp', () => {
+        const options = {
+          classificationDef: classBreaksDef
+        }
+        delete options.classificationDef.baseSymbol
+        delete options.classificationDef.colorRamps
+        const response = generateRenderer(data, options)
+        response.type.should.equal('classBreaks')
+        response.minValue.should.equal(0)
+        response.classBreakInfos.length.should.equal(9)
+        response.classBreakInfos[0].classMinValue.should.equal(0)
+        response.classBreakInfos[0].label.should.equal('0-1.4555555555555555')
+        response.classBreakInfos[0].symbol.color.should.deepEqual([115, 76, 0])
+        response.classBreakInfos[4].symbol.color.should.deepEqual([198, 39, 0])
+        response.classBreakInfos[8].symbol.color.should.deepEqual([255, 25, 86])
+        response.classBreakInfos[0].symbol.type.should.equal('esriSMS')
+      })
+      describe('has normalization', () => {
+        it('should properly return log normalized values', () => {
+          const options = {
+            classificationDef: classBreaksDef
+          }
+          options.classificationDef.normalizationType = 'esriNormalizeByLog'
+          const response = generateRenderer(data, options)
+          response.type.should.equal('classBreaks')
+          response.minValue.should.equal(0)
+          response.classBreakInfos.length.should.equal(9)
+          response.classBreakInfos[0].classMinValue.should.equal(0)
+          response.classBreakInfos[0].label.should.equal('0-0.1241412550728627')
+        })
+      })
+    })
+  })
+
+  describe('when creating class break infos', () => {
+    it('should properly return class break infos', () => {
+      const options = classBreakInfos
+      const classification = options.params.classificationDef
+      const classBreaks = options.classBreaks
+      const response = createClassBreakInfos(classBreaks, classification)
+      console.log(response[3])
+      response.length.should.equal(9)
+      response[0].classMinValue.should.equal(0)
+      response[0].label.should.equal('0-0.1241412550728627')
+      response[0].symbol.color.should.deepEqual([115, 76, 0])
+      response[4].symbol.color.should.deepEqual([ 198, 39, 0 ])
+      response[8].symbol.color.should.deepEqual([255, 25, 86])
+    })
+  })
   describe('when creating a color ramp that is', () => {
     describe('algorithmic', () => {
       let options
@@ -38,10 +125,13 @@ describe('Generate renderer operations', () => {
           const response = createAlgorithmicRamp(options)
           response.length.should.equal(13)
         })
-        it('should change ramp colors when toColor is changed', () => {
-          options.rampDetails.toColor = [50, 173, 23]
+        it('should change ramp colors when fromColor & toColor are changed', () => {
+          options.rampDetails.fromColor = [115, 76, 0]
+          options.rampDetails.toColor = [255, 25, 86]
           const response = createAlgorithmicRamp(options)
-          response[3].should.deepEqual([ 25, 223, 10 ])
+          response[0].should.deepEqual([115, 76, 0])
+          response[4].should.deepEqual([198, 39, 0])
+          response[8].should.deepEqual([255, 25, 86])
         })
       })
       describe('using the LAB algorithm', () => {
@@ -111,29 +201,6 @@ describe('Generate renderer operations', () => {
         response[1][7].should.deepEqual([ 83, 58, 233 ])
         response[0].length.should.equal(response[1].length)
         response[1].length.should.equal(response[2].length) // TODO: allow differnt breakCounts for each ramp?
-      })
-    })
-  })
-  describe('when classification', () => {
-    describe('does not exist', () => {
-      it('should throw an error', () => {
-        const options = {
-        }
-        const response = generateRenderer(data, options)
-        response.should.deepEqual({})
-      })
-    })
-    describe('has normalization', () => {
-      it('should return normalized values', () => {
-        const options = {
-          classificationDef: classBreaksDef
-        }
-        const response = generateRenderer(data, options)
-        console.log('response: ', response)
-        response.type.should.equal('classBreaks')
-        response.minValue.should.equal(0)
-        response.classBreakInfos.length.should.equal(9)
-        response.classBreakInfos[0].classMinValue.should.equal(0)
       })
     })
   })

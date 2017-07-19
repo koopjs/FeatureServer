@@ -2,13 +2,25 @@ const _ = require('lodash')
 
 module.exports = createSymbol
 
-const renderers = {
-  fillSymbol: require('../../templates/renderers/fill-symbol.json')
+function createSymbol (baseSymbol, color, type) {
+  const symbol = baseSymbol !== undefined ? baseSymbol : symbolTemplate(type)
+  symbol.color = color
+  return symbol
 }
 
-function createSymbol (breakCount, ramp) {
-  // TODO: handle different symbol type (i.e., point, polyline, polygon)
-  const json = _.cloneDeep(renderers.fillSymbol)
-  json.color = ramp
-  return json
+function symbolTemplate (options) {
+  const renderers = {
+    fillSymbol: require('../../templates/renderers/fill-symbol.json'), // TODO: remove if other templates are correct
+    point: require('../../templates/renderers/point.json'),
+    line: require('../../templates/renderers/line.json'),
+    polygon: require('../../templates/renderers/polygon.json')
+  }
+
+  const geometryType = options // TODO: have this be a real check! this is a placeholder
+  switch (geometryType) {
+    case 'esriGeometryPoint': return _.cloneDeep(renderers.point.symbol)
+    case 'esriGeometryLine': return _.cloneDeep(renderers.line.symbol)
+    case 'esriGeometryPolygon': return _.cloneDeep(renderers.polygon.symbol)
+    default: return _.cloneDeep(renderers.point.symbol)
+  }
 }
