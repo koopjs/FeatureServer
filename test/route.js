@@ -5,6 +5,7 @@ const express = require('express')
 const should = require('should')
 const _ = require('lodash')
 const snow = require('./fixtures/snow.json')
+const ProviderStatsClassBreaks = require('./fixtures/generateRenderer/provider-statistics-with-classBreaks.json')
 const app = express()
 
 let data
@@ -127,7 +128,7 @@ describe('Routing feature server requests', () => {
   describe('generateRenderer', () => {
     describe('when statistics are passed in', () => {
       beforeEach(() => {
-        data = require('./fixtures/generateRenderer/provider-statistics-with-classBreaks.json')
+        data = _.cloneDeep(ProviderStatsClassBreaks)
       })
       it('should properly route and handle when a provider passes in class breaks statistics', done => {
         request(app)
@@ -180,7 +181,7 @@ describe('Routing feature server requests', () => {
             '"toColor": [0, 0, 255, 255],' +
             '"algorithm": "esriHSVAlgorithm"}' +
           '}&' +
-         'where=latitude<39&' +
+         'where=latitude<39&' + // TODO: add multiple statements e.g., --> "daily%20snow%20total<2.5"&"
          'gdbVersion=&' +
          'f=json')
         .expect(res => {

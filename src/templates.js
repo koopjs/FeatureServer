@@ -125,8 +125,8 @@ function renderRenderers (breaks, classification) {
   if (classification) {
     json.field = classification.classificationField
     json.classificationMethod = classification.classificationMethod
-    json.minValue = breaks[0][0] // lower bound of first class break
   }
+  json.minValue = breaks[0][0] // lower bound of first class break
   json.classBreakInfos = createClassBreakInfos(breaks, classification)
   return json
 }

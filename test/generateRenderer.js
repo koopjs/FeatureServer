@@ -1,6 +1,6 @@
 /* global describe, it, beforeEach */
 const _ = require('lodash')
-const data = require('./fixtures/snow.json')
+const snow = require('./fixtures/snow.json')
 const generateRenderer = require('../src/generateRenderer')
 const { createClassBreakInfos } = require('../src/generateRenderer/createClassificationInfos')
 const { createMultipartRamp, createAlgorithmicRamp } = require('../src/generateRenderer/colorRamps')
@@ -9,32 +9,66 @@ const algorithmicRamp = require('./fixtures/generateRenderer/ramp-algorithmic.js
 const multipartRamp = require('./fixtures/generateRenderer/ramp-multipart.json')
 const classBreaksDef = require('./fixtures/generateRenderer/classBreaksDef.json')
 const classBreakInfos = require('./fixtures/generateRenderer/classBreakInfos.json')
-const statsClassBreaks = require('./fixtures/generateRenderer/provider-statistics-with-classBreaks.json')
+const ProviderStatsClassBreaks = require('./fixtures/generateRenderer/provider-statistics-with-classBreaks.json')
 
 describe('Generate renderer operations', () => {
-  describe('when statistics are passed in', () => {
-    it('should properly return renderer', () => {
-      const options = {}
-      const data = statsClassBreaks
-      const response = generateRenderer(data, options)
-      console.log(response)
-    })
+  let data
+  beforeEach(() => {
+    data = _.cloneDeep(snow)
   })
-  describe('when classification', () => {
-    describe('does not exist', () => {
-      it('should throw an error', () => {
-        const options = {
-        }
+  describe('when statistics passed in', () => {
+    beforeEach(() => {
+      data = _.cloneDeep(ProviderStatsClassBreaks)
+    })
+    describe('do not exist', () => {
+      it('should throw an error and return an empty object', () => {
+        let options = {}
+        data.statistics = []
         const response = generateRenderer(data, options)
         response.should.deepEqual({})
       })
     })
-
+    it('should properly return a renderer', () => {
+      let options = {}
+      const response = generateRenderer(data, options)
+      response.minValue.should.equal(80)
+      response.classBreakInfos.length.should.equal(9)
+      response.classBreakInfos[0].label.should.equal('80-147')
+      response.classBreakInfos[0].symbol.color.should.deepEqual([0, 255, 0])
+      response.classBreakInfos[4].symbol.color.should.deepEqual([0, 255, 255])
+      response.classBreakInfos[8].symbol.color.should.deepEqual([0, 0, 255])
+      response.classBreakInfos[0].symbol.type.should.equal('esriSMS')
+    })
+  })
+  describe('when a classification passed in', () => {
+    let options
+    beforeEach(() => {
+      options = { classificationDef: classBreaksDef }
+    })
+    describe('does not exist', () => {
+      it('should throw an error and return an empty object', () => {
+        options = {}
+        const response = generateRenderer(data, options)
+        response.should.deepEqual({})
+      })
+    })
+    describe('with no input data', () => {
+      it('should throw and error and return an empty object', () => {
+        data = {}
+        const response = generateRenderer(data, options)
+        response.should.deepEqual({})
+      })
+    })
+    describe('returns no queried features', () => {
+      it('should throw and error and return an empty object', () => {
+        options.where = 'latitude>1000'
+        const response = generateRenderer(data, options)
+        console.log(response)
+        response.should.deepEqual({})
+      })
+    })
     describe('has correct parameters', () => {
       it('should properly return a renderer', () => {
-        const options = {
-          classificationDef: classBreaksDef
-        }
         const response = generateRenderer(data, options)
         response.type.should.equal('classBreaks')
         response.minValue.should.equal(0)
@@ -47,9 +81,6 @@ describe('Generate renderer operations', () => {
         response.classBreakInfos[0].symbol.type.should.equal('esriSLS')
       })
       it('should use a default symbol and color ramp', () => {
-        const options = {
-          classificationDef: classBreaksDef
-        }
         delete options.classificationDef.baseSymbol
         delete options.classificationDef.colorRamps
         const response = generateRenderer(data, options)
@@ -65,9 +96,6 @@ describe('Generate renderer operations', () => {
       })
       describe('has normalization', () => {
         it('should properly return log normalized values', () => {
-          const options = {
-            classificationDef: classBreaksDef
-          }
           options.classificationDef.normalizationType = 'esriNormalizeByLog'
           const response = generateRenderer(data, options)
           response.type.should.equal('classBreaks')
