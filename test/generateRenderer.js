@@ -42,9 +42,7 @@ describe('Generate renderer operations', () => {
   })
   describe('when a classification passed in', () => {
     let options
-    beforeEach(() => {
-      options = { classificationDef: classBreaksDef }
-    })
+    beforeEach(() => { options = _.cloneDeep(classBreaksDef) })
     describe('does not exist', () => {
       it('should throw an error and return an empty object', () => {
         options = {}
