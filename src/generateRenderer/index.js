@@ -20,6 +20,7 @@ function generateRenderer (data = {}, params = {}) {
       breaks = stats.map(attributes => {
         if (attributes.classBreaks) { return attributes.classBreaks } // TODO: find a better way to grab classBreaks from stats
       })[0].sort((a, b) => a - b) // sort class breaks
+      // TODO: found issue at 5pm 7/21 - need to ignore parts of classificationDef if statistics are passed in
     } else {
       // throw new Error('other operations are not currently supported')
       breaks = Winnow.query(data, params)
