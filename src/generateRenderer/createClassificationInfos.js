@@ -5,8 +5,8 @@ const createSymbol = require('./createSymbol')
 module.exports = { createClassBreakInfos, createUniqueValueInfos }
 
 const renderers = {
-  classBreakInfo: require('../../templates/renderers/classBreakInfo.json'),
-  uniqueValueInfo: require('../../templates/renderers/uniqueValueInfo.json'),
+  classBreakInfos: require('../../templates/renderers/classBreakInfos.json'),
+  uniqueValueInfos: require('../../templates/renderers/uniqueValueInfos.json'),
   algorithmicColorRamp: require('../../templates/renderers/algorithmicColorRamp.json')
 }
 
@@ -18,7 +18,7 @@ function createClassBreakInfos (breaks, classification) {
   if (classification && classification.baseSymbol) baseSymbol = classification.baseSymbol
 
   return breaks.map((currBreak, index) => {
-    const json = _.cloneDeep(renderers.classBreakInfo)
+    const json = _.cloneDeep(renderers.classBreakInfos)
     json.classMaxValue = currBreak[1]
     json.classMinValue = currBreak[0]
     json.label = `${json.classMinValue}-${json.classMaxValue}` // TODO: handle duplicate max/min values between adjacent classes
@@ -28,8 +28,21 @@ function createClassBreakInfos (breaks, classification) {
   })
 }
 
-function createUniqueValueInfos () {
+function createUniqueValueInfos (breaks, classification) {
+  const type = 1 // TODO: use this to get the geometry type for creating a symbol
+  const inputRamp = classification && classification.colorRamp ? classification.colorRamp : undefined
+  const colorRamp = createColorRamp(breaks, inputRamp)
+  let baseSymbol
+  if (classification && classification.baseSymbol) baseSymbol = classification.baseSymbol
 
+  return breaks.map((currBreak, index) => {
+    const json = _.cloneDeep(renderers.uniqueValueInfos)
+    json.value =
+    json.label = `${json.classMinValue}-${json.classMaxValue}` // TODO: handle duplicate max/min values between adjacent classes
+    json.description = ''
+    json.symbol = createSymbol(baseSymbol, colorRamp[index], type)
+    return json
+  })
 }
 
 function createColorRamp (breaks, inputRamp) {

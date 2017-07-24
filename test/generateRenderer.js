@@ -1,6 +1,7 @@
 /* global describe, it, beforeEach */
 const _ = require('lodash')
 const snow = require('./fixtures/snow.json')
+const trees = require('./fixtures/trees.json')
 const generateRenderer = require('../src/generateRenderer')
 const { createClassBreakInfos } = require('../src/generateRenderer/createClassificationInfos')
 const { createMultipartRamp, createAlgorithmicRamp } = require('../src/generateRenderer/colorRamps')
@@ -9,6 +10,7 @@ const algorithmicRamp = require('./fixtures/generateRenderer/ramp-algorithmic.js
 const multipartRamp = require('./fixtures/generateRenderer/ramp-multipart.json')
 const classBreaksDef = require('./fixtures/generateRenderer/classBreaksDef.json')
 const classBreakInfos = require('./fixtures/generateRenderer/classBreakInfos.json')
+const uniqueValueInfos = require('./fixtures/generateRenderer/uniqueValueInfos.json')
 const ProviderStatsClassBreaks = require('./fixtures/generateRenderer/provider-statistics-with-classBreaks.json')
 
 describe('Generate renderer operations', () => {
@@ -40,7 +42,7 @@ describe('Generate renderer operations', () => {
       response.classBreakInfos[0].symbol.type.should.equal('esriSMS')
     })
   })
-  describe('when a classification passed in', () => {
+  describe('when a class breaks classification passed in', () => {
     let options
     beforeEach(() => { options = _.cloneDeep(classBreaksDef) })
     describe('does not exist', () => {
@@ -119,6 +121,14 @@ describe('Generate renderer operations', () => {
       response[0].symbol.color.should.deepEqual([115, 76, 0])
       response[4].symbol.color.should.deepEqual([ 198, 39, 0 ])
       response[8].symbol.color.should.deepEqual([255, 25, 86])
+    })
+  })
+
+  describe('when creating unique value infos', () => {
+    it('should properly return unique value infos', () => {
+      const data = _.cloneDeep(uniqueValueInfos)
+      const response = uniqueValueInfos()
+      console.log(response)
     })
   })
   describe('when creating a color ramp that is', () => {

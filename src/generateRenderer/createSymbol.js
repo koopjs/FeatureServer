@@ -3,6 +3,7 @@ const _ = require('lodash')
 module.exports = createSymbol
 
 function createSymbol (baseSymbol, color, type) {
+  // TODO add check for a valid baseSymbol
   const symbol = baseSymbol !== undefined ? _.cloneDeep(baseSymbol) : symbolTemplate(type) // TODO: figure out why cloneDeep is necessary
   symbol.color = color
   return symbol

@@ -116,17 +116,17 @@ function createStatFeatures (stats) {
   })
 }
 
-function renderRenderers (breaks, classification) {
+function renderRenderers (breaks, classificationDef) {
   // TODO: add check for renderer type (i.e., point, polyline, polygon)
   // TODO: handle options (e.g., uniqueValuesDef', gdbVersion=&)
 
   const json = _.cloneDeep(renderers.classBreaks)
 
-  if (classification) {
-    json.field = classification.classificationField
-    json.classificationMethod = classification.classificationMethod
+  if (classificationDef) {
+    json.field = classificationDef.classificationField
+    json.classificationMethod = classificationDef.classificationMethod
   }
   json.minValue = breaks[0][0] // lower bound of first class break
-  json.classBreakInfos = createClassBreakInfos(breaks, classification)
+  json.classBreakInfos = createClassBreakInfos(breaks, classificationDef)
   return json
 }
