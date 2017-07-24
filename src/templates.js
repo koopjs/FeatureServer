@@ -3,9 +3,9 @@ const moment = require('moment')
 const { isTable } = require('./utils')
 const { computeFieldObject, createFieldAliases, createStatFields } = require('./field')
 const { computeSpatialReference, computeExtent } = require('./geometry')
-const { createClassBreakInfos } = require('./generateRenderer/createClassificationInfos')
+const { createClassBreakInfos, createUniqueValueInfos } = require('./generateRenderer/createClassificationInfos')
 
-module.exports = { renderLayer, renderFeatures, renderStatistics, renderServer, renderStats, renderRenderers }
+module.exports = { renderLayer, renderFeatures, renderStatistics, renderServer, renderStats, renderClassBreaks, renderUniqueValue }
 
 const templates = {
   layer: require('../templates/layer.json'),
@@ -21,7 +21,7 @@ const renderers = {
   esriGeometryPolyline: require('../templates/renderers/line.json'),
   esriGeometryPoint: require('../templates/renderers/point.json'),
   classBreaks: require('../templates/renderers/classBreaks.json'),
-  uniqueValues: require('../templates/renderers/uniqueValues.json')
+  uniqueValue: require('../templates/renderers/uniqueValue.json')
 }
 
 /**
@@ -116,17 +116,39 @@ function createStatFeatures (stats) {
   })
 }
 
-function renderRenderers (breaks, classificationDef) {
+// function renderRenderers (breaks, classificationDef) {
+//   // TODO: add check for renderer type (i.e., point, polyline, polygon)
+//   // TODO: handle options (e.g., uniqueValueDef', gdbVersion=&)
+//
+//   if (classificationDef) {
+//     if (classificationDef.type && classificationDef.type === 'classBreaksDef') {
+//       const json = _.cloneDeep(renderers.classBreaks)
+//       json.field = classificationDef.classificationField
+//       json.classificationMethod = classificationDef.classificationMethod
+//     } else if (classificationDef.type && classificationDef.type === 'uniqueValueDef') {
+//       console.log('in here')
+//     }
+//   }
+// }
+
+function renderClassBreaks (breaks, classificationDef) {
   // TODO: add check for renderer type (i.e., point, polyline, polygon)
-  // TODO: handle options (e.g., uniqueValuesDef', gdbVersion=&)
-
+  // TODO: check for stats & leave out values if not creating a stats function
   const json = _.cloneDeep(renderers.classBreaks)
+  json.field = classificationDef.classificationField
+  json.classificationMethod = classificationDef.classificationMethod
 
-  if (classificationDef) {
-    json.field = classificationDef.classificationField
-    json.classificationMethod = classificationDef.classificationMethod
-  }
   json.minValue = breaks[0][0] // lower bound of first class break
   json.classBreakInfos = createClassBreakInfos(breaks, classificationDef)
+  return json
+}
+
+function renderUniqueValue (breaks, classificationDef) {
+  // TODO: add check for renderer type (i.e., point, polyline, polygon)
+  // TODO: check for stats & leave out values if not creating a stats function
+  const json = _.cloneDeep(renderers.uniqueValue)
+  json.field1 = classificationDef.uniqueValueFields[0]
+  json.fieldDelimiter = classificationDef.fieldDelimiter
+  json.uniqueValueInfos = createUniqueValueInfos(breaks, classificationDef)
   return json
 }

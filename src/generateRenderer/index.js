@@ -1,5 +1,5 @@
 const Winnow = require('winnow')
-const { renderRenderers } = require('../templates')
+const { renderClassBreaks, renderUniqueValue } = require('../templates')
 
 module.exports = generateRenderer
 
@@ -21,10 +21,17 @@ function generateRenderer (data = {}, params = {}) {
         if (attributes.classBreaks) { return attributes.classBreaks } // TODO: find a better way to grab classBreaks from stats
       })[0].sort((a, b) => a - b) // sort class breaks
       // TODO: found issue at 5pm 7/21 - need to ignore parts of classificationDef if statistics are passed in
-    } else {
-      breaks = Winnow.query(data, params)
-    }
-    return renderRenderers(breaks, params.classificationDef)
+      // TODO: return renderStatisticsRenderer(breaks)
+    } else { breaks = Winnow.query(data, params) }
+
+    if (params.classificationDef && params.classificationDef.type) {
+      const classification = params.classificationDef
+      if (classification.type && classification.type === 'classBreaksDef') {
+        return renderClassBreaks(breaks, classification)
+      } else if (classification.type && classification.type === 'uniqueValueDef') {
+        return renderUniqueValue(breaks, classification)
+      } else { throw new Error('invalid classification type: ', classification.type) }
+    } else { throw new Error('invalid classification: ', params.classificationDef) }
   } catch (e) {
     console.log(e)
     return {}

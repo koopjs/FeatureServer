@@ -31,14 +31,16 @@ function createClassBreakInfos (breaks, classification) {
 function createUniqueValueInfos (breaks, classification) {
   const type = 1 // TODO: use this to get the geometry type for creating a symbol
   const inputRamp = classification && classification.colorRamp ? classification.colorRamp : undefined
-  const colorRamp = createColorRamp(breaks, inputRamp)
+  const breakValues = breaks.map((currBreak) => { return currBreak.count })
+  
+  const colorRamp = createColorRamp(breakValues, inputRamp)
   let baseSymbol
   if (classification && classification.baseSymbol) baseSymbol = classification.baseSymbol
-
   return breaks.map((currBreak, index) => {
     const json = _.cloneDeep(renderers.uniqueValueInfos)
-    json.value =
-    json.label = `${json.classMinValue}-${json.classMaxValue}` // TODO: handle duplicate max/min values between adjacent classes
+    json.value = currBreak[classification.uniqueValueFields[0]]
+    json.count = currBreak.count
+    json.label = currBreak[classification.uniqueValueFields[0]]
     json.description = ''
     json.symbol = createSymbol(baseSymbol, colorRamp[index], type)
     return json
@@ -46,6 +48,7 @@ function createUniqueValueInfos (breaks, classification) {
 }
 
 function createColorRamp (breaks, inputRamp) {
+  console.log(breaks)
   const rampOptions = {
     rampDetails: inputRamp || _.cloneDeep(renderers.algorithmicColorRamp),
     breakCount: breaks.length

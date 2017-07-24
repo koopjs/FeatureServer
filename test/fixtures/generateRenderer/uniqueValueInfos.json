@@ -21,6 +21,10 @@
     "collection": {}
   },
   "uniqueValue" : [
-    {}
+    {"count": 10, "Species": "MIMOSIFOLIA"},
+    {"count": 5, "Species": "MIMOSIFOLIA"},
+    {"count": 3, "Species": "MIMOSIFOLIA"},
+    {"count": 2, "Species": "MIMOSIFOLIA"},
+    {"count": 50, "Species": "MIMOSIFOLIA"}
   ]
 }

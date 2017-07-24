@@ -3,12 +3,13 @@ const _ = require('lodash')
 const snow = require('./fixtures/snow.json')
 const trees = require('./fixtures/trees.json')
 const generateRenderer = require('../src/generateRenderer')
-const { createClassBreakInfos } = require('../src/generateRenderer/createClassificationInfos')
+const { createClassBreakInfos, createUniqueValueInfos } = require('../src/generateRenderer/createClassificationInfos')
 const { createMultipartRamp, createAlgorithmicRamp } = require('../src/generateRenderer/colorRamps')
 
 const algorithmicRamp = require('./fixtures/generateRenderer/ramp-algorithmic.json')
 const multipartRamp = require('./fixtures/generateRenderer/ramp-multipart.json')
 const classBreaksDef = require('./fixtures/generateRenderer/classBreaksDef.json')
+const uniqueValueDef = require('./fixtures/generateRenderer/uniqueValueDef')
 const classBreakInfos = require('./fixtures/generateRenderer/classBreakInfos.json')
 const uniqueValueInfos = require('./fixtures/generateRenderer/uniqueValueInfos.json')
 const ProviderStatsClassBreaks = require('./fixtures/generateRenderer/provider-statistics-with-classBreaks.json')
@@ -63,7 +64,6 @@ describe('Generate renderer operations', () => {
       it('should throw and error and return an empty object', () => {
         options.where = 'latitude>1000'
         const response = generateRenderer(data, options)
-        console.log(response)
         response.should.deepEqual({})
       })
     })
@@ -82,16 +82,16 @@ describe('Generate renderer operations', () => {
       })
       it('should use a default symbol and color ramp', () => {
         delete options.classificationDef.baseSymbol
-        delete options.classificationDef.colorRamps
+        delete options.classificationDef.colorRamp
         const response = generateRenderer(data, options)
         response.type.should.equal('classBreaks')
         response.minValue.should.equal(0)
         response.classBreakInfos.length.should.equal(9)
         response.classBreakInfos[0].classMinValue.should.equal(0)
         response.classBreakInfos[0].label.should.equal('0-1.4555555555555555')
-        response.classBreakInfos[0].symbol.color.should.deepEqual([115, 76, 0])
-        response.classBreakInfos[4].symbol.color.should.deepEqual([198, 39, 0])
-        response.classBreakInfos[8].symbol.color.should.deepEqual([255, 25, 86])
+        response.classBreakInfos[0].symbol.color.should.deepEqual([0, 255, 0])
+        response.classBreakInfos[4].symbol.color.should.deepEqual([0, 255, 255])
+        response.classBreakInfos[8].symbol.color.should.deepEqual([0, 0, 255])
         response.classBreakInfos[0].symbol.type.should.equal('esriSMS')
       })
       describe('has normalization', () => {
@@ -108,13 +108,73 @@ describe('Generate renderer operations', () => {
     })
   })
 
+  describe('when a unique value classification passed in', () => {
+    let options
+    beforeEach(() => {
+      data = _.cloneDeep(trees)
+      options = _.cloneDeep(uniqueValueDef)
+    })
+    describe('does not exist', () => {
+      it('should throw an error and return an empty object', () => {
+        options = {}
+        const response = generateRenderer(data, options)
+        response.should.deepEqual({})
+      })
+    })
+    describe('with no input data', () => {
+      it('should throw and error and return an empty object', () => {
+        data = {}
+        const response = generateRenderer(data, options)
+        response.should.deepEqual({})
+      })
+    })
+    describe('returns no queried features', () => {
+      it('should throw and error and return an empty object', () => {
+        options.where = 'latitude>1000'
+        const response = generateRenderer(data, options)
+        response.should.deepEqual({})
+      })
+    })
+    describe('has correct parameters', () => {
+      it('should properly return a renderer', () => {
+        const response = generateRenderer(data, options)
+        response.type.should.equal('uniqueValue')
+        response.field1.should.equal('Genus')
+        response.fieldDelimiter.should.equal(', ')
+        response.uniqueValueInfos.length.should.equal(162)
+        response.uniqueValueInfos[0].value.should.equal('MAGNOLIA')
+        response.uniqueValueInfos[0].count.should.equal(5908)
+        response.uniqueValueInfos[0].label.should.equal('MAGNOLIA')
+        response.uniqueValueInfos[0].symbol.color.should.deepEqual([115, 76, 0])
+        response.uniqueValueInfos[81].symbol.color.should.deepEqual([198, 39, 0])
+        response.uniqueValueInfos[161].symbol.color.should.deepEqual([255, 25, 86])
+        response.uniqueValueInfos[0].symbol.type.should.equal('esriSLS')
+      })
+      it('should use a default symbol and color ramp', () => {
+        delete options.classificationDef.baseSymbol
+        delete options.classificationDef.colorRamp
+        const response = generateRenderer(data, options)
+        response.type.should.equal('uniqueValue')
+        response.field1.should.equal('Genus')
+        response.fieldDelimiter.should.equal(', ')
+        response.uniqueValueInfos.length.should.equal(162)
+        response.uniqueValueInfos[0].value.should.equal('MAGNOLIA')
+        response.uniqueValueInfos[0].count.should.equal(5908)
+        response.uniqueValueInfos[0].label.should.equal('MAGNOLIA')
+        response.uniqueValueInfos[0].symbol.color.should.deepEqual([0, 255, 0])
+        response.uniqueValueInfos[81].symbol.color.should.deepEqual([0, 253, 255])
+        response.uniqueValueInfos[161].symbol.color.should.deepEqual([0, 0, 255])
+        response.uniqueValueInfos[0].symbol.type.should.equal('esriSMS')
+      })
+    })
+  })
+
   describe('when creating class break infos', () => {
-    it('should properly return class break infos', () => {
-      const options = classBreakInfos
+    it.only('should properly return class break infos', () => {
+      const options = _.cloneDeep(classBreakInfos)
       const classification = options.params.classificationDef
       const classBreaks = options.classBreaks
       const response = createClassBreakInfos(classBreaks, classification)
-      console.log(response[3])
       response.length.should.equal(9)
       response[0].classMinValue.should.equal(0)
       response[0].label.should.equal('0-0.1241412550728627')
@@ -123,12 +183,18 @@ describe('Generate renderer operations', () => {
       response[8].symbol.color.should.deepEqual([255, 25, 86])
     })
   })
-
   describe('when creating unique value infos', () => {
-    it('should properly return unique value infos', () => {
-      const data = _.cloneDeep(uniqueValueInfos)
-      const response = uniqueValueInfos()
+    it.only('should properly return unqiue value infos', () => {
+      const options = _.cloneDeep(uniqueValueInfos)
+      const classification = options.params.classificationDef
+      const breaks = options.uniqueValue
+      const response = createUniqueValueInfos(breaks, classification)
       console.log(response)
+      response.length.should.equal(163)
+      response[0].label.should.equal('0-0.1241412550728627')
+      response[0].symbol.color.should.deepEqual([115, 76, 0])
+      response[4].symbol.color.should.deepEqual([ 198, 39, 0 ])
+      response[8].symbol.color.should.deepEqual([255, 25, 86])
     })
   })
   describe('when creating a color ramp that is', () => {
