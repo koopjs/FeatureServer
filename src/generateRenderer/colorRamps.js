@@ -14,7 +14,7 @@ function createMultipartRamp (options) {
   const type = rampDetails.type
   const colorRamps = rampDetails.colorRamps
 
-  if (!type === 'multipart' && !colorRamps.length >= 1) return
+  if (type !== 'multipart' && colorRamps.length < 1) return
   return colorRamps.map((currentRamp) => {
     const rampOptions = {
       rampDetails: currentRamp,
@@ -33,7 +33,7 @@ function createMultipartRamp (options) {
 */
 function createAlgorithmicRamp (options) {
   const { rampDetails, breakCount = 7 } = options
-  if (!rampDetails.type === 'algorithmic') return
+  if (rampDetails.type !== 'algorithmic') return
   let colorRamp = chroma.scale([rampDetails.fromColor.slice(0, 3), rampDetails.toColor.slice(0, 3)])
   let ramp = []
   switch (rampDetails.algorithm) {

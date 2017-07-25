@@ -37,11 +37,8 @@ function createColorRamp (breaks, inputRamp) {
     rampDetails: inputRamp || _.cloneDeep(renderers.algorithmicColorRamp),
     breakCount: breaks.length
   }
-  if (rampOptions.rampDetails.type === 'multipart' && rampOptions.rampDetails.colorRamps) {
-    return createMultipartRamp(rampOptions)
-  } else if (rampOptions.rampDetails.type === 'algorithmic') {
-    return createAlgorithmicRamp(rampOptions)
-  } else {
-    console.log('Incorrect color ramp type: ', rampOptions.rampDetails.type)
-  }
+  const type = rampOptions.rampDetails.type
+  if (type === 'multipart' && rampOptions.rampDetails.colorRamps) return createMultipartRamp(rampOptions) // TODO: create checks for multipart
+  else if (type === 'algorithmic') return createAlgorithmicRamp(rampOptions)
+  else throw new Error('Invalid color ramp type: ', rampOptions.rampDetails.type)
 }

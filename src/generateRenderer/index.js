@@ -15,16 +15,10 @@ function generateRenderer (data = {}, params = {}) {
     if (Object.keys(data).length === 0) throw new Error('there must be input features in order to generate a renderer')
 
     let breaks = []
-    if (data.statistics && data.statistics.length > 0) {
-      const stats = data.statistics
-      breaks = stats.map(attributes => {
-        if (attributes.classBreaks) { return attributes.classBreaks } // TODO: find a better way to grab classBreaks from stats
-      })[0].sort((a, b) => a - b) // sort class breaks
+    if (data.statistics && data.statistics.classBreaks) {
       // TODO: found issue at 5pm 7/21 - need to ignore parts of classificationDef if statistics are passed in
-    } else {
-      // throw new Error('other operations are not currently supported')
-      breaks = Winnow.query(data, params)
-    }
+      breaks = data.statistics.classBreaks.sort((a, b) => a - b)
+    } else breaks = Winnow.query(data, params)
     return renderRenderers(breaks, params.classificationDef)
   } catch (e) {
     console.log(e)

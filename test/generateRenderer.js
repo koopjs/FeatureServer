@@ -103,6 +103,7 @@ describe('Generate renderer operations', () => {
           response.classBreakInfos[0].label.should.equal('0-0.1241412550728627')
         })
       })
+      // TODO: have checks for uniqueValue too, not just classBreaks
     })
   })
 
