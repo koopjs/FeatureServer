@@ -16,9 +16,8 @@ function generateRenderer (data = {}, params = {}) {
 
     let breaks = []
     if (data.statistics && data.statistics.classBreaks) {
-      // TODO: found issue at 5pm 7/21 - need to ignore parts of classificationDef if statistics are passed in
       breaks = data.statistics.classBreaks.sort((a, b) => a - b)
-      return renderClassBreaks(breaks)
+      return renderClassBreaks(breaks, {}) // TODO: handle classification, don't just ignore it
     } else breaks = Winnow.query(data, params)
 
     if (params.classificationDef && params.classificationDef.type) {

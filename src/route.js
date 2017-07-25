@@ -53,7 +53,6 @@ function execGenerateRenderer (req, res, geojson, options) {
     if (process.env.NODE_ENV === 'test') console.trace(e)
     return res.status(500).json({ error: e.message })
   }
-  // TODO: determine if these need to change
   if (req.query.callback) res.send(`${req.query.callback}(${JSON.stringify(response)})`)
   else res.status(200).json(response)
 }

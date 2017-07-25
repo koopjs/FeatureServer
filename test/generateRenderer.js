@@ -105,7 +105,6 @@ describe('Generate renderer operations', () => {
           response.classBreakInfos[0].label.should.equal('0-0.1241412550728627')
         })
       })
-      // TODO: have checks for uniqueValue too, not just classBreaks
     })
   })
 
@@ -136,7 +135,7 @@ describe('Generate renderer operations', () => {
         response.should.deepEqual({})
       })
     })
-    describe('has correct parameters', () => {
+    describe.only('has correct parameters', () => {
       it('should properly return a renderer', () => {
         const response = generateRenderer(data, options)
         response.type.should.equal('uniqueValue')

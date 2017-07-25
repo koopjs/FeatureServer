@@ -21,7 +21,7 @@ function createClassBreakInfos (breaks, classification) {
     const json = _.cloneDeep(renderers.classBreakInfos)
     json.classMaxValue = currBreak[1]
     json.classMinValue = currBreak[0]
-    json.label = `${json.classMinValue}-${json.classMaxValue}` // TODO: handle duplicate max/min values between adjacent classes
+    json.label = `${json.classMinValue}-${json.classMaxValue}`
     json.description = ''
     json.symbol = createSymbol(baseSymbol, colorRamp[index], type)
     return json

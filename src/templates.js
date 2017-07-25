@@ -133,11 +133,11 @@ function createStatFeatures (stats) {
 
 function renderClassBreaks (breaks, classificationDef) {
   // TODO: add check for renderer type (i.e., point, polyline, polygon)
-  // TODO: check for stats & leave out values if not creating a stats function
   const json = _.cloneDeep(renderers.classBreaks)
-  json.field = classificationDef.classificationField
-  json.classificationMethod = classificationDef.classificationMethod
-
+  if (classificationDef) {
+    json.field = classificationDef.classificationField
+    json.classificationMethod = classificationDef.classificationMethod
+  }
   json.minValue = breaks[0][0] // lower bound of first class break
   json.classBreakInfos = createClassBreakInfos(breaks, classificationDef)
   return json
