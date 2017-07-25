@@ -168,9 +168,8 @@ describe('Generate renderer operations', () => {
       })
     })
   })
-
   describe('when creating class break infos', () => {
-    it.only('should properly return class break infos', () => {
+    it('should properly return class break infos', () => {
       const options = _.cloneDeep(classBreakInfos)
       const classification = options.params.classificationDef
       const classBreaks = options.classBreaks
@@ -184,17 +183,15 @@ describe('Generate renderer operations', () => {
     })
   })
   describe('when creating unique value infos', () => {
-    it.only('should properly return unqiue value infos', () => {
+    it('should properly return unqiue value infos', () => {
       const options = _.cloneDeep(uniqueValueInfos)
       const classification = options.params.classificationDef
       const breaks = options.uniqueValue
       const response = createUniqueValueInfos(breaks, classification)
-      console.log(response)
-      response.length.should.equal(163)
-      response[0].label.should.equal('0-0.1241412550728627')
+      response.length.should.equal(5)
       response[0].symbol.color.should.deepEqual([115, 76, 0])
-      response[4].symbol.color.should.deepEqual([ 198, 39, 0 ])
-      response[8].symbol.color.should.deepEqual([255, 25, 86])
+      response[2].symbol.color.should.deepEqual([ 198, 39, 0 ])
+      response[4].symbol.color.should.deepEqual([255, 25, 86])
     })
   })
   describe('when creating a color ramp that is', () => {

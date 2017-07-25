@@ -32,7 +32,7 @@ function createUniqueValueInfos (breaks, classification) {
   const type = 1 // TODO: use this to get the geometry type for creating a symbol
   const inputRamp = classification && classification.colorRamp ? classification.colorRamp : undefined
   const breakValues = breaks.map((currBreak) => { return currBreak.count })
-  
+
   const colorRamp = createColorRamp(breakValues, inputRamp)
   let baseSymbol
   if (classification && classification.baseSymbol) baseSymbol = classification.baseSymbol
@@ -48,7 +48,6 @@ function createUniqueValueInfos (breaks, classification) {
 }
 
 function createColorRamp (breaks, inputRamp) {
-  console.log(breaks)
   const rampOptions = {
     rampDetails: inputRamp || _.cloneDeep(renderers.algorithmicColorRamp),
     breakCount: breaks.length
