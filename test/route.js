@@ -130,7 +130,7 @@ describe('Routing feature server requests', () => {
       beforeEach(() => {
         data = _.cloneDeep(ProviderStatsClassBreaks)
       })
-      it('should properly route and handle when a provider passes in class breaks statistics', done => {
+      it.only('should properly route and handle when a provider passes in class breaks statistics', done => {
         request(app)
           .get('/FeatureServer/3/generateRenderer?')
           .expect(res => {
