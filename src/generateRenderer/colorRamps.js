@@ -10,6 +10,7 @@ module.exports = { createMultipartRamp, createAlgorithmicRamp }
 * @return {array} algorithmic colorRamps
 */
 function createMultipartRamp (options) {
+  // TODO: determine if we even need multipart ramps. If so, finish & write tests
   const { rampDetails, breakCount = 7 } = options
   const type = rampDetails.type
   const colorRamps = rampDetails.colorRamps
@@ -35,20 +36,14 @@ function createAlgorithmicRamp (options) {
   const { rampDetails, breakCount = 7 } = options
   if (rampDetails.type !== 'algorithmic') return
   let colorRamp = chroma.scale([rampDetails.fromColor.slice(0, 3), rampDetails.toColor.slice(0, 3)])
-  let ramp = []
   switch (rampDetails.algorithm) {
     case 'esriHSVAlgorithm': // using HSV & hsl interchangeably
-      ramp = colorRamp.mode('hsl').colors(breakCount, 'rgb')
-      break
+      return colorRamp.mode('hsl').colors(breakCount, 'rgb')
     case 'esriCIELabAlgorithm':
-      ramp = colorRamp.mode('lab').colors(breakCount, 'rgb')
-      break
+      return colorRamp.mode('lab').colors(breakCount, 'rgb')
     case 'esriLabLChAlgorithm':
-      ramp = colorRamp.mode('lch').colors(breakCount, 'rgb')
-      break
+      return colorRamp.mode('lch').colors(breakCount, 'rgb')
     default:
-      ramp = colorRamp.mode('hsl').colors(breakCount, 'rgb')
-      break
+      return colorRamp.mode('hsl').colors(breakCount, 'rgb')
   }
-  return ramp
 }

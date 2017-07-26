@@ -116,21 +116,6 @@ function createStatFeatures (stats) {
   })
 }
 
-// function renderRenderers (breaks, classificationDef) {
-//   // TODO: add check for renderer type (i.e., point, polyline, polygon)
-//   // TODO: handle options (e.g., uniqueValueDef', gdbVersion=&)
-//
-//   if (classificationDef) {
-//     if (classificationDef.type && classificationDef.type === 'classBreaksDef') {
-//       const json = _.cloneDeep(renderers.classBreaks)
-//       json.field = classificationDef.classificationField
-//       json.classificationMethod = classificationDef.classificationMethod
-//     } else if (classificationDef.type && classificationDef.type === 'uniqueValueDef') {
-//       console.log('in here')
-//     }
-//   }
-// }
-
 function renderClassBreaks (breaks, classificationDef) {
   // TODO: add check for renderer type (i.e., point, polyline, polygon)
   const json = _.cloneDeep(renderers.classBreaks)

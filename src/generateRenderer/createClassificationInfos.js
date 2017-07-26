@@ -11,11 +11,7 @@ const renderers = {
 }
 
 function createClassBreakInfos (breaks, classification) {
-  const type = 1 // TODO: use this to get the geometry type for creating a symbol
-  const inputRamp = classification && classification.colorRamp ? classification.colorRamp : undefined
-  const colorRamp = createColorRamp(breaks, inputRamp)
-  let baseSymbol
-  if (classification && classification.baseSymbol) baseSymbol = classification.baseSymbol
+  const { colorRamp, baseSymbol, type } = setSymbology(breaks, classification)
 
   return breaks.map((currBreak, index) => {
     const json = _.cloneDeep(renderers.classBreakInfos)
@@ -29,13 +25,10 @@ function createClassBreakInfos (breaks, classification) {
 }
 
 function createUniqueValueInfos (breaks, classification) {
-  const type = 1 // TODO: use this to get the geometry type for creating a symbol
-  const inputRamp = classification && classification.colorRamp ? classification.colorRamp : undefined
-  const breakValues = breaks.map((currBreak) => { return currBreak.count })
+  const { colorRamp, baseSymbol, type } = setSymbology(breaks, classification)
+  // TODO: ? check to make sure that break name(s) == classification.uniqueValueFields
+  // if (_.findKey(currBreak, { currBreak.name }) !== classification.uniqueValueFields[0]) throw new Error('')
 
-  const colorRamp = createColorRamp(breakValues, inputRamp)
-  let baseSymbol
-  if (classification && classification.baseSymbol) baseSymbol = classification.baseSymbol
   return breaks.map((currBreak, index) => {
     const json = _.cloneDeep(renderers.uniqueValueInfos)
     json.value = currBreak[classification.uniqueValueFields[0]]
@@ -45,6 +38,15 @@ function createUniqueValueInfos (breaks, classification) {
     json.symbol = createSymbol(baseSymbol, colorRamp[index], type)
     return json
   })
+}
+
+function setSymbology (breaks, classification) {
+  const type = 1 // TODO: use this to get the geometry type for creating a symbol
+  const inputRamp = classification && classification.colorRamp ? classification.colorRamp : undefined
+  const colorRamp = createColorRamp(breaks, inputRamp)
+  let baseSymbol
+  if (classification && classification.baseSymbol) baseSymbol = classification.baseSymbol
+  return { colorRamp, baseSymbol, type }
 }
 
 function createColorRamp (breaks, inputRamp) {

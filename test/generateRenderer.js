@@ -135,7 +135,7 @@ describe('Generate renderer operations', () => {
         response.should.deepEqual({})
       })
     })
-    describe.only('has correct parameters', () => {
+    describe('has correct parameters', () => {
       it('should properly return a renderer', () => {
         const response = generateRenderer(data, options)
         response.type.should.equal('uniqueValue')
