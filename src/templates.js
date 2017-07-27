@@ -117,6 +117,7 @@ function createStatFeatures (stats) {
 }
 
 function renderClassBreaks (breaks, classificationDef) {
+  if (!Array.isArray(breaks) || !Array.isArray(breaks[0])) throw new Error('Breaks must be an array of break ranges')
   // TODO: add check for renderer type (i.e., point, polyline, polygon)
   const json = _.cloneDeep(renderers.classBreaks)
   if (classificationDef) {

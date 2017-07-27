@@ -19,6 +19,7 @@ function generateRenderer (data = {}, params = {}) {
       breaks = data.statistics.classBreaks.sort((a, b) => a - b)
       return renderClassBreaks(breaks, {}) // TODO: handle classification, don't just ignore it
     } else breaks = Winnow.query(data, params)
+    // TODO: ? handle uniqueValue statistics
 
     if (params.classificationDef && params.classificationDef.type) {
       const classification = params.classificationDef
