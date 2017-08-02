@@ -1,11 +1,13 @@
 /* global describe, it, beforeEach */
 const _ = require('lodash')
+// const assert = require('assert')
 const snow = require('./fixtures/snow.json')
 const trees = require('./fixtures/trees.json')
 const generateRenderer = require('../src/generateRenderer')
 const { createClassBreakInfos, createUniqueValueInfos } = require('../src/generateRenderer/createClassificationInfos')
-const { createMultipartRamp, createAlgorithmicRamp } = require('../src/generateRenderer/colorRamps')
+const { createColorRamp } = require('../src/generateRenderer/colorRamps')
 
+const inputBreaks = require('./fixtures/generateRenderer/inputBreaks.json')
 const algorithmicRamp = require('./fixtures/generateRenderer/ramp-algorithmic.json')
 const multipartRamp = require('./fixtures/generateRenderer/ramp-multipart.json')
 const classBreaksDef = require('./fixtures/generateRenderer/classBreaksDef.json')
@@ -24,11 +26,10 @@ describe('Generate renderer operations', () => {
       data = _.cloneDeep(ProviderStatsClassBreaks)
     })
     describe('do not exist', () => {
-      it('should throw an error and return an empty object', () => {
+      it('should throw an error', () => {
         let options = {}
         data.statistics = []
-        const response = generateRenderer(data, options)
-        response.should.deepEqual({})
+        generateRenderer.bind(this, data, options).should.throw()
       })
     })
     it('should properly return a renderer', () => {
@@ -47,24 +48,27 @@ describe('Generate renderer operations', () => {
     let options
     beforeEach(() => { options = _.cloneDeep(classBreaksDef) })
     describe('does not exist', () => {
-      it('should throw an error and return an empty object', () => {
+      it('should throw an error', () => {
         options = {}
-        const response = generateRenderer(data, options)
-        response.should.deepEqual({})
+        generateRenderer.bind(this, data, options).should.throw()
       })
     })
     describe('with no input data', () => {
-      it('should throw and error and return an empty object', () => {
+      it('should throw and error', () => {
         data = {}
-        const response = generateRenderer(data, options)
-        response.should.deepEqual({})
+        generateRenderer.bind(this, data, options).should.throw()
       })
     })
     describe('returns no queried features', () => {
-      it('should throw and error and return an empty object', () => {
+      it('should throw and error', () => {
         options.where = 'latitude>1000'
-        const response = generateRenderer(data, options)
-        response.should.deepEqual({})
+        generateRenderer.bind(this, data, options).should.throw()
+      })
+    })
+    describe('has incongruous geometry', () => {
+      it('should throw an error', () => {
+        options.classificationDef.baseSymbol.type = 'esriSLS'
+        generateRenderer.bind(this, data, options).should.throw()
       })
     })
     describe('has correct parameters', () => {
@@ -78,7 +82,7 @@ describe('Generate renderer operations', () => {
         response.classBreakInfos[0].symbol.color.should.deepEqual([115, 76, 0])
         response.classBreakInfos[4].symbol.color.should.deepEqual([198, 39, 0])
         response.classBreakInfos[8].symbol.color.should.deepEqual([255, 25, 86])
-        response.classBreakInfos[0].symbol.type.should.equal('esriSLS')
+        response.classBreakInfos[0].symbol.type.should.equal('esriSMS')
       })
       it('should use a default symbol and color ramp', () => {
         delete options.classificationDef.baseSymbol
@@ -115,24 +119,27 @@ describe('Generate renderer operations', () => {
       options = _.cloneDeep(uniqueValueDef)
     })
     describe('does not exist', () => {
-      it('should throw an error and return an empty object', () => {
+      it('should throw an error', () => {
         options = {}
-        const response = generateRenderer(data, options)
-        response.should.deepEqual({})
+        generateRenderer.bind(this, data, options).should.throw()
       })
     })
     describe('with no input data', () => {
-      it('should throw and error and return an empty object', () => {
+      it('should throw and error', () => {
         data = {}
-        const response = generateRenderer(data, options)
-        response.should.deepEqual({})
+        generateRenderer.bind(this, data, options).should.throw()
       })
     })
     describe('returns no queried features', () => {
-      it('should throw and error and return an empty object', () => {
+      it('should throw and error', () => {
         options.where = 'latitude>1000'
-        const response = generateRenderer(data, options)
-        response.should.deepEqual({})
+        generateRenderer.bind(this, data, options).should.throw()
+      })
+    })
+    describe('has incongruous geometry', () => {
+      it('should throw an error', () => {
+        options.classificationDef.baseSymbol.type = 'esriSLS'
+        generateRenderer.bind(this, data, options).should.throw()
       })
     })
     describe('has correct parameters', () => {
@@ -148,7 +155,7 @@ describe('Generate renderer operations', () => {
         response.uniqueValueInfos[0].symbol.color.should.deepEqual([115, 76, 0])
         response.uniqueValueInfos[81].symbol.color.should.deepEqual([198, 39, 0])
         response.uniqueValueInfos[161].symbol.color.should.deepEqual([255, 25, 86])
-        response.uniqueValueInfos[0].symbol.type.should.equal('esriSLS')
+        response.uniqueValueInfos[0].symbol.type.should.equal('esriSMS')
       })
       it('should use a default symbol and color ramp', () => {
         delete options.classificationDef.baseSymbol
@@ -165,6 +172,23 @@ describe('Generate renderer operations', () => {
         response.uniqueValueInfos[81].symbol.color.should.deepEqual([0, 253, 255])
         response.uniqueValueInfos[161].symbol.color.should.deepEqual([0, 0, 255])
         response.uniqueValueInfos[0].symbol.type.should.equal('esriSMS')
+      })
+      describe('has multiple unique value fields', () => {
+        it('should properly return multi-word value string', () => {
+          options.classificationDef.uniqueValueFields.push('Common_Name')
+          const response = generateRenderer(data, options)
+          response.type.should.equal('uniqueValue')
+          response.field1.should.equal('Genus')
+          response.fieldDelimiter.should.equal(', ')
+          response.uniqueValueInfos.length.should.equal(310)
+          response.uniqueValueInfos[0].value.should.equal('MAGNOLIA, SOUTHERN MAGNOLIA')
+          response.uniqueValueInfos[0].count.should.equal(5846)
+          response.uniqueValueInfos[0].label.should.equal('MAGNOLIA, SOUTHERN MAGNOLIA')
+          response.uniqueValueInfos[0].symbol.color.should.deepEqual([115, 76, 0])
+          response.uniqueValueInfos[155].symbol.color.should.deepEqual([198, 39, 0])
+          response.uniqueValueInfos[309].symbol.color.should.deepEqual([255, 25, 86])
+          response.uniqueValueInfos[0].symbol.type.should.equal('esriSMS')
+        })
       })
     })
   })
@@ -194,25 +218,22 @@ describe('Generate renderer operations', () => {
       response[4].symbol.color.should.deepEqual([255, 25, 86])
     })
   })
-  describe('when creating a color ramp that is', () => {
-    describe('algorithmic', () => {
-      let options
+  describe('when creating a color ramp that', () => {
+    describe('is algorithmic', () => {
+      let breaks
+      let inputRamp
       beforeEach(() => {
-        options = {}
-        options.rampDetails = _.cloneDeep(algorithmicRamp)
-        options.breakCount = 9
+        breaks = _.cloneDeep(inputBreaks)
+        inputRamp = _.cloneDeep(algorithmicRamp)
       })
-      it('should use default breakCount', () => {
-        delete options.breakCount
-        const response = createAlgorithmicRamp(options)
-        response.length.should.equal(7)
-        response[0].should.deepEqual([0, 255, 0])
-        response[2].should.deepEqual([0, 255, 170])
-        response[6].should.deepEqual([0, 0, 255])
+      describe('has no break count', () => {
+        it('should throw an error', () => {
+          createColorRamp.bind(this, undefined, inputRamp).should.throw()
+        })
       })
       describe('using the HSV algorithm', () => {
         it('should return correct hsv color ramp', () => {
-          const response = createAlgorithmicRamp(options)
+          const response = createColorRamp(breaks, inputRamp)
           response.should.be.an.instanceOf(Array)
           response.length.should.equal(9)
           response[3].should.be.an.instanceOf(Array)
@@ -220,14 +241,14 @@ describe('Generate renderer operations', () => {
           response[3].should.deepEqual([ 0, 255, 191 ])
         })
         it('should return correct number of breaks', () => {
-          options.breakCount = 13
-          const response = createAlgorithmicRamp(options)
-          response.length.should.equal(13)
+          breaks.push([2001, 3000])
+          const response = createColorRamp(breaks, inputRamp)
+          response.length.should.equal(10)
         })
         it('should change ramp colors when fromColor & toColor are changed', () => {
-          options.rampDetails.fromColor = [115, 76, 0]
-          options.rampDetails.toColor = [255, 25, 86]
-          const response = createAlgorithmicRamp(options)
+          inputRamp.fromColor = [115, 76, 0]
+          inputRamp.toColor = [255, 25, 86]
+          const response = createColorRamp(breaks, inputRamp)
           response[0].should.deepEqual([115, 76, 0])
           response[4].should.deepEqual([198, 39, 0])
           response[8].should.deepEqual([255, 25, 86])
@@ -235,10 +256,10 @@ describe('Generate renderer operations', () => {
       })
       describe('using the LAB algorithm', () => {
         beforeEach(() => {
-          options.rampDetails.algorithm = 'esriCIELabAlgorithm'
+          inputRamp.algorithm = 'esriCIELabAlgorithm'
         })
         it('should return correct lab color ramp', () => {
-          const response = createAlgorithmicRamp(options)
+          const response = createColorRamp(breaks, inputRamp)
           response.should.be.an.instanceOf(Array)
           response.length.should.equal(9)
           response[3].should.be.an.instanceOf(Array)
@@ -246,22 +267,22 @@ describe('Generate renderer operations', () => {
           response[3].should.deepEqual([ 123, 174, 141 ])
         })
         it('should return correct number of breaks', () => {
-          options.breakCount = 13
-          const response = createAlgorithmicRamp(options)
-          response.length.should.equal(13)
+          breaks.push([2001, 3000])
+          const response = createColorRamp(breaks, inputRamp)
+          response.length.should.equal(10)
         })
         it('should change ramp colors when toColor is changed', () => {
-          options.rampDetails.toColor = [50, 173, 23]
-          const response = createAlgorithmicRamp(options)
+          inputRamp.toColor = [50, 173, 23]
+          const response = createColorRamp(breaks, inputRamp)
           response[3].should.deepEqual([ 35, 224, 14 ])
         })
       })
       describe('using the LCH algorithm', () => {
         beforeEach(() => {
-          options.rampDetails.algorithm = 'esriLabLChAlgorithm'
+          inputRamp.algorithm = 'esriLabLChAlgorithm'
         })
         it('should return correct lch color ramp', () => {
-          const response = createAlgorithmicRamp(options)
+          const response = createColorRamp(breaks, inputRamp)
           response.should.be.an.instanceOf(Array)
           response.length.should.equal(9)
           response[3].should.be.an.instanceOf(Array)
@@ -269,31 +290,31 @@ describe('Generate renderer operations', () => {
           response[3].should.deepEqual([ 0, 206, 237 ])
         })
         it('should return correct number of breaks', () => {
-          options.breakCount = 13
-          const response = createAlgorithmicRamp(options)
-          response.length.should.equal(13)
+          breaks.push([2001, 3000])
+          const response = createColorRamp(breaks, inputRamp)
+          response.length.should.equal(10)
         })
         it('should change ramp colors when toColor is changed', () => {
-          options.rampDetails.toColor = [50, 173, 23]
-          const response = createAlgorithmicRamp(options)
+          inputRamp.toColor = [50, 173, 23]
+          const response = createColorRamp(breaks, inputRamp)
           response[3].should.deepEqual([ 37, 224, 13 ])
         })
       })
     })
     describe('multipart', () => {
-      let options
+      let breaks
+      let inputRamp
       beforeEach(() => {
-        options = {}
-        options.rampDetails = _.cloneDeep(multipartRamp)
-        options.breakCount = 9
+        breaks = _.cloneDeep(inputBreaks)
+        inputRamp = _.cloneDeep(multipartRamp)
       })
       it('should return multiple color ramps', () => {
-        const response = createMultipartRamp(options)
+        const response = createColorRamp(breaks, inputRamp)
         response.should.be.an.instanceOf(Array)
         response.length.should.equal(3)
       })
       it('should return correct color ramps that have different algorithms', () => {
-        const response = createMultipartRamp(options)
+        const response = createColorRamp(breaks, inputRamp)
         response[2].should.be.an.instanceOf(Array)
         response[2].length.should.equal(9)
         response[0][7].should.deepEqual([ 0, 64, 255 ])

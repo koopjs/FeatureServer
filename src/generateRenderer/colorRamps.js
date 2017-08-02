@@ -1,6 +1,23 @@
+const _ = require('lodash')
 const chroma = require('chroma-js')
 
-module.exports = { createMultipartRamp, createAlgorithmicRamp }
+module.exports = { createColorRamp }
+
+const renderers = {
+  algorithmicColorRamp: require('../../templates/renderers/symbology/algorithmicColorRamp.json')
+}
+
+function createColorRamp (breaks, inputRamp) {
+  if (!breaks || breaks.length === 0) throw new Error('Must supply breaks')
+  const rampOptions = {
+    rampDetails: inputRamp || _.cloneDeep(renderers.algorithmicColorRamp),
+    breakCount: breaks.length
+  }
+  const type = rampOptions.rampDetails.type
+  if (type === 'multipart' && rampOptions.rampDetails.colorRamps) return createMultipartRamp(rampOptions) // TODO: create checks for multipart
+  else if (type === 'algorithmic') return createAlgorithmicRamp(rampOptions)
+  else throw new Error('Invalid color ramp type: ', rampOptions.rampDetails.type)
+}
 
 /**
 *

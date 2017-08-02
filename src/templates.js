@@ -17,11 +17,11 @@ const templates = {
 }
 
 const renderers = {
-  esriGeometryPolygon: require('../templates/renderers/polygon.json'),
-  esriGeometryPolyline: require('../templates/renderers/line.json'),
-  esriGeometryPoint: require('../templates/renderers/point.json'),
-  classBreaks: require('../templates/renderers/classBreaks.json'),
-  uniqueValue: require('../templates/renderers/uniqueValue.json')
+  esriGeometryPolygon: require('../templates/renderers/symbology/polygon.json'),
+  esriGeometryPolyline: require('../templates/renderers/symbology/line.json'),
+  esriGeometryPoint: require('../templates/renderers/symbology/point.json'),
+  classBreaks: require('../templates/renderers/classification/classBreaks.json'),
+  uniqueValue: require('../templates/renderers/classification/uniqueValue.json')
 }
 
 /**
@@ -116,25 +116,23 @@ function createStatFeatures (stats) {
   })
 }
 
-function renderClassBreaks (breaks, classificationDef) {
+function renderClassBreaks (breaks, classificationDef, geomType) {
   if (!Array.isArray(breaks) || !Array.isArray(breaks[0])) throw new Error('Breaks must be an array of break ranges')
-  // TODO: add check for renderer type (i.e., point, polyline, polygon)
   const json = _.cloneDeep(renderers.classBreaks)
   if (classificationDef) {
     json.field = classificationDef.classificationField
     json.classificationMethod = classificationDef.classificationMethod
   }
   json.minValue = breaks[0][0] // lower bound of first class break
-  json.classBreakInfos = createClassBreakInfos(breaks, classificationDef)
+  json.classBreakInfos = createClassBreakInfos(breaks, classificationDef, geomType)
   return json
 }
 
-function renderUniqueValue (breaks, classificationDef) {
-  // TODO: add check for renderer type (i.e., point, polyline, polygon)
+function renderUniqueValue (breaks, classificationDef, geomType) {
   // TODO: check for stats & leave out values if not creating a stats function
   const json = _.cloneDeep(renderers.uniqueValue)
   json.field1 = classificationDef.uniqueValueFields[0]
   json.fieldDelimiter = classificationDef.fieldDelimiter
-  json.uniqueValueInfos = createUniqueValueInfos(breaks, classificationDef)
+  json.uniqueValueInfos = createUniqueValueInfos(breaks, classificationDef, geomType)
   return json
 }

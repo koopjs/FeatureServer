@@ -6,8 +6,8 @@
     ],
     "fieldDelimiter": ", ",
     "baseSymbol": {
-      "type": "esriSLS",
-      "style": "esriSLSSolid",
+      "type": "esriSMS",
+      "style": "esriSMSCircle",
       "width": 2
     },
     "colorRamp": {
