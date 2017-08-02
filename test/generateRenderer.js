@@ -85,7 +85,6 @@ describe('when a class breaks classification passed in', () => {
   })
   describe('has correct parameters', () => {
     it('should properly return a renderer', () => {
-      console.log(options)
       const response = generateRenderer(data, options)
       response.type.should.equal('classBreaks')
       response.minValue.should.equal(0)
