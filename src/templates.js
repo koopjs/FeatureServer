@@ -129,7 +129,6 @@ function renderClassBreaks (breaks, classificationDef, geomType) {
 }
 
 function renderUniqueValue (breaks, classificationDef, geomType) {
-  // TODO: check for stats & leave out values if not creating a stats function
   const json = _.cloneDeep(renderers.uniqueValue)
   json.field1 = classificationDef.uniqueValueFields[0]
   json.fieldDelimiter = classificationDef.fieldDelimiter

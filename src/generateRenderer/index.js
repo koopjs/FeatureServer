@@ -17,7 +17,7 @@ function generateRenderer (data = {}, params = {}) {
   let breaks = []
   if (data.statistics && data.statistics.classBreaks) {
     breaks = data.statistics.classBreaks.sort((a, b) => a - b)
-    return renderClassBreaks(breaks, {}, '') // TODO: handle classification, don't just ignore it
+    return renderClassBreaks(breaks, {}, '')
   } else if (data.features) breaks = Winnow.query(data, params)
   else throw new Error('Must supply statistics or data features')
   // TODO: ? handle uniqueValue statistics

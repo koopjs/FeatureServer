@@ -3,14 +3,13 @@ const _ = require('lodash')
 module.exports = { createSymbol }
 
 const renderers = {
-  fillSymbol: require('../../templates/renderers/symbology/fill-symbol.json'), // TODO: remove if other templates are correct
   point: require('../../templates/renderers/symbology/point.json'),
   line: require('../../templates/renderers/symbology/line.json'),
   polygon: require('../../templates/renderers/symbology/polygon.json')
 }
 
 function createSymbol (baseSymbol, color, geomType) {
-  const symbol = _.cloneDeep(baseSymbol) || symbolTemplate(geomType) // TODO: figure out why cloneDeep is necessary
+  const symbol = _.cloneDeep(baseSymbol) || symbolTemplate(geomType)
   symbol.color = color
   return symbol
 }

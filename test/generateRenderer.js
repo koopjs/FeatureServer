@@ -65,10 +65,23 @@ describe('Generate renderer operations', () => {
         generateRenderer.bind(this, data, options).should.throw()
       })
     })
-    describe('has incongruous geometry', () => {
-      it('should throw an error', () => {
-        options.classificationDef.baseSymbol.type = 'esriSLS'
-        generateRenderer.bind(this, data, options).should.throw()
+    describe('with geometry', () => {
+      describe('that is incongruous', () => {
+        it('should throw an error', () => {
+          options.classificationDef.baseSymbol.type = 'esriSLS'
+          generateRenderer.bind(this, data, options).should.throw()
+        })
+      })
+      describe('that is invalid', () => {
+        it('should throw an error', () => {
+          let modifiedData = _.cloneDeep(data)
+          modifiedData.features = modifiedData.features.map((feature) => {
+            feature.geometry.type = 'Invalid Type'
+            return feature
+          })
+          delete options.classificationDef.baseSymbol
+          generateRenderer.bind(this, modifiedData, options).should.throw()
+        })
       })
     })
     describe('has correct parameters', () => {
@@ -320,7 +333,7 @@ describe('Generate renderer operations', () => {
         response[0][7].should.deepEqual([ 0, 64, 255 ])
         response[1][7].should.deepEqual([ 83, 58, 233 ])
         response[0].length.should.equal(response[1].length)
-        response[1].length.should.equal(response[2].length) // TODO: allow differnt breakCounts for each ramp?
+        response[1].length.should.equal(response[2].length) // TODO: allow different breakCounts for each ramp?
       })
     })
   })

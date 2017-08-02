@@ -181,14 +181,13 @@ describe('Routing feature server requests', () => {
             '"toColor": [0, 0, 255, 255],' +
             '"algorithm": "esriHSVAlgorithm"}' +
           '}&' +
-         'where=latitude<39&' + // TODO: add multiple statements e.g., --> "daily%20snow%20total<2.5"&"
-         'gdbVersion=&' +
+         'where=latitude < 39 AND latitude > 38.5&' +
          'f=json')
         .expect(res => {
           res.body.type.should.equal('classBreaks')
           res.body.classBreakInfos.length.should.equal(7)
           res.body.classBreakInfos[0].symbol.color.should.deepEqual([0, 100, 0])
-          res.body.classBreakInfos[0].label.should.equal('0-0.8285714285714285')
+          res.body.classBreakInfos[0].label.should.equal('0-0.7571428571428571')
           res.body.classBreakInfos[3].symbol.color.should.deepEqual([0, 177, 178])
           res.body.classBreakInfos[6].symbol.color.should.deepEqual([0, 0, 255])
         })

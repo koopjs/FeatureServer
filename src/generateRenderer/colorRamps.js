@@ -50,8 +50,7 @@ function createMultipartRamp (options) {
 * @return {array} colorRamp
 */
 function createAlgorithmicRamp (options) {
-  // TODO: default breakCount currently isn't being used. breakCount is required
-  const { rampDetails, breakCount = 7 } = options
+  const { rampDetails, breakCount } = options
   if (rampDetails.type !== 'algorithmic') return
   let colorRamp = chroma.scale([rampDetails.fromColor.slice(0, 3), rampDetails.toColor.slice(0, 3)])
   switch (rampDetails.algorithm) {
