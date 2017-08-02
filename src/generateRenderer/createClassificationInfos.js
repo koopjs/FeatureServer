@@ -25,8 +25,17 @@ function createClassBreakInfos (breaks, classification, geomType) {
 
 function createUniqueValueInfos (breaks, classification, geomType) {
   const { colorRamp, baseSymbol } = setSymbology(breaks, classification)
-  // TODO: ? check to make sure that break name(s) == classification.uniqueValueFields
-  // if (_.findKey(currBreak, { currBreak.name }) !== classification.uniqueValueFields[0]) throw new Error('')
+
+  // check that unique value fields are congruous
+  if (!classification.uniqueValueFields.map(field => {
+    Object.keys(breaks[0]).includes(field)
+  })) {
+    throw new Error(
+      'Unique value fields are incongruous: ' +
+      Object.keys(breaks[0]) +
+      classification.uniqueValueFields)
+  }
+
   return breaks.map((currBreak, index) => {
     const json = _.cloneDeep(renderers.uniqueValueInfos)
     json.value = parseUniqueValues(currBreak)

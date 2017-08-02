@@ -14,7 +14,7 @@ function createColorRamp (breaks, inputRamp) {
     breakCount: breaks.length
   }
   const type = rampOptions.rampDetails.type
-  if (type === 'multipart' && rampOptions.rampDetails.colorRamps) return createMultipartRamp(rampOptions) // TODO: create checks for multipart
+  if (type === 'multipart' && rampOptions.rampDetails.colorRamps) return createMultipartRamp(rampOptions)
   else if (type === 'algorithmic') return createAlgorithmicRamp(rampOptions)
   else throw new Error('Invalid color ramp type: ', rampOptions.rampDetails.type)
 }
