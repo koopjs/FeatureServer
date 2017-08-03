@@ -207,6 +207,44 @@ FeatureServer.generateRender(geojson, options)
 *required
 ```
 
+Output:
+
+```js
+{
+  type: 'classBreaks',
+  field: '<field1>',
+  classificationMethod: 'esriClassifyEqualInterval',
+  minValue: 0,
+  classBreakInfos: [
+    {
+      classMinValue: 0,
+      classMaxValue: 5,
+      label: '0-5',
+      description: '',
+      symbol: {
+        type: 'esriSMS',
+        style: 'esriSMSCircle',
+        width: 2,
+        color: [115, 76, 0]
+      }
+    },
+    {
+      classMinValue: 6,
+      classMaxValue: 11,
+      label: '6-11',
+      description: '',
+      symbol: {
+        type: 'esriSMS',
+        style: 'esriSMSCircle',
+        width: 2,
+        color: [156, 67, 0]
+      }
+    },
+    ...
+  ]
+}
+```
+
 ##### uniqueValueDef
 The following is an example of _all_ uniqueValueDef `options` that can be passed into the generateRenderer route: '/FeatureServer/:layer/generateRenderer'
 
@@ -216,7 +254,7 @@ e.g.
 const options = {
  *'classificationDef': {
    *'type': 'uniqueValueDef',
-   *'uniqueValueFields': ['<field1>', '<field2>', '<field3>'],
+   *'uniqueValueFields': ['Genus', '<field2>', '<field3>'],
    *'fieldDelimiter': ', '
     'baseSymbol': {
       'type': 'esriSMS',
@@ -230,7 +268,7 @@ const options = {
       'algorithm': 'esriHSVAlgorithm'
     }
   },
-  'where': '<field2> > 39'
+  'where': 'latitude > 39'
 }
 
 FeatureServer.generateRender(geojson, options)
@@ -238,6 +276,45 @@ FeatureServer.generateRender(geojson, options)
 *required
 ```
 
+Output:
+
+```js
+{
+  type: 'uniqueValue',
+  field1: 'Genus',
+  field2: '',
+  field3: '',
+  fieldDelimiter: ', ',
+  defaultSymbol: {},
+  defaultLabel: '',
+  uniqueValueInfos: [
+    { 
+  	   value: 'MAGNOLIA',
+      count: 5908,
+      label: 'MAGNOLIA',
+      description: '',
+      symbol: {
+     	 type: 'esriSMS',
+  		 style: 'esriSMSCircle',
+  		 width: 2,
+  		 color: [115, 76, 0]
+  	   }
+    },
+    {
+      value: 'QUERCUS',
+      count: 12105,
+      label: 'QUERCUS',
+      description: '',
+      symbol: {
+     	 type: 'esriSMS',
+  		 style: 'esriSMSCircle',
+  		 width: 2,
+  		 color: [116, 76, 0]
+  	  }
+   },
+   ...
+  ]
+```
 
 [npm-image]: https://img.shields.io/npm/v/featureserver.svg?style=flat-square
 [npm-url]: https://www.npmjs.com/package/featureserver
