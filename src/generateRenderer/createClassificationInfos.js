@@ -38,7 +38,7 @@ function createUniqueValueInfos (breaks, classification, geomType) {
 
   return breaks.map((currBreak, index) => {
     const json = _.cloneDeep(renderers.uniqueValueInfos)
-    json.value = parseUniqueValues(currBreak)
+    json.value = parseUniqueValues(currBreak, classification.fieldDelimiter)
     json.count = currBreak.count
     json.label = json.value
     json.description = '' // TODO: ? fill in description
@@ -47,10 +47,10 @@ function createUniqueValueInfos (breaks, classification, geomType) {
   })
 }
 
-function parseUniqueValues (currBreak) {
+function parseUniqueValues (currBreak, delimiter) {
   const thisBreak = _.cloneDeep(currBreak)
   delete thisBreak.count
-  return Object.values(thisBreak).join(', ')
+  return Object.keys(thisBreak).map(key => thisBreak[key]).join(delimiter)
 }
 
 function setSymbology (breaks, classification) {
