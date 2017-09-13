@@ -55,6 +55,10 @@ function geoservicesPostQuery (data, queriedData, params) {
     // TODO should these be calculated using the whole dataset?
     params.spatialReference = params.outSR
     params.attributeSample = data.features[0] && data.features[0].properties
+    // the GeoService feature spec doesn't include 'Type'
+    queriedData.features.forEach(feature => {
+      delete feature.type
+    })
     return renderFeatures(queriedData, params)
   }
 }
