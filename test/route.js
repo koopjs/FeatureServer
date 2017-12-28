@@ -128,14 +128,12 @@ describe('Routing feature server requests', () => {
     describe('no geometry', () => {
       beforeEach(() => {
         data = _.cloneDeep(noGeom)
-        data.name = 'Snow'
       })
       it('should properly route and handle the layer with no geometry', done => {
         request(app)
           .get('/FeatureServer/3?f=json')
           .expect(res => {
             res.body.type.should.equal('Table')
-            res.body.name.should.equal('Snow')
             res.body.id.should.equal(3)
             res.body.fields
               .filter(f => {
