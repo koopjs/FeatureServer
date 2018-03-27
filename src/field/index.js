@@ -44,7 +44,7 @@ function computeFieldObject (data, template, options = {}) {
       alias: field.alias || field.name,
       // Add length property for strings
       length: (type === 'esriFieldTypeString') ? 128 : undefined
-    });
+    })
   })
   if (!oid) fields.push(templates.objectIDField)
 
@@ -68,15 +68,15 @@ const DATE_FORMATS = [moment.ISO_8601]
 function computeFieldsFromProperties (props, template, options = {}) {
   const fields = Object.keys(props).map((key, i) => {
     const type = fieldType(props[key])
-    const field = { 
-      name: key, 
-      type, 
+    const field = {
+      name: key,
+      type,
       alias: key,
       defaultValue: null,
       domain: null,
       editable: false,
       nullable: false,
-      sqlType: "sqlTypeOther"
+      sqlType: 'sqlTypeOther'
     }
 
     // Add length field to strings and dates
@@ -95,7 +95,7 @@ function computeFieldsFromProperties (props, template, options = {}) {
       domain: null,
       editable: false,
       nullable: false,
-      sqlType: "sqlTypeOther",
+      sqlType: 'sqlTypeOther'
     })
 
     // Ensure OBJECTID is first in the array

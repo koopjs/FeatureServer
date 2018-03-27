@@ -24,7 +24,6 @@ describe('Query operatons', () => {
     response.fields[2].type.should.equal('esriFieldTypeInteger')
     response.fields[3].type.should.equal('esriFieldTypeString')
     response.fields[4].type.should.equal('esriFieldTypeDate')
-
   })
 
   describe('when getting featureserver features from geojson', function () {
