@@ -37,13 +37,20 @@ function computeFieldObject (data, template, options = {}) {
       oid = true
     }
     const template = _.cloneDeep(templates.field)
+    type = type || fieldMap[field.type.toLowerCase()] || field.type
     return Object.assign({}, template, {
       name: field.name,
-      type: type || fieldMap[field.type.toLowerCase()] || field.type,
-      alias: field.alias || field.name
-    })
+      type,
+      alias: field.alias || field.name,
+      // Add length property for strings
+      length: (type === 'esriFieldTypeString') ? 128 : undefined
+    });
   })
   if (!oid) fields.push(templates.objectIDField)
+
+  // Ensure the OBJECTID field is first in the array
+  fields.unshift(fields.splice(fields.findIndex(field => field.name === 'OBJECTID'), 1)[0])
+
   return fields
 }
 
