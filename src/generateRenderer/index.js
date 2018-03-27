@@ -1,4 +1,4 @@
-const Winnow = require('../../../winnow/src')
+const Winnow = require('winnow')
 const { getGeom } = require('./getGeom')
 const { renderClassBreaks, renderUniqueValue } = require('../templates')
 
