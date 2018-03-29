@@ -42,8 +42,8 @@ function computeFieldObject (data, template, options = {}) {
       name: field.name,
       type,
       alias: field.alias || field.name,
-      // Add length property for strings
-      length: (type === 'esriFieldTypeString') ? 128 : undefined
+      // Add length property for strings and dates
+      length: (type === 'esriFieldTypeString') ? 128 : (type === 'esriFieldTypeDate') ? 36 : undefined
     })
   })
   if (!oid) fields.push(templates.objectIDField)
@@ -80,8 +80,8 @@ function computeFieldsFromProperties (props, template, options = {}) {
     }
 
     // Add length field to strings and dates
-    if (type === 'esriFieldTypeString') field.length = 128
-    else if (type === 'esriFieldTypeDate') field.length = 36
+    field.length = (type === 'esriFieldTypeString') ? 128 : (type === 'esriFieldTypeDate') ? 36 : undefined
+
     return field
   })
 
