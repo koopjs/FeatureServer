@@ -4,9 +4,67 @@ const polyData = require('./fixtures/polygon.json')
 const data = require('./fixtures/snow.json')
 const should = require('should')
 const _ = require('lodash')
+const Joi = require('joi')
 
 describe('Info operations', () => {
   describe('server info', () => {
+    it('should conform to the prescribed schema', () => {
+      const server = FeatureServer.serverInfo(data)
+
+      // Test response body schema
+      const schema = Joi.object().keys({
+        'currentVersion': Joi.number(),
+        'hasVersionedData': Joi.boolean().valid(false),
+        'supportsDisconnectedEditing': Joi.boolean().valid(false),
+        'supportedQueryFormats': Joi.string().valid('JSON'),
+        'maxRecordCount': Joi.number().integer().min(1),
+        'hasStaticData': Joi.boolean().valid(false),
+        'capabilities': Joi.string().valid('Query'),
+        'serviceDescription': Joi.string().allow(''),
+        'description': Joi.string(),
+        'copyrightText': Joi.string(),
+        'spatialReference': Joi.object().keys({
+          'wkid': Joi.number().integer(),
+          'latestWkid': Joi.number().integer()
+        }),
+        'initialExtent': Joi.object().keys({
+          'xmin': Joi.number(),
+          'ymin': Joi.number(),
+          'xmax': Joi.number(),
+          'ymax': Joi.number(),
+          'spatialReference': Joi.object().keys({
+            'wkid': Joi.number().integer(),
+            'latestWkid': Joi.number().integer()
+          })
+        }),
+        'fullExtent': Joi.object().keys({
+          'xmin': Joi.number(),
+          'ymin': Joi.number(),
+          'xmax': Joi.number(),
+          'ymax': Joi.number(),
+          'spatialReference': Joi.object().keys({
+            'wkid': Joi.number().integer(),
+            'latestWkid': Joi.number().integer()
+          })
+        }),
+        'allowGeometryUpdates': Joi.boolean().valid(false),
+        'units': Joi.string(),
+        'syncEnabled': Joi.boolean().valid(false),
+        'layers': Joi.array().items(Joi.object().keys({
+          'id': Joi.number().integer(),
+          'name': Joi.string(),
+          'parentLayerId': Joi.number().integer().min(-1).allow(null),
+          'defaultVisibility': Joi.boolean(),
+          'subLayerIds': Joi.array().valid(null).items(Joi.number().integer()),
+          'minScale': Joi.number().integer().min(0),
+          'maxScale': Joi.number().integer().min(0),
+          'geometryType': Joi.string()
+        })),
+        'tables': Joi.array()
+      })
+      Joi.validate(server, schema, {presence: 'required'}).should.have.property('error', null)
+    })
+
     it('should work with geojson passed in', () => {
       const server = FeatureServer.serverInfo(data)
       server.layers.length.should.equal(1)
