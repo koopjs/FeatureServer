@@ -159,6 +159,90 @@ describe('Info operations', () => {
   describe('layers info', () => {
     it('should work with simple geojson passed in', () => {
       const layers = FeatureServer.layersInfo(data)
+
+      const schema = Joi.object().keys({
+        'currentVersion': Joi.number().valid(10.51),
+        'id': Joi.number().integer().min(0),
+        'name': Joi.string(),
+        'type': Joi.string().valid('Feature Layer'),
+        'description': Joi.string(),
+        'geometryType': Joi.string(),
+        'copyrightText': Joi.string(),
+        'parentLayer': Joi.number().integer().min(-1).allow(null),
+        'subLayers': Joi.array().allow(null).items(Joi.number().integer()),
+        'minScale': Joi.number().integer().min(0),
+        'maxScale': Joi.number().integer().min(0),
+        'drawingInfo': Joi.object().keys({
+          'renderer': Joi.object(),
+          'labelingInfo': Joi.object().allow(null)
+        }),
+        'defaultVisibility': Joi.boolean(),
+        'extent': Joi.object().keys({
+          'xmin': Joi.number(),
+          'ymin': Joi.number(),
+          'xmax': Joi.number(),
+          'ymax': Joi.number(),
+          'spatialReference': Joi.object().keys({
+            'wkid': Joi.number().integer(),
+            'latestWkid': Joi.number().integer()
+          })
+        }),
+        'hasAttachments': Joi.boolean().valid(false),
+        'htmlPopupType': Joi.string().valid('esriServerHTMLPopupTypeNone'),
+        'displayField': Joi.string(),
+        'typeIdField': Joi.string().allow(null),
+        'fields': Joi.array().items(Joi.object().keys({
+          'name': Joi.string().when('type', {is: 'esriFieldTypeOID', then: Joi.valid('OBJECTID'), otherwise: Joi.string()}),
+          'type': Joi.string(),
+          'alias': Joi.string().when('type', {is: 'esriFieldTypeOID', then: Joi.valid('OBJECTID'), otherwise: Joi.string()}),
+          'length': Joi.optional().when('type', {
+            is: Joi.string().allow('esriFieldTypeString', 'esriFieldTypeDate'),
+            then: Joi.number().integer().min(0)
+          }),
+          'defaultValue': Joi.any().valid(null),
+          'domain': Joi.any().valid(null),
+          'editable': Joi.boolean().valid(false),
+          'nullable': Joi.boolean().valid(false),
+          'sqlType': Joi.string().valid('sqlTypeOther', 'sqlTypeDouble')
+        })),
+        'relationships': Joi.array(),
+        'canModifyLayer': Joi.boolean().valid(false),
+        'canScaleSymbols': Joi.boolean().valid(false),
+        'hasLabels': Joi.boolean().valid(false),
+        'capabilities': Joi.string().valid('Query'),
+        'maxRecordCount': Joi.number().integer().min(0),
+        'supportsStatistics': Joi.boolean().valid(true),
+        'supportsAdvancedQueries': Joi.boolean().valid(true),
+        'supportedQueryFormats': Joi.string().valid('JSON'),
+        'ownershipBasedAccessControlForFeatures': {
+          'allowOthersToQuery': true
+        },
+        'supportsCoordinatesQuantization': Joi.boolean().valid(false),
+        'useStandardizedQueries': Joi.boolean().valid(true),
+        'advancedQueryCapabilities': Joi.object().keys({
+          'useStandardizedQueries': Joi.boolean().valid(true),
+          'supportsStatistics': Joi.boolean().valid(true),
+          'supportsOrderBy': Joi.boolean().valid(true),
+          'supportsDistinct': Joi.boolean().valid(true),
+          'supportsPagination': Joi.boolean().valid(true),
+          'supportsTrueCurve': Joi.boolean().valid(false),
+          'supportsReturningQueryExtent': Joi.boolean().valid(true),
+          'supportsQueryWithDistance': Joi.boolean().valid(true)
+        }),
+        'dateFieldsTimeReference': Joi.object().valid(null),
+        'isDataVersioned': Joi.boolean().valid(false),
+        'supportsRollbackOnFailureParameter': Joi.boolean().valid(true),
+        'hasM': Joi.boolean().valid(false),
+        'hasZ': Joi.boolean().valid(false),
+        'allowGeometryUpdates': Joi.boolean().valid(true),
+        'objectIdField': Joi.string().valid('OBJECTID'),
+        'globalIdField': Joi.string().allow(''),
+        'types': Joi.array(),
+        'templates': Joi.array(),
+        'hasStaticData': Joi.boolean().valid(true),
+        'timeInfo': Joi.object().optional()
+      })
+      Joi.validate(layers.layers[0], schema, {presence: 'required'}).should.have.property('error', null)
       layers.layers.length.should.equal(1)
     })
   })
