@@ -23,8 +23,8 @@ function route (req, res, geojson, options) {
   })
 
   if (req.query.callback) {
-      req.query.callback = sanitizeCallback(req.query.callback)
-      res.append("Content-Type", "application/javascript")
+    req.query.callback = sanitizeCallback(req.query.callback)
+    res.append("Content-Type", "application/javascript")
   }
 
   if (isNaN(req.query.limit)) req.query.limit = metadata.maxRecordCount || 2000
