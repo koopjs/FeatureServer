@@ -1,4 +1,5 @@
 /* global describe, it */
+const Joi = require('joi')
 const FeatureServer = require('../src')
 const data = require('./fixtures/snow.json')
 const projectionApplied = require('./fixtures/projection-applied.json')
@@ -16,7 +17,55 @@ const offsetApplied = require('./fixtures/offset-applied.json')
 
 // const moment = require('moment')
 
-describe('Query operatons', () => {
+describe('Query operations', () => {
+  it('should return the expected response schema for an optionless query', () => {
+    const response = FeatureServer.query(data, {})
+
+    const schema = Joi.object().keys({
+      'objectIdFieldName': Joi.string().valid('OBJECTID'),
+      'globalIdFieldName': Joi.string().allow(''),
+      'geometryType': Joi.string().valid('esriGeometryPoint', 'esriGeometryLine', 'esriGeometryPolygon'),
+      'spatialReference': Joi.object().keys({
+        'wkid': Joi.number().integer().min(0)
+      }),
+      'fields': Joi.array().min(1).items(Joi.object().keys({
+        'name': Joi.string().when('type', {is: 'esriFieldTypeOID', then: Joi.valid('OBJECTID'), otherwise: Joi.string()}),
+        'type': Joi.string().allow('esriFieldTypeOID', 'esriFieldTypeInteger', 'esriFieldTypeDouble', 'esriFieldTypeString', 'esriFieldTypeDate'),
+        'alias': Joi.string().when('type', {is: 'esriFieldTypeOID', then: Joi.valid('OBJECTID'), otherwise: Joi.string()}),
+        'length': Joi.optional().when('type', {
+          is: Joi.string().allow('esriFieldTypeString', 'esriFieldTypeDate'),
+          then: Joi.number().integer().min(0)
+        }),
+        'defaultValue': Joi.any().valid(null),
+        'domain': Joi.any().valid(null),
+        'sqlType': Joi.string().valid('sqlTypeOther', 'sqlTypeDouble')
+      })),
+      'features': Joi.array().items(Joi.object().keys({
+        'attributes': Joi.object().keys({
+          'OBJECTID': Joi.number().integer()
+        }).unknown(),
+        'geometry': Joi.object().keys()
+      })),
+      'exceededTransferLimit': Joi.boolean()
+    })
+    Joi.validate(response, schema, {presence: 'required'}).should.have.property('error', null)
+  })
+
+  it('should return only requested "outFields" set in options', () => {
+    const response = FeatureServer.query(data, {outFields: 'OBJECTID'})
+
+    response.fields.should.have.length(1)
+    response.fields[0].should.have.property('name', 'OBJECTID')
+    Object.keys(response.features[0].attributes).should.have.length(1)
+    response.features[0].attributes.should.have.property('OBJECTID')
+    response.features[0].attributes.OBJECTID.should.be.type('number')
+  })
+
+  it('should not return geometry data when "returnGeometry" is false', () => {
+    const response = FeatureServer.query(data, {returnGeometry: false})
+    response.features[0].hasOwnProperty('geometry').should.equal(false)
+  })
+
   it('should serialize all the types correctly', () => {
     const response = FeatureServer.query(oneOfEach, {})
     response.fields[0].type.should.equal('esriFieldTypeOID')
@@ -215,6 +264,7 @@ describe('Query operatons', () => {
       response.fields[2].name.should.equal('Dept')
       response.features.length.should.equal(10)
       Object.keys(response.features[0].attributes).length.should.equal(3)
+      response.features[0].hasOwnProperty('geometry').should.equal(false)
     })
   })
 

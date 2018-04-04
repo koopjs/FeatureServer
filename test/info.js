@@ -193,7 +193,7 @@ describe('Info operations', () => {
         'typeIdField': Joi.string().allow(null),
         'fields': Joi.array().items(Joi.object().keys({
           'name': Joi.string().when('type', {is: 'esriFieldTypeOID', then: Joi.valid('OBJECTID'), otherwise: Joi.string()}),
-          'type': Joi.string(),
+          'type': Joi.string().allow('esriFieldTypeOID', 'esriFieldTypeInteger', 'esriFieldTypeDouble', 'esriFieldTypeString', 'esriFieldTypeDate'),
           'alias': Joi.string().when('type', {is: 'esriFieldTypeOID', then: Joi.valid('OBJECTID'), otherwise: Joi.string()}),
           'length': Joi.optional().when('type', {
             is: Joi.string().allow('esriFieldTypeString', 'esriFieldTypeDate'),
