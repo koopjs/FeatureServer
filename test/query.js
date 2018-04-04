@@ -24,6 +24,8 @@ describe('Query operations', () => {
     const schema = Joi.object().keys({
       'objectIdFieldName': Joi.string().valid('OBJECTID'),
       'globalIdFieldName': Joi.string().allow(''),
+      'hasZ': Joi.boolean().valid(false),
+      'hasM': Joi.boolean().valid(false),
       'geometryType': Joi.string().valid('esriGeometryPoint', 'esriGeometryLine', 'esriGeometryPolygon'),
       'spatialReference': Joi.object().keys({
         'wkid': Joi.number().integer().min(0)

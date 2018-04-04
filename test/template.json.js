@@ -12,6 +12,8 @@ describe('Template content', () => {
       const schema = Joi.object().keys({
         'objectIdFieldName': Joi.string().valid('OBJECTID'),
         'globalIdFieldName': Joi.string().valid(''),
+        'hasZ': Joi.boolean().valid(false),
+        'hasM': Joi.boolean().valid(false),
         'geometryType': Joi.string().valid('esriGeometryPoint'),
         'spatialReference': Joi.object().keys({
           'wkid': Joi.number().valid(4326)
