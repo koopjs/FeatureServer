@@ -134,10 +134,12 @@ describe('Template content', () => {
     it('should conform to the prescribed schema', () => {
       // Use Joi to build expected schema and test against JSON.
       const schema = Joi.object().keys({
+        'currentVersion': Joi.number().valid(10.51),
+        'serviceDescription': Joi.string().allow(''),
         'hasVersionedData': Joi.boolean().valid(false),
         'supportsDisconnectedEditing': Joi.boolean().valid(false),
         'supportedQueryFormats': Joi.string().valid('JSON'),
-        'maxRecordCount': Joi.integer().valid(2000),
+        'maxRecordCount': Joi.number().integer().valid(2000),
         'hasStaticData': Joi.boolean().valid(true),
         'capabilities': Joi.string().valid('Query'),
         'description': Joi.string().allow(''),
