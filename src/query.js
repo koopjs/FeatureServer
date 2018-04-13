@@ -1,4 +1,4 @@
-const Winnow = require('../../winnow/src')
+const Winnow = require('winnow')
 const Logger = require('@koopjs/logger')
 const config = require('config')
 const log = new Logger(config)
