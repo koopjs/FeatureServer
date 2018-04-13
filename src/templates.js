@@ -54,7 +54,6 @@ function renderLayer (featureCollection = {}, options = {}) {
   if (json.timeInfo) json.timeInfo = metadata.timeInfo
   if (json.maxRecordCount) json.maxRecordCount = metadata.maxRecordCount || 2000
   if (json.displayField) json.displayField = metadata.displayField || json.fields[0].name
-  if (json.objectIdField) json.objectIdField = metadata.idField || 'OBJECTID'
   if (capabilities.quantization) json.supportsCoordinatesQuantization = true
   return json
 }

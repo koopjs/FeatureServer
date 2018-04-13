@@ -1,7 +1,8 @@
 /* global describe, it */
 const Joi = require('joi')
+const _ = require('lodash')
 const FeatureServer = require('../src')
-const data = require('./fixtures/snow.json')
+const snowData = require('./fixtures/snow.json')
 const projectionApplied = require('./fixtures/projection-applied.json')
 const should = require('should') // eslint-disable-line
 const polyData = require('./fixtures/polygon.json')
@@ -14,10 +15,15 @@ const statsDateInMetaValue = require('./fixtures/stats-date-with-metadata-value.
 const oneOfEach = require('./fixtures/one-of-each.json')
 const fullySpecified = require('./fixtures/fully-specified-metadata.json')
 const offsetApplied = require('./fixtures/offset-applied.json')
-
 // const moment = require('moment')
 
 describe('Query operations', () => {
+  let data
+  beforeEach(() => {
+    // Prevent data mutation
+    data = _.cloneDeep(snowData)
+  })
+
   it('should return the expected response schema for an optionless query', () => {
     const response = FeatureServer.query(data, {})
 
@@ -55,7 +61,6 @@ describe('Query operations', () => {
 
   it('should return only requested "outFields" set in options', () => {
     const response = FeatureServer.query(data, {outFields: 'OBJECTID'})
-
     response.fields.should.have.length(1)
     response.fields[0].should.have.property('name', 'OBJECTID')
     Object.keys(response.features[0].attributes).should.have.length(1)
@@ -96,7 +101,7 @@ describe('Query operations', () => {
       const response = FeatureServer.query(data, { outSR: { latestWkid: 3857 }, limit: 1, returnGeometry: true })
       response.geometryType.should.equal('esriGeometryPoint')
       response.features.length.should.equal(1)
-      response.features[0].attributes.OBJECTID.should.equal(0)
+      response.features[0].attributes.OBJECTID.should.be.type('number')
       response.features[0].geometry.x.should.equal(-11682713.391976157)
       response.features[0].geometry.y.should.equal(4857924.005275469)
       response.spatialReference.latestWkid.should.equal(3857)
@@ -114,21 +119,21 @@ describe('Query operations', () => {
 
   describe('when getting featureserver features by id queries', function () {
     it('should return a proper features', () => {
-      const response = FeatureServer.query(data, { objectIds: '1,2,3' })
+      const response = FeatureServer.query(data, { objectIds: '793393921,637696142,1482448926' })
       response.should.be.an.instanceOf(Object)
       response.fields.should.be.an.instanceOf(Array)
       response.features.should.have.length(3)
     })
 
     it('should work with single id', () => {
-      const response = FeatureServer.query(data, { objectIds: 1 })
+      const response = FeatureServer.query(data, { objectIds: 793393921 })
       response.should.be.an.instanceOf(Object)
       response.fields.should.be.an.instanceOf(Array)
       response.features.should.have.length(1)
     })
 
     it('should return only count of features', () => {
-      const response = FeatureServer.query(data, { returnCountOnly: true, objectIds: '1,2,3' })
+      const response = FeatureServer.query(data, { returnCountOnly: true, objectIds: '793393921,637696142,1482448926' })
       response.should.be.an.instanceOf(Object)
       response.should.have.property('count')
       response.count.should.equal(3)
@@ -144,9 +149,10 @@ describe('Query operations', () => {
 
   describe('when getting features with returnIdsOnly', function () {
     it('should return only ids of features', () => {
-      const response = FeatureServer.query(data, { returnIdsOnly: true, objectIds: '1,2,3' })
+      const response = FeatureServer.query(data, { returnIdsOnly: true, objectIds: '793393921,637696142,1482448926' })
       response.should.be.an.instanceOf(Object)
       response.should.have.property('objectIds')
+      console.log(response.objectIds.join(','))
       response.objectIds.length.should.equal(3)
     })
   })
@@ -403,8 +409,8 @@ describe('Query operations', () => {
 
         const response = FeatureServer.query(budgetTable, options)
         response.features[0]['attributes']['Full/Part_COUNT'].should.equal(6644)
-        response.fields[0].name.should.equal('Full/Part_COUNT')
-        response.fields[1].name.should.equal('Full/Part')
+        response.fields.find((f) => { return f.name === 'Full/Part_COUNT' }).should.not.equal(-1)
+        response.fields.find((f) => { return f.name === 'Full/Part' }).should.not.equal(-1)
       })
     })
   })
