@@ -26,10 +26,10 @@ describe('when building esri fields', function () {
       f.should.have.property('name')
       f.should.have.property('alias')
     })
-    fields[0].type.should.equal('esriFieldTypeInteger')
-    fields[1].type.should.equal('esriFieldTypeDouble')
-    fields[2].type.should.equal('esriFieldTypeString')
-    fields[3].type.should.equal('esriFieldTypeDate')
+    fields.find((f) => { return f.name === 'propInt' }).type.should.equal('esriFieldTypeInteger')
+    fields.find((f) => { return f.name === 'propFloat' }).type.should.equal('esriFieldTypeDouble')
+    fields.find((f) => { return f.name === 'propString' }).type.should.equal('esriFieldTypeString')
+    fields.find((f) => { return f.name === 'propDate' }).type.should.equal('esriFieldTypeDate')
   })
 
   describe('proper dates get through, improper dates fail', () => {
@@ -42,9 +42,9 @@ describe('when building esri fields', function () {
     const fields = fieldObj.fields
 
     it('Should not allow improper date formats through', () => {
-      fields[0].type.should.equal('esriFieldTypeDate')
-      fields[1].type.should.equal('esriFieldTypeString')
-      fields[2].type.should.equal('esriFieldTypeString')
+      fields.find((f) => { return f.name === 'properDate' }).type.should.equal('esriFieldTypeDate')
+      fields.find((f) => { return f.name === 'improperDate1' }).type.should.equal('esriFieldTypeString')
+      fields.find((f) => { return f.name === 'improperDate2' }).type.should.equal('esriFieldTypeString')
     })
   })
 })

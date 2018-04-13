@@ -17,36 +17,45 @@ const templates = {
 
 // TODO this should be the only exported function
 function computeFieldObject (data, template, options = {}) {
-  let oid = false
   const metadata = data.metadata || {}
   let metadataFields = metadata.fields
 
-  if (!metadataFields && data.statistics) return computeFieldsFromProperties(data.statistics[0], template, options).fields
+  if (!metadataFields && data.statistics) return computeFieldsFromProperties(data.statistics[0], template, metadata.idField, options).fields
   else if (!metadataFields) return computeAggFieldObject(data, template, options)
 
+  // Handle non-wildcarded outFields
   if (options.outFields && options.outFields !== '*') {
     const outFields = options.outFields.split(/\s*,\s*/)
     metadataFields = metadata.fields.filter(field => {
       if (outFields.indexOf(field.name) > -1) return field
     })
   }
+  // Create the fields array based on requested fields
   const fields = metadataFields.map(field => {
-    let type
+    let type = fieldMap[field.type.toLowerCase()] || field.type
+    let name = field.name
+    let alias = field.alias || field.name
+
+    // If this field is the provider's idField, make it the OBJECTID field
     if (field.name === metadata.idField || field.name.toLowerCase() === 'objectid') {
+      name = 'OBJECTID'
       type = 'esriFieldTypeOID'
-      oid = true
+      alias = 'OBJECTID'
     }
+    // Get the template JSON for the field object
     const template = _.cloneDeep(templates.field)
-    type = type || fieldMap[field.type.toLowerCase()] || field.type
+    // Overwrite field-specific template properties
     return Object.assign({}, template, {
-      name: field.name,
+      name,
       type,
-      alias: field.alias || field.name,
+      alias,
       // Add length property for strings and dates
       length: (type === 'esriFieldTypeString') ? 128 : (type === 'esriFieldTypeDate') ? 36 : undefined
     })
   })
-  if (!oid) fields.push(templates.objectIDField)
+
+  // If there is no metadata.idField, then an OBJECTID field hasn't yet been created. Add one here.
+  if (!fields.find(field => field.name === 'OBJECTID')) fields.push(templates.objectIDField)
 
   // Ensure the OBJECTID field is first in the array
   fields.unshift(fields.splice(fields.findIndex(field => field.name === 'OBJECTID'), 1)[0])
@@ -65,13 +74,23 @@ const DATE_FORMATS = [moment.ISO_8601]
  * @param  {object} options
  * @return {object} fields
  */
-function computeFieldsFromProperties (props, template, options = {}) {
+function computeFieldsFromProperties (props, template, idField = null, options = {}) {
   const fields = Object.keys(props).map((key, i) => {
-    const type = fieldType(props[key])
+    let name = key
+    let type = fieldType(props[key])
+    let alias = key
+
+    // Create OBJECTID-specific property values if this key is the idField
+    if (key === idField) {
+      name = 'OBJECTID'
+      type = 'esriFieldTypeOID'
+      alias = 'OBJECTID'
+    }
+
     const field = {
-      name: key,
+      name,
       type,
-      alias: key,
+      alias,
       defaultValue: null,
       domain: null,
       editable: false,
@@ -85,8 +104,8 @@ function computeFieldsFromProperties (props, template, options = {}) {
     return field
   })
 
-  // Add OBJECTID field if not yet there
-  if (template === 'layer' && Object.keys(props).indexOf('OBJECTID') < 0) {
+  // Add OBJECTID field object if one was not created using an assiged idField
+  if (template === 'layer' && !fields.find(field => field.name === 'OBJECTID')) {
     fields.push({
       name: 'OBJECTID',
       type: 'esriFieldTypeOID',
@@ -97,10 +116,10 @@ function computeFieldsFromProperties (props, template, options = {}) {
       nullable: false,
       sqlType: 'sqlTypeOther'
     })
-
-    // Ensure OBJECTID is first in the array
-    fields.unshift(fields.splice(fields.findIndex(field => field.name === 'OBJECTID'), 1)[0])
   }
+
+  // Ensure OBJECTID is first object in the array
+  fields.unshift(fields.splice(fields.findIndex(field => field.name === 'OBJECTID'), 1)[0])
 
   return { oidField: 'OBJECTID', fields }
 }
@@ -136,6 +155,7 @@ function isInt (value) {
 function computeAggFieldObject (data, template, options = {}) {
   const feature = data.features && data.features[0]
   const properties = feature ? feature.properties || feature.attributes : options.attributeSample
-  if (properties) return computeFieldsFromProperties(properties, template, options).fields
+  const idField = data.metadata && data.metadata.idField
+  if (properties) return computeFieldsFromProperties(properties, template, idField, options).fields
   else return []
 }
