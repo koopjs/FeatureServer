@@ -1,4 +1,7 @@
 const Winnow = require('winnow')
+const Logger = require('@koopjs/logger')
+const config = require('config')
+const log = new Logger(config)
 const { renderFeatures, renderStatistics, renderStats } = require('./templates')
 const Utils = require('./utils')
 const _ = require('lodash')
@@ -16,6 +19,8 @@ function query (data, params = {}) {
   // TODO clean up this series of if statements
   const filtersApplied = data.filtersApplied || {}
   const options = _.cloneDeep(params)
+  const hasIdField = _.has(data, 'metadata.idField')
+
   if (filtersApplied.projection) delete options.outSR
   if (filtersApplied.geometry) delete options.geometry
   if (filtersApplied.where || options.where === '1=1') delete options.where
@@ -29,6 +34,12 @@ function query (data, params = {}) {
 
   if (options.f !== 'geojson') options.toEsri = true
   const queriedData = filtersApplied.all ? data : Winnow.query(data, options)
+
+  // ArcGIS client warnings
+  if (options.toEsri) {
+    if (!hasIdField) log.warn(`The requested provider has no "idField" assignment. This can cause errors in ArcGIS clients`)
+    else if (data.metadata.idField.toLowerCase() === 'objectid' && data.metadata.idField !== 'OBJECTID') { log.warn(`The requested provider's "idField" is a mixed-case version of "OBJECTID". This can cause errors in ArcGIS clients`) } else if (queriedData.features.some(feature => { return !Number.isInteger(feature.attributes.OBJECTID) || feature.attributes.isArrayOBJECTID > 2147483647 })) { log.warn(`OBJECTIDs created from provider's "idField" are not integers from 0 to 2147483647`) }
+  }
 
   if (params.f === 'geojson') return { type: 'FeatureCollection', features: queriedData.features }
   else return geoservicesPostQuery(data, queriedData, params)
