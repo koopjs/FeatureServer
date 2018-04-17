@@ -296,14 +296,14 @@ describe('Info operations', () => {
     it('should override the default true value of "hasStaticData" when set in metadata', () => {
       const input = {
         metadata: {
-          hasStaticData: false,
+          hasStaticData: true,
           geometryType: 'Polygon',
           extent: [[11, 12], [13, 14]],
           fields: [{ name: 'test', type: 'integer' }]
         }
       }
       const layer = FeatureServer.layerInfo(input, {})
-      layer.hasStaticData.should.equal(false)
+      layer.hasStaticData.should.equal(true)
     })
   })
 

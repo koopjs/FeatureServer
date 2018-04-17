@@ -110,7 +110,7 @@ describe('Template content', () => {
         'globalIdField': Joi.string().valid(''),
         'types': Joi.array().min(0),
         'templates': Joi.array().min(0),
-        'hasStaticData': Joi.boolean().valid(true),
+        'hasStaticData': Joi.boolean().valid(false),
         'timeInfo': Joi.object().keys({})
       })
       Joi.validate(layerJson, schema, {presence: 'required'}).should.have.property('error', null)
@@ -142,7 +142,7 @@ describe('Template content', () => {
         'supportsDisconnectedEditing': Joi.boolean().valid(false),
         'supportedQueryFormats': Joi.string().valid('JSON'),
         'maxRecordCount': Joi.number().integer().valid(2000),
-        'hasStaticData': Joi.boolean().valid(true),
+        'hasStaticData': Joi.boolean().valid(false),
         'capabilities': Joi.string().valid('Query'),
         'description': Joi.string().allow(''),
         'copyrightText': Joi.string().allow(''),
