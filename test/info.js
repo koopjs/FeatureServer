@@ -239,7 +239,7 @@ describe('Info operations', () => {
         'globalIdField': Joi.string().allow(''),
         'types': Joi.array(),
         'templates': Joi.array(),
-        'hasStaticData': Joi.boolean().valid(true),
+        'hasStaticData': Joi.boolean().valid(false),
         'timeInfo': Joi.object().optional()
       })
       Joi.validate(layers.layers[0], schema, {presence: 'required'}).should.have.property('error', null)
