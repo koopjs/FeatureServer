@@ -74,7 +74,7 @@ const DATE_FORMATS = [moment.ISO_8601]
  * @param  {object} options
  * @return {object} fields
  */
-function computeFieldsFromProperties (props, template, metadataIdField, options = {}) {
+function computeFieldsFromProperties (props, template, options = {}) {
   // Loop through the properties and construct an array of field objects
   const fields = Object.keys(props).map((key, i) => {
     const type = fieldType(props[key])
@@ -135,7 +135,6 @@ function isInt (value) {
 function computeAggFieldObject (data, template, options = {}) {
   const feature = data.features && data.features[0]
   const properties = feature ? feature.properties || feature.attributes : options.attributeSample
-  const idField = data.metadata && data.metadata.idField
-  if (properties) return computeFieldsFromProperties(properties, template, idField, options).fields
+  if (properties) return computeFieldsFromProperties(properties, template, options).fields
   else return []
 }
