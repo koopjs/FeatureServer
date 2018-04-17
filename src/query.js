@@ -36,7 +36,7 @@ function query (data, params = {}) {
 
 function geoservicesPostQuery (data, queriedData, params) {
   // options.objectIds works alongside returnCountOnly but not statistics
-  const oidField = (data.metadata && data.metadata.idField) || 'OBJECTID'
+  const oidField = 'OBJECTID'
   if (params.objectIds && !params.outStatistics) {
     let oids
 
@@ -69,7 +69,7 @@ function geoservicesPostQuery (data, queriedData, params) {
 }
 
 function idsOnly (data, options = {}) {
-  const oidField = options.idField || 'OBJECTID'
+  const oidField = 'OBJECTID'
   return data.features.reduce(
     (resp, f) => {
       resp.objectIds.push(f.attributes[oidField])
