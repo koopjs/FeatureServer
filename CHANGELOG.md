@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+### Fixed
+* default to templated value of display field if not provided in metadata and an `empty` fields array
+
 ## [2.11.0] - 04-16-2018
 ### Added
 * provider attributes referenced by metadata `idField` are maintained as separate field in addition to OBJECTID when creating ESRI json
