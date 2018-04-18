@@ -6,6 +6,9 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 * default to templated value of display field if not provided in metadata and an `empty` fields array
 
+### Added
+* if request includes `returnGeometry=false` and `outSR=<EPSG>`, delete the `outSR` param since no geometry will be present to reproject
+
 ## [2.11.0] - 04-16-2018
 ### Added
 * provider attributes referenced by metadata `idField` are maintained as separate field in addition to OBJECTID when creating ESRI json
