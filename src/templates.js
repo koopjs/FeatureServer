@@ -5,12 +5,13 @@ const { computeFieldObject, createFieldAliases, createStatFields } = require('./
 const { computeSpatialReference, computeExtent } = require('./geometry')
 const { createClassBreakInfos, createUniqueValueInfos } = require('./generateRenderer/createClassificationInfos')
 
-module.exports = { renderLayer, renderFeatures, renderStatistics, renderServer, renderStats, renderClassBreaks, renderUniqueValue }
+module.exports = { renderRestInfo, renderLayer, renderFeatures, renderStatistics, renderServer, renderStats, renderClassBreaks, renderUniqueValue }
 
 const templates = {
   layer: require('../templates/layer.json'),
   features: require('../templates/features.json'),
   statistics: require('../templates/statistics.json'),
+  restInfo: require('../templates/rest-info.json'),
   server: require('../templates/server.json'),
   field: require('../templates/field.json'),
   objectIDField: require('../templates/oid-field.json')
@@ -85,6 +86,15 @@ function renderStatistics (featureCollection = {}, options = {}) {
 
   if (json.fields) json.fields = computeFieldObject(data, 'statistics', options)
   if (json.features) json.features = data.features
+  return json
+}
+
+/**
+ * Get and return the templated rest/info response
+ * @param {*} restInfo
+ */
+function renderRestInfo () {
+  const json = _.cloneDeep(templates.restInfo)
   return json
 }
 
