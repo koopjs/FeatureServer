@@ -8,11 +8,11 @@ const { createClassBreakInfos, createUniqueValueInfos } = require('./generateRen
 module.exports = { renderRestInfo, renderLayer, renderFeatures, renderStatistics, renderServer, renderStats, renderClassBreaks, renderUniqueValue }
 
 const templates = {
-  layer: require('../templates/layer.json'),
+  layer: Object.assign(require('../templates/layer.json'), require('../templates/version.json')),
   features: require('../templates/features.json'),
   statistics: require('../templates/statistics.json'),
-  restInfo: require('../templates/rest-info.json'),
-  server: require('../templates/server.json'),
+  restInfo: Object.assign(require('../templates/rest-info.json'), require('../templates/version.json')),
+  server: Object.assign(require('../templates/server.json'), require('../templates/version.json')),
   field: require('../templates/field.json'),
   objectIDField: require('../templates/oid-field.json')
 }
