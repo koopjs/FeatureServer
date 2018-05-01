@@ -5,6 +5,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ## Unreleased
 ### Added
 * support the `/rest/info` route
+* warnings when `fields` set in provider's metadata don't match name/type of fields found in feature properties
+* support for setting the length of string and date fields in the `fields` array of a provider's metadata , e.g `[{ name: 'Title', type: 'String', length: 50}]`
 
 ## [2.11.1] - 04-18-2018
 ### Fixed
