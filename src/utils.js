@@ -72,20 +72,22 @@ function esriTypeMap (type) {
       return 'esriFieldTypeInteger'
     case 'date':
       return 'esriFieldTypeDate'
-    case 'esrifieldtypeblob':
-    case 'esrifieldtypedate':
-    case 'esrifieldtypedouble':
-    case 'esrifieldtypegeometry':
-    case 'esrifieldtypeglobalid':
-    case 'esrifieldtypeguid':
-    case 'esrifieldtypeinteger':
-    case 'esrifieldtypeoid':
-    case 'esrifieldtyperaster':
-    case 'esrifieldtypesingle':
-    case 'esrifieldtypesmallinteger':
-    case 'esrifieldtypestring':
-    case 'esrifieldtypexml':
-      return type
+    case 'blob':
+      return 'esriFieldTypeBlob'
+    case 'geometry':
+      return 'esriFieldTypeGeometry'
+    case 'globalid':
+      return 'esriFieldTypeGlobalID'
+    case 'guid':
+      return 'esriFieldTypeGUID'
+    case 'raster':
+      return 'esriFieldTypeRaster'
+    case 'single':
+      return 'esriFieldTypeSingle'
+    case 'smallinteger':
+      return 'esriFieldTypeSmallInteger'
+    case 'xml':
+      return 'esriFieldTypeXML'
     case 'string':
     default:
       return 'esriFieldTypeString'
