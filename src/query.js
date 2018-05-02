@@ -33,14 +33,10 @@ function query (data, params = {}) {
   const queriedData = filtersApplied.all ? data : Winnow.query(data, options)
 
   // ArcGIS client warnings
-  if (options.toEsri) {
-    if (!hasIdField) console.warn(`WARNING: requested provider has no "idField" assignment. This can cause errors in ArcGIS clients`)
-    else if (data.metadata.idField.toLowerCase() === 'objectid' && data.metadata.idField !== 'OBJECTID') {
-      console.warn(`WARNING: requested provider's "idField" is a mixed-case version of "OBJECTID". This can cause errors in ArcGIS clients`)
-    }
-    if (queriedData.features && queriedData.features.some(feature => { return !Number.isInteger(feature.attributes.OBJECTID) || feature.attributes.OBJECTID > 2147483647 })) {
-      console.warn(`WARNING: OBJECTIDs created from provider's "idField" are not integers from 0 to 2147483647`)
-    }
+  if (options.toEsri && !hasIdField) {
+    console.warn(`WARNING: requested provider has no "idField" assignment. This can cause errors in ArcGIS clients`)
+  } else if (options.toEsri && data.metadata.idField.toLowerCase() === 'objectid' && data.metadata.idField !== 'OBJECTID') {
+    console.warn(`WARNING: requested provider's "idField" is a mixed-case version of "OBJECTID". This can cause errors in ArcGIS clients`)
   }
 
   // Compare provider metadata fields to feature properties
@@ -125,7 +121,7 @@ function warnOnMetadataFieldDiscrepencies (metadataFields, featureProperties) {
   })
 
   // compare metadata to feature properties; identifies fields defined in metadata that are not found in feature properties
-  // of that have a metadata type definition inconsistent with feature property's value
+  // that have a metadata type definition inconsistent with feature property's value
   metadataFields.filter(field => {
     let featureField = _.find(featureFields, ['name', field.name])
     if (!featureField || (field.type !== featureField.type && !(field.type === 'Date' && featureField.type === 'Integer') && !(field.type === 'Double' && featureField.type === 'Integer'))) {
@@ -133,7 +129,7 @@ function warnOnMetadataFieldDiscrepencies (metadataFields, featureProperties) {
     }
   })
 
-  // compare feature properties to metadata fields; identfies fields found on feature that are not defined in metadata field array
+  // compare feature properties to metadata fields; identifies fields found on feature that are not defined in metadata field array
   featureFields.filter(field => {
     if (!_.find(metadataFields, ['name', field.name])) {
       console.warn(`WARNING: requested provider's features have property "${field.name} (${field.type})" that was not defined in metadata fields array)`)

@@ -72,6 +72,21 @@ function esriTypeMap (type) {
       return 'esriFieldTypeInteger'
     case 'date':
       return 'esriFieldTypeDate'
+    case 'esrifieldtypeblob':
+    case 'esrifieldtypedate':
+    case 'esrifieldtypedouble':
+    case 'esrifieldtypegeometry':
+    case 'esrifieldtypeglobalid':
+    case 'esrifieldtypeguid':
+    case 'esrifieldtypeinteger':
+    case 'esrifieldtypeoid':
+    case 'esrifieldtyperaster':
+    case 'esrifieldtypesingle':
+    case 'esrifieldtypesmallinteger':
+    case 'esrifieldtypestring':
+    case 'esrifieldtypexml':
+      return type
+    case 'string':
     default:
       return 'esriFieldTypeString'
   }
