@@ -6,11 +6,11 @@ module.exports = { restInfo, serverInfo, layerInfo, layersInfo }
 
 /**
  * Pass on request for rest/info to rendering function
- * @param {object} data 
+ * @param {object} dataSourceRestInfo rest-info object that will supplement/override templated rest/info response
  * return JSON response
  */
-function restInfo (data) {
-  return renderRestInfo(data.metadata)
+function restInfo (dataSourceRestInfo) {
+  return renderRestInfo(dataSourceRestInfo)
 }
 
 function serverInfo (server, params = {}) {

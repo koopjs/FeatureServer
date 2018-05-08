@@ -89,11 +89,11 @@ function renderStatistics (featureCollection = {}, options = {}) {
 }
 
 /**
- * Get the templated rest/info response and overwrite with any provider-specific metadata
- * @param {*} restInfo
+ * Get the templated rest/info response and supplement/overwrite with any provider-specific metadata
+ * @param {object} dataSourceRestInfo
  */
-function renderRestInfo (metadata = {}) {
-  const json = Object.assign(_.cloneDeep(templates.restInfo), metadata)
+function renderRestInfo (dataSourceRestInfo = {}) {
+  const json = Object.assign(_.cloneDeep(templates.restInfo), dataSourceRestInfo)
   return json
 }
 
