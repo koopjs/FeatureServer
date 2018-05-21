@@ -4,7 +4,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 ### Added
-* Add response handlers for authentication and authorization errors
+* Add response handlers for authentication success and authentication/authorization errors
 
 ## [2.13.0] - 05-10-2018
 ### Added
