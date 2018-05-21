@@ -344,6 +344,29 @@ Output:
   ]
 ```
 
+### FeatureServer.error.authorize
+Pass in an outgoing response object and this function will route and return the following authorization error:
+
+    {
+      "error": {
+        "code": 499,
+        "message": "Token Required",
+        "details": []
+      }
+    }
+
+### FeatureServer.error.authenticate
+Pass in an outgoing response object and this function will route and return the following authentication error:
+
+    {
+      "error": {
+        "code": 400,
+        "message": "Unable to generate token.",
+        "details": ["Invalid username or password."]
+      }
+    }
+
+
 [npm-image]: https://img.shields.io/npm/v/featureserver.svg?style=flat-square
 [npm-url]: https://www.npmjs.com/package/featureserver
 [travis-image]: https://img.shields.io/travis/koopjs/FeatureServer.svg?style=flat-square
