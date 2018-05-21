@@ -343,9 +343,33 @@ Output:
    ...
   ]
 ```
+### FeatureServer.authenticate
+Pass in an outgoing response object and an authentication success object and this function will route and return a formatted authentication success response.
+
+    FeatureServer.authenticate(res, auth, ssl = false)
+
+* `auth` is the result of a successful authentication attempt that returns a token and expiration time
+* `ssl` is a boolean flag indicating if token should always be passed back via HTTPS. Defaults to `false`
+
+e.g.,
+    
+    const auth = {
+      "token":"elS39KU4bMmZQgMXDuswgA14vavIp4mfpiqcWSr0qM6q4dFguTnnHddWqbpK5Mc3HsCN8XghlwawUUYApOOcxKNyg_9WqTofChJXxxD058_rL1HZkM5PDhUOh9YYQn1K",
+      "expires":1524508236322
+    }
+
+    FeatureServer.authenticate(res, auth)
+
+    {
+      "token":"elS39KU4bMmZQgMXDuswgA14vavIp4mfpiqcWSr0qM6q4dFguTnnHddWqbpK5Mc3HsCN8XghlwawUUYApOOcxKNyg_9WqTofChJXxxD058_rL1HZkM5PDhUOh9YYQn1K",
+      "expires":1524508236322,
+      ssl: false
+    }
 
 ### FeatureServer.error.authorize
-Pass in an outgoing response object and this function will route and return the following authorization error:
+Pass in an outgoing response object and this function will route and return a formattted authorization error.
+
+    FeatureServer.error.authorize(res)
 
     {
       "error": {
@@ -356,8 +380,10 @@ Pass in an outgoing response object and this function will route and return the 
     }
 
 ### FeatureServer.error.authenticate
-Pass in an outgoing response object and this function will route and return the following authentication error:
+Pass in an outgoing response object and this function will route and return a formatted authentication error.
 
+    FeatureServer.error.authenticate(res)
+    
     {
       "error": {
         "code": 400,
