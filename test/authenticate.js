@@ -1,5 +1,5 @@
 const should = require('should') // eslint-disable-line
-const authentication = require('../src/authenticate')
+const { authenticate } = require('../src')
 
 describe('Authentication handler', () => {
   it('should return a status code 200 and token payload', () => {
@@ -18,7 +18,7 @@ describe('Authentication handler', () => {
       token: 'a-mocked-token-response',
       expires: 100000000
     }
-    authentication(res, mockAuthSuccess)
+    authenticate(res, mockAuthSuccess)
     statusCode.should.equal(200)
     responsePayload.should.be.instanceOf(Object)
     responsePayload.should.have.property('token', 'a-mocked-token-response')
@@ -42,7 +42,7 @@ describe('Authentication handler', () => {
       token: 'a-mocked-token-response',
       expires: 100000000
     }
-    authentication(res, mockAuthSuccess, true)
+    authenticate(res, mockAuthSuccess, true)
     statusCode.should.equal(200)
     responsePayload.should.be.instanceOf(Object)
     responsePayload.should.have.property('token', 'a-mocked-token-response')

@@ -1,5 +1,5 @@
 const should = require('should') // eslint-disable-line
-const error = require('../src/error')
+const { error } = require('../src')
 
 describe('Error operations', () => {
   describe('authentication error', () => {

@@ -8,5 +8,6 @@ module.exports = {
   layersInfo: info.layersInfo,
   query: require('./query.js'),
   generateRenderer: require('./generateRenderer'),
-  error: require('./error')
+  error: require('./error'),
+  authenticate: require('./authenticate')
 }
