@@ -2,6 +2,16 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+### Fixed
+* Authentication and authorization error messages now properly handled if request has `callback` query parameter
+* 
+
+### Added
+* Helper function to handle all success responses, with or without `callback` query parameter
+* `currentVersion: 10.61` to info responses
+* `fullVersion: "10.6.1"` to info responses
+
 ## [2.14.1] - 05-22-2018
 ### Fixed
 * Version bump due to NPM's inability to resolve last publish
