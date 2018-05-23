@@ -1,6 +1,7 @@
 const FsInfo = require('./info.js')
 const FsQuery = require('./query.js')
 const FsGenerateRenderer = require('./generateRenderer')
+const helpers = require('./helpers')
 
 module.exports = route
 
@@ -22,11 +23,6 @@ function route (req, res, geojson, options) {
   Object.keys(req.query).forEach(key => {
     req.query[key] = tryParse(req.query[key])
   })
-
-  if (req.query.callback) {
-    req.query.callback = sanitizeCallback(req.query.callback)
-    res.set('Content-Type', 'application/javascript')
-  }
 
   if (isNaN(req.query.limit)) req.query.limit = metadata.maxRecordCount || 2000
 
@@ -50,8 +46,7 @@ function execQuery (req, res, geojson, options) {
     if (process.env.NODE_ENV === 'test') console.trace(e)
     return res.status(e.code || 500).json({ error: e.message })
   }
-  if (req.query.callback) res.send(`${req.query.callback}(${JSON.stringify(response)})`)
-  else res.status(200).json(response)
+  helpers.responseHandler(req, res, 200, response)
 }
 
 function execGenerateRenderer (req, res, geojson, options) {
@@ -62,8 +57,7 @@ function execGenerateRenderer (req, res, geojson, options) {
     if (process.env.NODE_ENV === 'test') console.trace(e)
     return res.status(e.code || 500).json({ error: e.message })
   }
-  if (req.query.callback) res.send(`${req.query.callback}(${JSON.stringify(response)})`)
-  else res.status(200).json(response)
+  helpers.responseHandler(req, res, 200, response)
 }
 
 function execInfo (req, res, method, geojson) {
@@ -87,12 +81,7 @@ function execInfo (req, res, method, geojson) {
     if (process.env.NODE_ENV === 'test') console.trace(e)
     return res.status(e.code || 500).json({ error: e.message })
   }
-  if (req.query.callback) res.send(`${req.query.callback}(${JSON.stringify(info)})`)
-  else res.status(200).json(info)
-}
-
-function sanitizeCallback (callback) {
-  return callback.replace(/[^\w\d\.\(\)\[\]]/g, '') // eslint-disable-line
+  helpers.responseHandler(req, res, 200, info)
 }
 
 function tryParse (json) {
