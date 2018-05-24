@@ -66,19 +66,19 @@ function execInfo (req, res, method, geojson) {
   try {
     if (/\/rest\/info$/i.test(url)) {
       info = FsInfo.restInfo(geojson)
-    } else if (/\/MapServer$/i.test(url) || /\/MapServer$/i.test(url) || /\/MapServer\/\d+$/i.test(url)) {
-      const error = new Error('Not Found')
-      error.code = 404
-      throw error
     } else if (/\/FeatureServer$/i.test(url)) {
       info = FsInfo.serverInfo(geojson, req.params)
     } else if (/\/FeatureServer\/\d+$/i.test(url)) {
       info = FsInfo.layerInfo(geojson, req.params)
     } else if (/\/FeatureServer\/layers$/i.test(url)) {
       info = FsInfo.layersInfo(geojson, req.query)
-    } else {
+    } else if (/\/FeatureServer/i.test(url)) {
       const error = new Error('Method not supported')
       error.code = 400
+      throw error
+    } else {
+      const error = new Error('Not Found')
+      error.code = 404
       throw error
     }
   } catch (e) {
