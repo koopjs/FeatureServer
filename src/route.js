@@ -44,7 +44,7 @@ function execQuery (req, res, geojson, options) {
     response = FsQuery(geojson, req.query || {})
   } catch (e) {
     if (process.env.NODE_ENV === 'test') console.trace(e)
-    return res.status(e.code || 500).json({ error: e.message })
+    return helpers.responseHandler(req, res, (e.code || 500), { error: e.message })
   }
   helpers.responseHandler(req, res, 200, response)
 }
@@ -55,7 +55,7 @@ function execGenerateRenderer (req, res, geojson, options) {
     response = FsGenerateRenderer(geojson, req.query || {})
   } catch (e) {
     if (process.env.NODE_ENV === 'test') console.trace(e)
-    return res.status(e.code || 500).json({ error: e.message })
+    return helpers.responseHandler(req, res, (e.code || 500), { error: e.message })
   }
   helpers.responseHandler(req, res, 200, response)
 }
@@ -66,6 +66,10 @@ function execInfo (req, res, method, geojson) {
   try {
     if (/\/rest\/info$/i.test(url)) {
       info = FsInfo.restInfo(geojson)
+    } else if (/\/MapServer$/i.test(url) || /\/MapServer$/i.test(url) || /\/MapServer\/\d+$/i.test(url)) {
+      const error = new Error('Not Found')
+      error.code = 404
+      throw error
     } else if (/\/FeatureServer$/i.test(url)) {
       info = FsInfo.serverInfo(geojson, req.params)
     } else if (/\/FeatureServer\/\d+$/i.test(url)) {
@@ -79,7 +83,7 @@ function execInfo (req, res, method, geojson) {
     }
   } catch (e) {
     if (process.env.NODE_ENV === 'test') console.trace(e)
-    return res.status(e.code || 500).json({ error: e.message })
+    return helpers.responseHandler(req, res, (e.code || 500), { error: e.message })
   }
   helpers.responseHandler(req, res, 200, info)
 }
