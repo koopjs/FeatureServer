@@ -16,11 +16,11 @@ module.exports = route
  */
 function route (req, res, geojson, options) {
   // Check for valid GeoJSON and warn if not found (non-production environments)
-  if(process.env.NODE_ENV !== 'production') {
+  if (process.env.NODE_ENV !== 'production') {
     let geojsonErrors = geojsonhint.hint(geojson)
-    if (geojsonErrors.length > 0) console.log(`\nWARNING: Source data for ${req.path} is invalid GeoJSON:\n ${geojsonErrors.map((err, i) => `\t ${i+1}) ${geojsonErrors[0].message}\n`)}`)
+    if (geojsonErrors.length > 0) console.log(`\nWARNING: Source data for ${req.path} is invalid GeoJSON:\n ${geojsonErrors.map((err, i) => `\t ${i + 1}) ${err.message}\n`)}`)
   }
-  
+
   req.query = req.query || {}
   req.query = coerceQuery(req.query)
   req.params = req.params || {}
