@@ -15,8 +15,6 @@ const oneOfEach = require('./fixtures/one-of-each.json')
 const fullySpecified = require('./fixtures/fully-specified-metadata.json')
 const offsetApplied = require('./fixtures/offset-applied.json')
 
-// const moment = require('moment')
-
 describe('Query operations', () => {
   it('should return the expected response schema for an optionless query', () => {
     const response = FeatureServer.query(data, {})
