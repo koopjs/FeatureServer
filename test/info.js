@@ -385,7 +385,7 @@ describe('Info operations', () => {
     })
 
     it('should use capabilities found in GeoJSON', () => {
-      data.capabilities = { extract: true, quantization: true}
+      data.capabilities = { extract: true, quantization: true }
       const service = FeatureServer.layerInfo(data, {})
       service.supportsCoordinatesQuantization.should.equal(true)
       service.capabilities.should.equal('Query,Extract')
