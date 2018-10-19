@@ -31,7 +31,7 @@ function route (req, res, geojson, options) {
     req.query[key] = tryParse(req.query[key])
   })
 
-  if (isNaN(req.query.limit)) req.query.limit = metadata.maxRecordCount || 2000
+  if (isNaN(req.query.limit)) req.query.limit = req.query.resultRecordCount || metadata.maxRecordCount || 2000
 
   // if this is for a method we can handle like query
   const method = req.params && req.params.method
