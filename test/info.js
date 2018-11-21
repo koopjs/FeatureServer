@@ -353,7 +353,6 @@ describe('Info operations', () => {
     it('should assign field length from metadata', () => {
       const input = {
         metadata: {
-          idField: 'test',
           geometryType: 'Polygon',
           extent: [[11, 12], [13, 14]],
           fields: [

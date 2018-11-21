@@ -56,19 +56,19 @@ function renderLayer (data = {}, options = {}) {
   return json
 }
 
-function renderFeatures (featureCollection = {}, options = {}) {
+function renderFeatures (data = {}, options = {}) {
   const json = _.cloneDeep(templates.features)
-  if (!json) throw new Error('Unsupported operation')
-  const data = featureCollection
   const metadata = data.metadata || {}
-  const maxRecordCount = metadata.maxRecordCount || 2000
 
-  if (json.geometryType) json.geometryType = options.geometryType
-  if (json.spatialReference) json.spatialReference = computeSpatialReference(options.spatialReference)
-  if (json.fields) json.fields = computeFieldObject(data, 'query', options)
-  if (json.features) json.features = data.features
+  json.geometryType = options.geometryType
+  json.spatialReference = computeSpatialReference(options.spatialReference)
+  json.fields = computeFieldObject(data, 'query', options)
+  json.features = data.features || []
+
+  const maxRecordCount = metadata.maxRecordCount || 2000
   if (metadata.limitExceeded && (options.limit >= maxRecordCount)) json.exceededTransferLimit = true
   if (metadata.transform) json.transform = metadata.transform
+  if (metadata.idField) json.objectIdFieldName = metadata.idField
 
   return json
 }
