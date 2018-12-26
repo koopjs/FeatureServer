@@ -75,7 +75,7 @@ function renderFeatures (data = {}, options = {}) {
   json.features = data.features || []
 
   const maxRecordCount = metadata.maxRecordCount || 2000
-  if (metadata.limitExceeded && (options.limit >= maxRecordCount)) json.exceededTransferLimit = true
+  if (metadata.limitExceeded) json.exceededTransferLimit = true
   if (metadata.transform) json.transform = metadata.transform
   if (metadata.idField) {
     json.objectIdFieldName = metadata.idField
