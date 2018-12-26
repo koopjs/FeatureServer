@@ -74,7 +74,6 @@ function renderFeatures (data = {}, options = {}) {
   json.fields = computeFieldObject(data, 'query', options)
   json.features = data.features || []
 
-  const maxRecordCount = metadata.maxRecordCount || 2000
   if (metadata.limitExceeded) json.exceededTransferLimit = true
   if (metadata.transform) json.transform = metadata.transform
   if (metadata.idField) {
