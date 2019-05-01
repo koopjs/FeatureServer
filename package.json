@@ -1,6 +1,6 @@
 {
   "name": "featureserver",
-  "version": "2.16.4",
+  "version": "2.17.0",
   "description": "*An open source implementation of the GeoServices specification*",
   "main": "dist/index.js",
   "directories": {
@@ -16,6 +16,7 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@mapbox/geojsonhint": "^3.0.0",
+    "chalk": "^2.4.2",
     "chroma-js": "^2.0.0",
     "classybrew": "0.0.3",
     "esri-extent": "^1.1.1",

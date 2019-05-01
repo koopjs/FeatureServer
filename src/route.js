@@ -1,4 +1,5 @@
 const geojsonhint = require('@mapbox/geojsonhint')
+const chalk = require('chalk')
 const FsInfo = require('./info.js')
 const FsQuery = require('./query.js')
 const FsGenerateRenderer = require('./generateRenderer')
@@ -18,7 +19,7 @@ function route (req, res, geojson, options) {
   // Check for valid GeoJSON and warn if not found (non-production environments)
   if (process.env.NODE_ENV !== 'production' && process.env.KOOP_WARNINGS !== 'suppress') {
     let geojsonErrors = geojsonhint.hint(geojson)
-    if (geojsonErrors.length > 0) console.log(`\nWARNING: Source data for ${req.path} is invalid GeoJSON:\n ${geojsonErrors.map((err, i) => `\t ${i + 1}) ${err.message}\n`)}`)
+    if (geojsonErrors.length > 0) console.log(chalk.yellow(`WARNING: source data for ${req.path} contains invalid GeoJSON.`))
   }
 
   req.query = req.query || {}
@@ -79,7 +80,7 @@ function execInfo (req, res, method, geojson) {
       info = FsInfo.restInfo(geojson)
     } else if (/\/FeatureServer$/i.test(url)) {
       info = FsInfo.serverInfo(geojson, req.params)
-    } else if (/\/FeatureServer\/\d+$/i.test(url)) {
+    } else if (/\/FeatureServer\/\d+$/i.test(url) || /\/FeatureServer\/\d+\/info$/i.test(url)) {
       info = FsInfo.layerInfo(geojson, req.params)
     } else if (/\/FeatureServer\/layers$/i.test(url)) {
       info = FsInfo.layersInfo(geojson, req.query)
