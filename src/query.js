@@ -1,4 +1,5 @@
 const Winnow = require('winnow')
+const esriExtent = require('esri-extent')
 const { renderFeatures, renderStatistics, renderStats } = require('./templates')
 const Utils = require('./utils')
 const _ = require('lodash')
@@ -29,7 +30,7 @@ function query (data, params = {}) {
   if (data.statistics) return renderStats(data)
   if (options.returnCountOnly && data.count !== undefined) return { count: data.count }
 
-  if (options.f !== 'geojson') options.toEsri = true
+  if (options.f !== 'geojson' && !options.returnExtentOnly) options.toEsri = true
   const queriedData = filtersApplied.all ? data : Winnow.query(data, options)
 
   // Warnings
@@ -84,8 +85,12 @@ function geoservicesPostQuery (data, queriedData, params) {
   }
 
   // Format the response according to the request parameters
-  if (params.returnCountOnly) {
+  if (params.returnCountOnly && params.returnExentOnly) {
+    return { count: queriedData.features.length, extent: esriExtent(queriedData) }
+  } else if (params.returnCountOnly) {
     return { count: queriedData.features.length }
+  }  else if (params.returnExtentOnly) {
+    return { extent: esriExtent(queriedData) }
   } else if (params.returnIdsOnly) {
     return idsOnly(queriedData, data.metadata)
   } else if (params.outStatistics) {
