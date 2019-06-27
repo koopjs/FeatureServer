@@ -85,12 +85,12 @@ function geoservicesPostQuery (data, queriedData, params) {
   }
 
   // Format the response according to the request parameters
-  if (params.returnCountOnly && params.returnExentOnly) {
+  if (params.returnCountOnly && params.returnExtentOnly) {
     return { count: queriedData.features.length, extent: esriExtent(queriedData) }
   } else if (params.returnCountOnly) {
     return { count: queriedData.features.length }
-  }  else if (params.returnExtentOnly) {
-    return { extent: esriExtent(queriedData) }
+  } else if (params.returnExtentOnly) {
+    return { extent: getExtent(queriedData, params.outSR) }
   } else if (params.returnIdsOnly) {
     return idsOnly(queriedData, data.metadata)
   } else if (params.outStatistics) {
@@ -161,4 +161,35 @@ function warnOnMetadataFieldDiscrepencies (metadataFields, featureProperties) {
       console.warn(chalk.yellow(`WARNING: requested provider's features have property "${field.name} (${field.type})" that was not defined in metadata fields array)`))
     }
   })
+}
+
+/**
+ * 
+ * @param {object} geojson
+ * @param {*} outSR Esri spatial reference object, or WKID integer
+ */
+function getExtent (geojson, outSR) {
+  // Calculate extent from object
+  const extent = esriExtent(geojson)
+  if (!outSR) return extent
+
+  // Esri extent assumes WGS84, but the data passed in may have been transformed
+  // to a different coordinate system by winnow. Math should be the same for the 
+  // output spatial references we support, but we need to alter the spatial reference
+  // property to reflect the requested outSR 
+  
+  // when outSR submitted as wkt
+  if (outSR.wkt) {
+    extent.spatialReference = {
+      wkt: outSR.wkt
+    }
+    return extent
+  }
+
+  // When submitted as a WKID
+  const wkid = outSR.latestWkid || outSR.wkid || outSR
+  if (Number.isInteger(wkid)) {
+    extent.spatialReference = { wkid }
+    return extent
+  }
 }
