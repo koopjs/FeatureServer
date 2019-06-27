@@ -460,4 +460,18 @@ describe('Query operations', () => {
       json.count.should.equal(1)
     })
   })
+
+  describe('returnExtentOnly', function () {
+    it('should return extent of features', () => {
+      const response = FeatureServer.query(data, { returnExtentOnly: true })
+      response.should.be.an.instanceOf(Object)
+      response.should.have.property('extent')
+      response.extent.should.have.property('xmin', -108.9395)
+      response.extent.should.have.property('ymin', 37.084968)
+      response.extent.should.have.property('xmax', -102)
+      response.extent.should.have.property('ymax', 40.8877)
+      response.extent.should.have.property('spatialReference')
+      response.extent.spatialReference.should.have.property('wkid', 4326)
+    })
+  })
 })
