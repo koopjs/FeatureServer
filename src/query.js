@@ -164,7 +164,7 @@ function warnOnMetadataFieldDiscrepencies (metadataFields, featureProperties) {
 }
 
 /**
- * 
+ * Get an extent object for passed GeoJSON
  * @param {object} geojson
  * @param {*} outSR Esri spatial reference object, or WKID integer
  */
@@ -174,10 +174,10 @@ function getExtent (geojson, outSR) {
   if (!outSR) return extent
 
   // Esri extent assumes WGS84, but the data passed in may have been transformed
-  // to a different coordinate system by winnow. Math should be the same for the 
+  // to a different coordinate system by winnow. Math should be the same for the
   // output spatial references we support, but we need to alter the spatial reference
-  // property to reflect the requested outSR 
-  
+  // property to reflect the requested outSR
+
   // when outSR submitted as wkt
   if (outSR.wkt) {
     extent.spatialReference = {
