@@ -228,8 +228,8 @@ describe('Info operations', () => {
       })
 
       Joi.validate(layers.layers[0], layersSchemaOverride, { presence: 'required' }).should.have.property('error', null)
+      
       layers.layers.length.should.equal(1)
-      //from the complex-metadata fixture and not defaults
       layers.layers[0].drawingInfo.renderer.symbol.color[0].should.equal(115)
       layers.layers[0].drawingInfo.renderer.symbol.color[1].should.equal(76)
       layers.layers[0].drawingInfo.renderer.symbol.color[2].should.equal(0)
