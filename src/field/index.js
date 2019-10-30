@@ -50,7 +50,7 @@ function computeFieldsCollection (data, requestContext, options = {}) {
   })
 
   // Ensure the OBJECTID field is first in the array
-  const idFieldIndex = responsefields.findIndex(field => field.type === templates.objectIDField.type);
+  const idFieldIndex = responsefields.findIndex(field => field.type === templates.objectIDField.type)
   if (idFieldIndex !== -1) {
     responsefields.unshift(responsefields.splice(idFieldIndex, 1)[0])
   }
