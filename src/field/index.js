@@ -49,7 +49,7 @@ function computeFieldsCollection (data, requestContext, options = {}) {
       domain: field.domain,
       nullable: field.nullable
     })
-  });
+  })
   // Ensure the OBJECTID field is first in the array
   responsefields.unshift(responsefields.splice(responsefields.findIndex(field => field.name === 'OBJECTID'), 1)[0])
 
@@ -91,9 +91,9 @@ function computeFieldObject (name, options = {}) {
   if (context === 'layer') {
     Object.assign(outputField, {
       editable: false,
-      domain,
-      nullable: typeof(nullable) !== 'undefined' ? nullable : false
-    });
+      domain: domain || null,
+      nullable: typeof nullable !== 'undefined' ? nullable : false
+    })
   }
 
   // Create the field object by overriding a template with field specific property values
