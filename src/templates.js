@@ -4,7 +4,7 @@ const { getExtent, getGeomType, isTable } = require('./utils')
 const { computeFieldObject, createFieldAliases, createStatFields } = require('./field')
 const { normalizeSpatialReference, computeExtent } = require('./geometry')
 const { createClassBreakInfos, createUniqueValueInfos } = require('./generateRenderer/createClassificationInfos')
-const OGC_WGS84 = 'ogc:1.3:crs84'
+const getCollectionCrs = require('./get-collection-crs')
 module.exports = { renderRestInfo, renderLayer, renderFeatures, renderStatistics, renderServer, renderStats, renderClassBreaks, renderUniqueValue }
 
 const templates = {
@@ -196,18 +196,4 @@ function getOutputSpatialReference (collection, {
   }
 
   return { wkt }
-}
-
-function getCollectionCrs (collection) {
-  const collectionCrs = _.get(collection, 'crs.properties.name')
-  if (!collectionCrs) return
-
-  const crs = collectionCrs.toLowerCase().replace(/urn:ogc:def:crs:/, '')
-  if (crs === OGC_WGS84) return
-
-  const crsRegex = /(?<authority>[a-z]+)(::|:)(?<srid>.+)/
-  const result = crsRegex.exec(crs)
-  if (!result) return
-  const { groups: { srid } } = result
-  return srid
 }
