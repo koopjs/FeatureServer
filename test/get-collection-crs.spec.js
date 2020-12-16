@@ -36,6 +36,4 @@ describe('get-collection-crs', () => {
     const crs = getCollectionCrs({ crs: { properties: { name: 'urn:ogc:def:crs:EPSG::2285' } } })
     should(crs).equal('2285')
   })
-
 })
-
