@@ -73,7 +73,7 @@ describe('Query operations', () => {
 
   describe('when using an outSR', function () {
     it('should translate the data properly', function () {
-      const response = FeatureServer.query(data, { outSR: { latestWkid: 3857 }, limit: 1, returnGeometry: true })
+      const response = FeatureServer.query(data, { outSR: { latestWkid: 102100 }, limit: 1, returnGeometry: true })
       response.geometryType.should.equal('esriGeometryPoint')
       response.features.length.should.equal(1)
       response.features[0].attributes.OBJECTID.should.equal(this.objectIds[0])
