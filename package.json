@@ -7,7 +7,7 @@
     "test": "test"
   },
   "scripts": {
-    "test": "standard && mocha test --recursive -t 5000",
+    "test": "standard && mocha test/**/*.spec.js --recursive -t 5000",
     "fix": "standard --fix"
   },
   "contributors": [
