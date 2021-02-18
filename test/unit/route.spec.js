@@ -154,7 +154,7 @@ describe('Route module unit tests', () => {
       querySpy.calledOnce.should.equal(true)
       querySpy.firstCall.args.should.deepEqual([{
         metadata: { maxRecordCount: 2000 }
-      },{
+      }, {
         limit: 2000
       }])
       responseHandlerSpy.calledOnce.should.equal(true)
