@@ -86,7 +86,7 @@ describe('server info', () => {
       layers: [],
       tables: [{
         id: 0,
-        name: 'Layer_0',
+        name: 'Table_0',
         parentLayerId: -1,
         defaultVisibility: true,
         subLayerIds: null,
@@ -126,6 +126,7 @@ describe('server info', () => {
     getCollectionCrs.firstCall.args.should.deepEqual([simpleCollectionFixture])
     getGeometryTypeFromGeojson.calledOnce.should.equal(true)
     getGeometryTypeFromGeojson.firstCall.args.should.deepEqual([simpleCollectionFixture])
+    getGeometryTypeFromGeojson.firstCall.args.should.deepEqual([simpleCollectionFixture])
 
     serverInfo.should.deepEqual({
       foo: 'bar',
@@ -138,7 +139,7 @@ describe('server info', () => {
       layers: [],
       tables: [{
         id: 0,
-        name: 'Layer_0',
+        name: 'Table_0',
         parentLayerId: -1,
         defaultVisibility: true,
         subLayerIds: null,
@@ -177,7 +178,7 @@ describe('server info', () => {
     normalizeExtent.notCalled.should.equal(true)
     getCollectionCrs.calledOnce.should.equal(true)
     getCollectionCrs.firstCall.args.should.deepEqual([simpleCollectionFixture])
-    getGeometryTypeFromGeojson.calledOnce.should.equal(true)
+    getGeometryTypeFromGeojson.calledTwice.should.equal(true)
     getGeometryTypeFromGeojson.firstCall.args.should.deepEqual([simpleCollectionFixture])
     normalizeSpatialReference.calledOnce.should.equal(true)
     normalizeSpatialReference.firstCall.args.should.deepEqual([4326])
@@ -227,7 +228,10 @@ describe('server info', () => {
 
   it('metadata object input should generate layers, extent, spatialReference', () => {
     const getCollectionCrs = sinon.spy(function () { return 4326 })
-    const getGeometryTypeFromGeojson = sinon.spy(function () { return 'esriGeometryPoint' })
+    const getGeometryTypeFromGeojson = sinon.spy(function () {
+      if (getGeometryTypeFromGeojson.callCount === 3 || getGeometryTypeFromGeojson.callCount === 6) return
+      return 'esriGeometryPoint'
+    })
     const normalizeSpatialReference = sinon.spy(function () { return { wkid: 4326, latestWkid: 4326 } })
     const normalizeExtent = sinon.spy(function () {
       return {
@@ -243,7 +247,7 @@ describe('server info', () => {
     })
     const layer1 = { type: 'FeatureCollection', crs: { type: 'name', properties: { name: 'urn:ogc:def:crs:OGC:1.3:CRS84' } }, features: [{ type: 'Feature', properties: {}, geometry: { type: 'Point', coordinates: [-100, 40] } }, { type: 'Feature', properties: {}, geometry: { type: 'Point', coordinates: [-101, 41] } }, { type: 'Feature', properties: {}, geometry: { type: 'Point', coordinates: [-99, 39] } }] }
     const layer2 = { type: 'FeatureCollection', crs: { type: 'name', properties: { name: 'urn:ogc:def:crs:OGC:1.3:CRS84' } }, features: [{ type: 'Feature', properties: {}, geometry: { type: 'Point', coordinates: [-122, 49] } }, { type: 'Feature', properties: {}, geometry: { type: 'Point', coordinates: [-121, 20] } }, { type: 'Feature', properties: {}, geometry: { type: 'Point', coordinates: [-110, 43] } }] }
-
+    const tables = [{ type: 'FeatureCollection', crs: { type: 'name', properties: { name: 'urn:ogc:def:crs:OGC:1.3:CRS84' } }, features: [{ type: 'Feature', properties: {}, geometry: null }, { type: 'Feature', properties: {}, geometry: null }, { type: 'Feature', properties: {}, geometry: null }] }]
     const input = {
       maxRecordCount: 5000,
       hasStaticData: true,
@@ -251,7 +255,8 @@ describe('server info', () => {
       name: 'Foobar',
       extent: [-180, -90, 180, 90],
       geometryType: 'set by metadata',
-      layers: [layer1, layer2]
+      layers: [layer1, layer2],
+      tables
     }
 
     const serverInfoHandler = proxyquire('../../lib/server-info-route-handler', {
@@ -274,7 +279,7 @@ describe('server info', () => {
 
     getCollectionCrs.calledOnce.should.equal(true)
     getCollectionCrs.firstCall.args.should.deepEqual([input])
-    getGeometryTypeFromGeojson.callCount.should.equal(2)
+    getGeometryTypeFromGeojson.callCount.should.equal(5)
     getGeometryTypeFromGeojson.firstCall.args.should.deepEqual([layer1])
     normalizeSpatialReference.calledOnce.should.equal(true)
     normalizeSpatialReference.firstCall.args.should.deepEqual([4326])
@@ -335,7 +340,16 @@ describe('server info', () => {
         maxScale: 0,
         geometryType: 'esriGeometryPoint'
       }],
-      tables: []
+      tables: [{
+        id: 0,
+        name: 'Table_0',
+        parentLayerId: -1,
+        defaultVisibility: true,
+        subLayerIds: null,
+        minScale: 0,
+        maxScale: 0,
+        geometryType: undefined
+      }]
     })
   })
 
@@ -393,7 +407,7 @@ describe('server info', () => {
 
     getCollectionCrs.calledOnce.should.equal(true)
     getCollectionCrs.firstCall.args.should.deepEqual([simpleCollectionFixture])
-    getGeometryTypeFromGeojson.callCount.should.equal(1)
+    getGeometryTypeFromGeojson.callCount.should.equal(2)
     getGeometryTypeFromGeojson.firstCall.args.should.deepEqual([simpleCollectionFixture])
     normalizeSpatialReference.calledOnce.should.equal(true)
     normalizeSpatialReference.firstCall.args.should.deepEqual([4326])

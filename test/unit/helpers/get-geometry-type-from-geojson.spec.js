@@ -27,13 +27,18 @@ describe('get-geometry-type-from-geojson', function () {
     result.should.equal('esriGeometryPoint')
   })
 
-  it('uses first feature geometry-type if no other source', () => {
+  it('uses feature geometry-type if no other source', () => {
     const result = getGeometryTypeFromGeojson({ features: [{ geometry: { type: 'Point' } }] })
     result.should.equal('esriGeometryPoint')
   })
 
-  it('returns undefined if uses first feature geometry-type if no other source', () => {
-    const result = getGeometryTypeFromGeojson({ features: [{ geometry: { type: 'Point' } }] })
+  it('Searches for first feature geometry-type if no other source', () => {
+    const result = getGeometryTypeFromGeojson({ features: [{ geometry: null }, { geometry: { type: 'Point' } }] })
+    result.should.equal('esriGeometryPoint')
+  })
+
+  it('returns undefined feature geometry-type not defined', () => {
+    const result = getGeometryTypeFromGeojson({ features: [{ geometry: null }] })
     result.should.equal('esriGeometryPoint')
   })
 
