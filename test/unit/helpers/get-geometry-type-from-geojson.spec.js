@@ -39,7 +39,7 @@ describe('get-geometry-type-from-geojson', function () {
 
   it('returns undefined feature geometry-type not defined', () => {
     const result = getGeometryTypeFromGeojson({ features: [{ geometry: null }] })
-    result.should.equal('esriGeometryPoint')
+    should(result).equal()
   })
 
   it('supports defined set of input types', () => {

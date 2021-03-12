@@ -111,4 +111,43 @@ describe('normalize-extent', function () {
       spatialReference: { wkid: 4326 }
     })
   })
+
+  it('Complete Esri extent passed in should get returned', () => {
+    const result = normalizeExtent({
+      xmin: 40,
+      ymin: 10,
+      xmax: 55,
+      ymax: 25,
+      spatialReference: {
+        wkid: 4326
+      }
+    }, {
+      wkid: 3857
+    })
+    result.should.deepEqual({
+      xmin: 40,
+      ymin: 10,
+      xmax: 55,
+      ymax: 25,
+      spatialReference: { wkid: 4326 }
+    })
+  })
+
+  it('Esri extent without spatial ref, should get spatial ref added', () => {
+    const result = normalizeExtent({
+      xmin: 40,
+      ymin: 10,
+      xmax: 55,
+      ymax: 25
+    }, {
+      wkid: 4326
+    })
+    result.should.deepEqual({
+      xmin: 40,
+      ymin: 10,
+      xmax: 55,
+      ymax: 25,
+      spatialReference: { wkid: 4326 }
+    })
+  })
 })
