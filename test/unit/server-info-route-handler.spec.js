@@ -36,7 +36,8 @@ describe('server info', () => {
       initialExtent: 'initial-extent',
       fullExtent: 'full-extent',
       layers: [],
-      tables: []
+      tables: [],
+      relationships: []
     })
 
     getCollectionCrs.notCalled.should.equal(true)
@@ -52,7 +53,7 @@ describe('server info', () => {
     const normalizeSpatialReference = sinon.spy()
     const normalizeExtent = sinon.spy()
     const normalizeInputData = sinon.spy(function (input) {
-      return { tables: [input], layers: [] }
+      return { tables: [input], layers: [], relationships: [] }
     })
 
     const serverInfoHandler = proxyquire('../../lib/server-info-route-handler', {
@@ -72,7 +73,8 @@ describe('server info', () => {
           fullExtent: 'full-extent',
           initialExtent: 'initial-extent',
           layers: [],
-          tables: []
+          tables: [],
+          relationships: []
         }
       }
     })
@@ -102,7 +104,8 @@ describe('server info', () => {
         minScale: 0,
         maxScale: 0,
         geometryType: undefined
-      }]
+      }],
+      relationships: []
     })
   })
 
@@ -113,7 +116,7 @@ describe('server info', () => {
     const normalizeSpatialReference = sinon.spy()
     const normalizeExtent = sinon.spy()
     const normalizeInputData = sinon.spy(function (input) {
-      return { tables: [input], layers: [] }
+      return { tables: [input], layers: [], relationships: [] }
     })
 
     const serverInfoHandler = proxyquire('../../lib/server-info-route-handler', {
@@ -155,7 +158,8 @@ describe('server info', () => {
         minScale: 0,
         maxScale: 0,
         geometryType: undefined
-      }]
+      }],
+      relationships: []
     })
   })
 
@@ -167,7 +171,7 @@ describe('server info', () => {
     const normalizeSpatialReference = sinon.spy(function () { return { wkid: 4326, latestWkid: 4326 } })
     const normalizeExtent = sinon.spy()
     const normalizeInputData = sinon.spy(function (input) {
-      return { tables: [], layers: [input] }
+      return { tables: [], layers: [input], relationships: [] }
     })
     const serverInfoHandler = proxyquire('../../lib/server-info-route-handler', {
       './helpers': { getCollectionCrs, getGeometryTypeFromGeojson, normalizeSpatialReference, normalizeExtent, normalizeInputData },
@@ -234,7 +238,8 @@ describe('server info', () => {
         parentLayerId: -1,
         subLayerIds: null
       }],
-      tables: []
+      tables: [],
+      relationships: []
     })
   })
 
@@ -258,7 +263,7 @@ describe('server info', () => {
       }
     })
     const normalizeInputData = sinon.spy(function (input) {
-      return { tables: input.tables, layers: input.layers }
+      return { tables: input.tables, layers: input.layers, relationships: [] }
     })
     const layer1 = { type: 'FeatureCollection', crs: { type: 'name', properties: { name: 'urn:ogc:def:crs:OGC:1.3:CRS84' } }, features: [{ type: 'Feature', properties: {}, geometry: { type: 'Point', coordinates: [-100, 40] } }, { type: 'Feature', properties: {}, geometry: { type: 'Point', coordinates: [-101, 41] } }, { type: 'Feature', properties: {}, geometry: { type: 'Point', coordinates: [-99, 39] } }] }
     const layer2 = { type: 'FeatureCollection', crs: { type: 'name', properties: { name: 'urn:ogc:def:crs:OGC:1.3:CRS84' } }, features: [{ type: 'Feature', properties: {}, geometry: { type: 'Point', coordinates: [-122, 49] } }, { type: 'Feature', properties: {}, geometry: { type: 'Point', coordinates: [-121, 20] } }, { type: 'Feature', properties: {}, geometry: { type: 'Point', coordinates: [-110, 43] } }] }
@@ -366,7 +371,8 @@ describe('server info', () => {
         minScale: 0,
         maxScale: 0,
         geometryType: undefined
-      }]
+      }],
+      relationships: []
     })
   })
 
@@ -405,7 +411,7 @@ describe('server info', () => {
       }
     })
     const normalizeInputData = sinon.spy(function (input) {
-      return { layers: [input], tables: [] }
+      return { layers: [input], tables: [], relationships: [] }
     })
 
     const serverInfoHandler = proxyquire('../../lib/server-info-route-handler', {
@@ -479,7 +485,8 @@ describe('server info', () => {
         maxScale: 14,
         geometryType: 'esriGeometryPoint'
       }],
-      tables: []
+      tables: [],
+      relationships: []
     })
   })
 })
