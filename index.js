@@ -9,7 +9,7 @@ module.exports = {
   serverInfo: require('./lib/rest-info-route-handler'),
   layerInfo,
   layersInfo,
-  query: require('./lib/query/index.js'),
+  query: require('./lib/query'),
   queryRelatedRecords: require('./lib/queryRelatedRecords.js'),
   generateRenderer: require('./lib/generateRenderer'),
   error: require('./lib/error'),
