@@ -1,5 +1,4 @@
 const should = require('should') // eslint-disable-line
-should.config.checkProtoEql = false
 const sinon = require('sinon')
 const proxyquire = require('proxyquire')
 
