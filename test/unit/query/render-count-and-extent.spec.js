@@ -118,13 +118,27 @@ describe('renderCountAndExtent', () => {
     esriExtentSpy.firstCall.args.should.deepEqual([{ features: ['test'] }])
   })
 
-  it('should render extent and replace spatialReference with outSR string', () => {
+  it('should render extent and replace spatialReference with outSR string id', () => {
     const result = renderCountAndExtentResponse({ features: ['test'] }, { returnExtentOnly: true, outSR: '1234' })
     result.should.deepEqual({
       extent: {
         foo: 'bar',
         spatialReference: {
-          wkt: '1234'
+          wkid: 1234
+        }
+      }
+    })
+    esriExtentSpy.callCount.should.equal(1)
+    esriExtentSpy.firstCall.args.should.deepEqual([{ features: ['test'] }])
+  })
+
+  it('should render extent and replace spatialReference with outSR string', () => {
+    const result = renderCountAndExtentResponse({ features: ['test'] }, { returnExtentOnly: true, outSR: 'big-WKT-string' })
+    result.should.deepEqual({
+      extent: {
+        foo: 'bar',
+        spatialReference: {
+          wkt: 'big-WKT-string'
         }
       }
     })
