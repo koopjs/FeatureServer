@@ -16,7 +16,7 @@ const stub = {
   'esri-extent': esriExtentSpy
 }
 
-const { renderCountAndExtentResponse } = proxyquire('../../../lib/query/render-count-and-exent', stub)
+const { renderCountAndExtentResponse } = proxyquire('../../../lib/query/render-count-and-extent', stub)
 
 describe('renderCountAndExtent', () => {
   afterEach(function () {
