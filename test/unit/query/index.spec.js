@@ -15,7 +15,7 @@ const renderFeaturesResponseSpy = sinon.spy(function () {
 const renderStatisticsResponseSpy = sinon.spy(function () {
   return 'out-statistics'
 })
-const renderPrecalulatedStatisticsResponseSpy = sinon.spy(function () {
+const renderPrecalculatedStatisticsResponseSpy = sinon.spy(function () {
   return 'precalculated-statistics'
 })
 const renderCountAndExtentResponseSpy = sinon.spy(function () {
@@ -36,7 +36,7 @@ const stub = {
     renderStatisticsResponse: renderStatisticsResponseSpy
   },
   './render-precalculated-statistics': {
-    renderPrecalulatedStatisticsResponse: renderPrecalulatedStatisticsResponseSpy
+    renderPrecalculatedStatisticsResponse: renderPrecalculatedStatisticsResponseSpy
   },
   './render-count-and-exent': {
     renderCountAndExtentResponse: renderCountAndExtentResponseSpy
@@ -55,7 +55,7 @@ describe('query', () => {
     getGeometryTypeFromGeojsonSpy.resetHistory()
     renderFeaturesResponseSpy.resetHistory()
     renderStatisticsResponseSpy.resetHistory()
-    renderPrecalulatedStatisticsResponseSpy.resetHistory()
+    renderPrecalculatedStatisticsResponseSpy.resetHistory()
     renderCountAndExtentResponseSpy.resetHistory()
   })
 
@@ -68,8 +68,8 @@ describe('query', () => {
 
       const result = queryHandler(json)
       result.should.equal('precalculated-statistics')
-      renderPrecalulatedStatisticsResponseSpy.callCount.should.equal(1)
-      renderPrecalulatedStatisticsResponseSpy.firstCall.args.should.deepEqual([json])
+      renderPrecalculatedStatisticsResponseSpy.callCount.should.equal(1)
+      renderPrecalculatedStatisticsResponseSpy.firstCall.args.should.deepEqual([json])
     })
 
     it('should render extent and count', () => {
@@ -88,7 +88,7 @@ describe('query', () => {
         extent: 'extent',
         count: 'count'
       })
-      renderPrecalulatedStatisticsResponseSpy.callCount.should.equal(0)
+      renderPrecalculatedStatisticsResponseSpy.callCount.should.equal(0)
     })
 
     it('should render extent', () => {
@@ -105,7 +105,7 @@ describe('query', () => {
       result.should.deepEqual({
         extent: 'extent'
       })
-      renderPrecalulatedStatisticsResponseSpy.callCount.should.equal(0)
+      renderPrecalculatedStatisticsResponseSpy.callCount.should.equal(0)
     })
 
     it('should render count', () => {
@@ -122,7 +122,7 @@ describe('query', () => {
       result.should.deepEqual({
         count: 'count'
       })
-      renderPrecalulatedStatisticsResponseSpy.callCount.should.equal(0)
+      renderPrecalculatedStatisticsResponseSpy.callCount.should.equal(0)
     })
   })
 

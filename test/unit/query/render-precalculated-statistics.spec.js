@@ -22,9 +22,9 @@ const stub = {
   }
 }
 
-const { renderPrecalulatedStatisticsResponse } = proxyquire('../../../lib/query/render-precalculated-statistics', stub)
+const { renderPrecalculatedStatisticsResponse } = proxyquire('../../../lib/query/render-precalculated-statistics', stub)
 
-describe('renderPrecalulatedStatisticsResponse', () => {
+describe('renderPrecalculatedStatisticsResponse', () => {
   afterEach(function () {
     computeFieldObjectSpy.resetHistory()
   })
@@ -46,7 +46,7 @@ describe('renderPrecalulatedStatisticsResponse', () => {
         SOME_ISO_DATE_STRING: '2020-12-01T17:00:14.000Z'
       }
     ]
-    const result = renderPrecalulatedStatisticsResponse({ statistics })
+    const result = renderPrecalculatedStatisticsResponse({ statistics })
     result.should.deepEqual({
       displayFieldName: '',
       fields: [
@@ -114,7 +114,7 @@ describe('renderPrecalulatedStatisticsResponse', () => {
       TOTAL_STUD_SUM: 5421,
       ZIP_CODE_COUNT: 18
     }
-    const result = renderPrecalulatedStatisticsResponse({ statistics })
+    const result = renderPrecalculatedStatisticsResponse({ statistics })
     result.should.deepEqual({
       displayFieldName: '',
       fields: [
@@ -166,7 +166,7 @@ describe('renderPrecalulatedStatisticsResponse', () => {
       ]
     }
 
-    const result = renderPrecalulatedStatisticsResponse({ statistics, metadata })
+    const result = renderPrecalculatedStatisticsResponse({ statistics, metadata })
     result.should.deepEqual({
       displayFieldName: '',
       fields: [
