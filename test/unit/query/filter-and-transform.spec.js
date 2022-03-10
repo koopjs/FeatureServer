@@ -92,6 +92,74 @@ describe('filterAndTransform', () => {
         filterAndTransformSpy.firstCall.args.should.deepEqual([{ metadata: { crs: 1234 }, features: [{}] }, { inputCrs: 4673, toEsri: true }])
       })
     })
+
+    describe('should remove params that were already applied', () => {
+      it('should get value from default', () => {
+        const json = {
+          filtersApplied: {
+            projection: 'test',
+            outSR: 'foo',
+            offset: 1,
+            resultOffset: 2,
+            limit: 10,
+            resultRecordOffset: 20
+          },
+          features: [{}]
+        }
+        const result = filterAndTransform(json, {
+          projection: 'test',
+          outSR: 'foo',
+          offset: 1,
+          resultOffset: 2,
+          limit: 10,
+          resultRecordOffset: 20
+        })
+        result.should.deepEqual('expected-result')
+        filterAndTransformSpy.callCount.should.equal(1)
+        filterAndTransformSpy.firstCall.args.should.deepEqual([json, { inputCrs: 4326, toEsri: true }])
+      })
+
+      it('should get value from feature collection', () => {
+        const getCollectionCrsSpy = sinon.spy(function () {
+          return 'collection-crs'
+        })
+
+        const stub = {
+          '../helpers': {
+            getCollectionCrs: getCollectionCrsSpy
+          },
+          winnow: {
+            query: filterAndTransformSpy
+          }
+        }
+        const { filterAndTransform } = proxyquire('../../../lib/query/filter-and-transform', stub)
+        const result = filterAndTransform({ features: [{}] }, {})
+        result.should.deepEqual('expected-result')
+        filterAndTransformSpy.callCount.should.equal(1)
+        filterAndTransformSpy.firstCall.args.should.deepEqual([{ features: [{}] }, { inputCrs: 'collection-crs', toEsri: true }])
+      })
+
+      it('should get value from metadata.crs', () => {
+        const result = filterAndTransform({ metadata: { crs: 1234 }, features: [{}] }, {})
+        result.should.deepEqual('expected-result')
+        filterAndTransformSpy.callCount.should.equal(1)
+        filterAndTransformSpy.firstCall.args.should.deepEqual([{ metadata: { crs: 1234 }, features: [{}] }, { inputCrs: 1234, toEsri: true }])
+      })
+
+      it('should get value from sourceSR request parameter', () => {
+        const result = filterAndTransform({ metadata: { crs: 1234 }, features: [{}] }, { sourceSR: 4229 })
+        result.should.deepEqual('expected-result')
+        filterAndTransformSpy.callCount.should.equal(1)
+        filterAndTransformSpy.firstCall.args.should.deepEqual([{ metadata: { crs: 1234 }, features: [{}] }, { inputCrs: 4229, toEsri: true }])
+      })
+
+      it('should get value from inputCrs request parameter', () => {
+        const result = filterAndTransform({ metadata: { crs: 1234 }, features: [{}] }, { sourceSR: 4229, inputCrs: 4673 })
+        result.should.deepEqual('expected-result')
+        filterAndTransformSpy.callCount.should.equal(1)
+        filterAndTransformSpy.firstCall.args.should.deepEqual([{ metadata: { crs: 1234 }, features: [{}] }, { inputCrs: 4673, toEsri: true }])
+      })
+    })
   })
 
   describe('should filter by objectIds', () => {
