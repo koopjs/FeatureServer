@@ -4,7 +4,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 ### Added
-- Add support for overrided default value for supportsPagination
+- Add support for overriding default value for supportsPagination
 
 ## [3.3.4] - 03-25-2022
 ### Changed
