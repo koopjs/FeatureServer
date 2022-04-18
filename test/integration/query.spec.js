@@ -3,7 +3,8 @@ const _ = require('lodash')
 const FeatureServer = require('../..')
 const data = require('./fixtures/snow.json')
 const projectionApplied = require('./fixtures/projection-applied.json')
-const should = require('should') // eslint-disable-line
+const should = require('should')
+should.config.checkProtoEql = false
 const { featuresTemplateSchema } = require('./schemas')
 const polyData = require('./fixtures/polygon.json')
 const budgetTable = require('./fixtures/budget-table.json')
@@ -322,10 +323,75 @@ describe('Query operations', () => {
   describe('querying for statistics', function () {
     describe('results are passed in', function () {
       it('should properly render a group-by response', function () {
-        const input = require('./fixtures/stats-in.json')
-        const response = FeatureServer.query({ statistics: input })
-        const expected = require('./fixtures/stats-out.json')
-        JSON.stringify(response).should.equal(JSON.stringify(expected))
+        const response = FeatureServer.query({
+          statistics: [
+            {
+              FACUSE: 'Middle School',
+              TOTAL_STUD_SUM: 5421,
+              ZIP_CODE_COUNT: 18
+            },
+            {
+              FACUSE: 'Elementary School',
+              TOTAL_STUD_SUM: 23802,
+              ZIP_CODE_COUNT: 72
+            }
+          ]
+        }, {
+          outStatistics: [{
+            statisticType: 'sum',
+            onStatisticField: 'Student Count',
+            outStatisticFieldName: 'TOTAL_STUD_SUM'
+          }, {
+            statisticType: 'count',
+            onStatisticField: 'ZIP_CODE',
+            outStatisticFieldName: 'ZIP_CODE_COUNT'
+          }]
+        })
+        response.should.deepEqual({
+          fields: [
+            {
+              name: 'FACUSE',
+              type: 'esriFieldTypeString',
+              alias: 'FACUSE',
+              defaultValue: null,
+              domain: null,
+              sqlType: 'sqlTypeOther',
+              length: 128
+            },
+            {
+              name: 'TOTAL_STUD_SUM',
+              type: 'esriFieldTypeDouble',
+              alias: 'TOTAL_STUD_SUM',
+              defaultValue: null,
+              domain: null,
+              sqlType: 'sqlTypeFloat'
+            },
+            {
+              name: 'ZIP_CODE_COUNT',
+              type: 'esriFieldTypeDouble',
+              alias: 'ZIP_CODE_COUNT',
+              defaultValue: null,
+              domain: null,
+              sqlType: 'sqlTypeFloat'
+            }
+          ],
+          features: [
+            {
+              attributes: {
+                FACUSE: 'Middle School',
+                TOTAL_STUD_SUM: 5421,
+                ZIP_CODE_COUNT: 18
+              }
+            },
+            {
+              attributes: {
+                FACUSE: 'Elementary School',
+                TOTAL_STUD_SUM: 23802,
+                ZIP_CODE_COUNT: 72
+              }
+            }
+          ]
+        })
       })
 
       it('should properly render a regular response', function () {
@@ -335,14 +401,40 @@ describe('Query operations', () => {
             ZIP_CODE_COUNT: 18
           }
         })
-        const expected = require('./fixtures/stats-out-single.json')
-        JSON.stringify(response).should.equal(JSON.stringify(expected))
+        response.should.deepEqual({
+          fields: [
+            {
+              name: 'TOTAL_STUD_SUM',
+              type: 'esriFieldTypeInteger',
+              alias: 'TOTAL_STUD_SUM',
+              domain: null,
+              defaultValue: null,
+              sqlType: 'sqlTypeOther'
+            },
+            {
+              name: 'ZIP_CODE_COUNT',
+              type: 'esriFieldTypeInteger',
+              alias: 'ZIP_CODE_COUNT',
+              domain: null,
+              defaultValue: null,
+              sqlType: 'sqlTypeOther'
+            }
+          ],
+          features: [
+            {
+              attributes: {
+                TOTAL_STUD_SUM: 5421,
+                ZIP_CODE_COUNT: 18
+              }
+            }
+          ]
+        })
       })
 
       it('should respect metadata when converting a date string type to a date type', () => {
         const response = FeatureServer.query(statsDateInMeta)
         response.features[0].attributes.dateField.should.equal(1497578316179)
-        response.fields[1].type.should.equal('esriFieldTypeDate')
+        response.fields[0].type.should.equal('esriFieldTypeDate')
       })
 
       it('should convert a date string type to a date type', () => {
@@ -352,9 +444,17 @@ describe('Query operations', () => {
       })
 
       it('should respect metadata when date field is passed in', () => {
-        const response = FeatureServer.query(statsDateInMetaValue)
+        const response = FeatureServer.query(statsDateInMetaValue, {
+          outStatistics: [
+            {
+              statisticType: 'MIN',
+              onStatisticField: 'dateField',
+              outStatisticFieldName: 'some_new_label'
+            }
+          ]
+        })
         response.features[0].attributes.dateField.should.equal(1497578316179)
-        response.fields[1].type.should.equal('esriFieldTypeDate')
+        response.fields[0].type.should.equal('esriFieldTypeDate')
       })
     })
 
