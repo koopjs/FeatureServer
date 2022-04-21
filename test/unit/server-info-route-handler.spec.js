@@ -276,6 +276,7 @@ describe('server info', () => {
       maxRecordCount: 5000,
       hasStaticData: true,
       description: 'Defined in metadata',
+      copyrightText: 'Custom Copyright Text',
       name: 'Foobar',
       extent: [-180, -90, 180, 90],
       geometryType: 'set by metadata',
@@ -322,6 +323,7 @@ describe('server info', () => {
       foo: 'bar',
       maxRecordCount: 5000,
       serviceDescription: 'Defined in metadata',
+      copyrightText: 'Custom Copyright Text',
       hasStaticData: true,
       supportsRelationshipsResource: false,
       spatialReference: {
@@ -387,6 +389,7 @@ describe('server info', () => {
         maxRecordCount: 5000,
         hasStaticData: true,
         description: 'Defined in metadata',
+        copyrightText: 'Copyright text in metadata',
         name: 'Foobar',
         extent: [-180, -90, 180, 90],
         geometryType: 'Polygon',
@@ -455,6 +458,7 @@ describe('server info', () => {
       foo: 'bar',
       maxRecordCount: 5000,
       serviceDescription: 'Defined in metadata',
+      copyrightText: 'Copyright text in metadata',
       hasStaticData: true,
       supportsRelationshipsResource: false,
       spatialReference: {

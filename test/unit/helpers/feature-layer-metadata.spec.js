@@ -256,6 +256,7 @@ describe('FeatureLayerMetadata', () => {
       metadata: {
         foo: 'bar',
         displayField: 'myField',
+        copyrightText: 'Custom copyright text',
         capabilities: 'list,of,stuff'
       },
       capabilities: {
@@ -274,6 +275,7 @@ describe('FeatureLayerMetadata', () => {
       },
       capabilities: 'list,of,stuff',
       displayField: 'myField',
+      copyrightText: 'Custom copyright text',
       id: 99,
       name: 'GMajor'
     })
