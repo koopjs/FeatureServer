@@ -145,4 +145,18 @@ describe('renderCountAndExtent', () => {
     esriExtentSpy.callCount.should.equal(1)
     esriExtentSpy.firstCall.args.should.deepEqual([{ features: ['test'] }])
   })
+
+  it('should return count from data', () => {
+    const result = renderCountAndExtentResponse({ count: 2, features: ['test'] }, { returnCountOnly: true })
+    result.should.deepEqual({ count: 2 })
+  })
+
+  it('should return count from data and extent', () => {
+    const result = renderCountAndExtentResponse({ count: 2, features: ['test'] }, {
+      returnCountOnly: true,
+      returnExtentOnly: true,
+      outSR: 'my-SR'
+    })
+    result.should.deepEqual({ count: 2, extent: { foo: 'bar', spatialReference: { wkt: 'my-SR' } } } )
+  })
 })
