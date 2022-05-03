@@ -157,6 +157,6 @@ describe('renderCountAndExtent', () => {
       returnExtentOnly: true,
       outSR: 'my-SR'
     })
-    result.should.deepEqual({ count: 2, extent: { foo: 'bar', spatialReference: { wkt: 'my-SR' } } } )
+    result.should.deepEqual({ count: 2, extent: { foo: 'bar', spatialReference: { wkt: 'my-SR' } } })
   })
 })
