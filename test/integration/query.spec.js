@@ -459,7 +459,7 @@ describe('Query operations', () => {
     })
 
     describe('calculating from geojson', function () {
-      it('should return correct fields and features for one stat', () => {
+      it.only('should return correct fields and features for one stat', () => {
         const response = FeatureServer.query(data, {
           outStatistics: [{
             statisticType: 'MIN',
