@@ -7,7 +7,7 @@ const createQueryFieldsSpy = sinon.spy(function () {
 })
 
 const fields = {
-  FieldsBuilder: {
+  QueryFieldsBuilder: {
     create: createQueryFieldsSpy
   }
 }

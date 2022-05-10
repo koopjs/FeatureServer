@@ -1,10 +1,10 @@
 const should = require('should') // eslint-disable-line
 should.config.checkProtoEql = false
-const QueryFieldsBuilder = require('../../../../lib/helpers/fields/query-fields-builder')
+const LayerFieldsBuilder = require('../../../../lib/helpers/fields/layer-fields-builder')
 
-describe('QueryFieldsBuilder', () => {
+describe('LayerFieldsBuilder', () => {
   it('create fields from definitions, adds OBJECTID', () => {
-    const result = QueryFieldsBuilder.create({
+    const result = LayerFieldsBuilder.create({
       fields: [
         { name: 'foo', type: 'String' }
       ]
@@ -15,7 +15,7 @@ describe('QueryFieldsBuilder', () => {
       type: 'esriFieldTypeOID',
       sqlType: 'sqlTypeInteger',
       domain: null,
-      defaultValue: null
+      defaultValue: null, editable: false, nullable: false
     }, {
       name: 'foo',
       alias: 'foo',
@@ -23,12 +23,12 @@ describe('QueryFieldsBuilder', () => {
       sqlType: 'sqlTypeOther',
       length: 128,
       domain: null,
-      defaultValue: null
+      defaultValue: null, editable: false, nullable: false
     }])
   })
 
   it('create fields from definitions, assign idField as OBJECTID', () => {
-    const result = QueryFieldsBuilder.create({
+    const result = LayerFieldsBuilder.create({
       fields: [
         { name: 'foo', type: 'Integer' }
       ],
@@ -40,12 +40,12 @@ describe('QueryFieldsBuilder', () => {
       type: 'esriFieldTypeOID',
       sqlType: 'sqlTypeInteger',
       domain: null,
-      defaultValue: null
+      defaultValue: null, editable: false, nullable: false
     }])
   })
 
   it('create fields from attributes sample, adds OBJECTID', () => {
-    const result = QueryFieldsBuilder.create({
+    const result = LayerFieldsBuilder.create({
       attributeSample: {
         foo: 'bar'
       }
@@ -56,7 +56,7 @@ describe('QueryFieldsBuilder', () => {
       type: 'esriFieldTypeOID',
       sqlType: 'sqlTypeInteger',
       domain: null,
-      defaultValue: null
+      defaultValue: null, editable: false, nullable: false
     }, {
       name: 'foo',
       alias: 'foo',
@@ -64,12 +64,12 @@ describe('QueryFieldsBuilder', () => {
       sqlType: 'sqlTypeOther',
       length: 128,
       domain: null,
-      defaultValue: null
+      defaultValue: null, editable: false, nullable: false
     }])
   })
 
   it('create fields from attributes sample, finds and uses OBJECTID', () => {
-    const result = QueryFieldsBuilder.create({
+    const result = LayerFieldsBuilder.create({
       attributeSample: {
         foo: 'bar',
         OBJECTID: 1
@@ -81,7 +81,7 @@ describe('QueryFieldsBuilder', () => {
       type: 'esriFieldTypeOID',
       sqlType: 'sqlTypeInteger',
       domain: null,
-      defaultValue: null
+      defaultValue: null, editable: false, nullable: false
     }, {
       name: 'foo',
       alias: 'foo',
@@ -89,12 +89,12 @@ describe('QueryFieldsBuilder', () => {
       sqlType: 'sqlTypeOther',
       length: 128,
       domain: null,
-      defaultValue: null
+      defaultValue: null, editable: false, nullable: false
     }])
   })
 
   it('create fields from attributes sample, adds OBJECTID', () => {
-    const result = QueryFieldsBuilder.create({
+    const result = LayerFieldsBuilder.create({
       attributeSample: {
         foo: 'bar'
       }
@@ -105,7 +105,7 @@ describe('QueryFieldsBuilder', () => {
       type: 'esriFieldTypeOID',
       sqlType: 'sqlTypeInteger',
       domain: null,
-      defaultValue: null
+      defaultValue: null, editable: false, nullable: false
     }, {
       name: 'foo',
       alias: 'foo',
@@ -113,12 +113,12 @@ describe('QueryFieldsBuilder', () => {
       sqlType: 'sqlTypeOther',
       length: 128,
       domain: null,
-      defaultValue: null
+      defaultValue: null, editable: false, nullable: false
     }])
   })
 
   it('create fields from geojson data, adds OBJECTID', () => {
-    const result = QueryFieldsBuilder.create({
+    const result = LayerFieldsBuilder.create({
       features: [{
         properties: {
           foo: 'bar'
@@ -132,7 +132,7 @@ describe('QueryFieldsBuilder', () => {
       type: 'esriFieldTypeOID',
       sqlType: 'sqlTypeInteger',
       domain: null,
-      defaultValue: null
+      defaultValue: null, editable: false, nullable: false
     }, {
       name: 'foo',
       alias: 'foo',
@@ -140,12 +140,12 @@ describe('QueryFieldsBuilder', () => {
       sqlType: 'sqlTypeOther',
       length: 128,
       domain: null,
-      defaultValue: null
+      defaultValue: null, editable: false, nullable: false
     }])
   })
 
   it('create fields from geojson data, finds and uses OBJECTID', () => {
-    const result = QueryFieldsBuilder.create({
+    const result = LayerFieldsBuilder.create({
       features: [{
         properties: {
           OBJECTID: 1,
@@ -160,7 +160,7 @@ describe('QueryFieldsBuilder', () => {
       type: 'esriFieldTypeOID',
       sqlType: 'sqlTypeInteger',
       domain: null,
-      defaultValue: null
+      defaultValue: null, editable: false, nullable: false
     }, {
       name: 'foo',
       alias: 'foo',
@@ -168,12 +168,12 @@ describe('QueryFieldsBuilder', () => {
       sqlType: 'sqlTypeOther',
       length: 128,
       domain: null,
-      defaultValue: null
+      defaultValue: null, editable: false, nullable: false
     }])
   })
 
   it('create fields from esri json data, adds OBJECTID', () => {
-    const result = QueryFieldsBuilder.create({
+    const result = LayerFieldsBuilder.create({
       features: [{
         attributes: {
           foo: 'bar'
@@ -187,7 +187,7 @@ describe('QueryFieldsBuilder', () => {
       type: 'esriFieldTypeOID',
       sqlType: 'sqlTypeInteger',
       domain: null,
-      defaultValue: null
+      defaultValue: null, editable: false, nullable: false
     }, {
       name: 'foo',
       alias: 'foo',
@@ -195,12 +195,12 @@ describe('QueryFieldsBuilder', () => {
       sqlType: 'sqlTypeOther',
       length: 128,
       domain: null,
-      defaultValue: null
+      defaultValue: null, editable: false, nullable: false
     }])
   })
 
   it('create fields from esri json data, finds and uses OBJECTID', () => {
-    const result = QueryFieldsBuilder.create({
+    const result = LayerFieldsBuilder.create({
       features: [{
         attributes: {
           OBJECTID: 1,
@@ -215,7 +215,7 @@ describe('QueryFieldsBuilder', () => {
       type: 'esriFieldTypeOID',
       sqlType: 'sqlTypeInteger',
       domain: null,
-      defaultValue: null
+      defaultValue: null, editable: false, nullable: false
     }, {
       name: 'foo',
       alias: 'foo',
@@ -223,137 +223,7 @@ describe('QueryFieldsBuilder', () => {
       sqlType: 'sqlTypeOther',
       length: 128,
       domain: null,
-      defaultValue: null
-    }])
-  })
-
-  it('outFields option filters fields array', () => {
-    const result = QueryFieldsBuilder.create({
-      fields: [
-        { name: 'foo', type: 'String' },
-        { name: 'bar', type: 'String' },
-        { name: 'hello', type: 'String' }
-      ],
-      outFields: 'foo,hello'
-    })
-    result.should.deepEqual([{
-      name: 'foo',
-      alias: 'foo',
-      type: 'esriFieldTypeString',
-      sqlType: 'sqlTypeOther',
-      length: 128,
-      domain: null,
-      defaultValue: null
-    }, {
-      name: 'hello',
-      alias: 'hello',
-      type: 'esriFieldTypeString',
-      sqlType: 'sqlTypeOther',
-      length: 128,
-      domain: null,
-      defaultValue: null
-    }])
-  })
-
-  it('outFields wildcard does not filter fields array', () => {
-    const result = QueryFieldsBuilder.create({
-      fields: [
-        { name: 'foo', type: 'String' },
-        { name: 'hello', type: 'String' }
-      ],
-      outFields: '*'
-    })
-    result.should.deepEqual([{
-      name: 'OBJECTID',
-      alias: 'OBJECTID',
-      type: 'esriFieldTypeOID',
-      sqlType: 'sqlTypeInteger',
-      domain: null,
-      defaultValue: null
-    }, {
-      name: 'foo',
-      alias: 'foo',
-      type: 'esriFieldTypeString',
-      sqlType: 'sqlTypeOther',
-      length: 128,
-      domain: null,
-      defaultValue: null
-    }, {
-      name: 'hello',
-      alias: 'hello',
-      type: 'esriFieldTypeString',
-      sqlType: 'sqlTypeOther',
-      length: 128,
-      domain: null,
-      defaultValue: null
-    }])
-  })
-
-  it('outFields empty string does not filter fields array', () => {
-    const result = QueryFieldsBuilder.create({
-      fields: [
-        { name: 'foo', type: 'String' },
-        { name: 'hello', type: 'String' }
-      ],
-      outFields: ''
-    })
-    result.should.deepEqual([{
-      name: 'OBJECTID',
-      alias: 'OBJECTID',
-      type: 'esriFieldTypeOID',
-      sqlType: 'sqlTypeInteger',
-      domain: null,
-      defaultValue: null
-    }, {
-      name: 'foo',
-      alias: 'foo',
-      type: 'esriFieldTypeString',
-      sqlType: 'sqlTypeOther',
-      length: 128,
-      domain: null,
-      defaultValue: null
-    }, {
-      name: 'hello',
-      alias: 'hello',
-      type: 'esriFieldTypeString',
-      sqlType: 'sqlTypeOther',
-      length: 128,
-      domain: null,
-      defaultValue: null
-    }])
-  })
-
-  it('outFields null value does not filter fields array', () => {
-    const result = QueryFieldsBuilder.create({
-      fields: [
-        { name: 'foo', type: 'String' },
-        { name: 'hello', type: 'String' }
-      ],
-      outFields: null
-    })
-    result.should.deepEqual([{
-      name: 'OBJECTID',
-      alias: 'OBJECTID',
-      type: 'esriFieldTypeOID',
-      sqlType: 'sqlTypeInteger',
-      domain: null,
-      defaultValue: null
-    }, {
-      name: 'foo',
-      alias: 'foo',
-      type: 'esriFieldTypeString',
-      sqlType: 'sqlTypeOther',
-      length: 128,
-      domain: null,
-      defaultValue: null
-    }, {
-      name: 'hello',
-      alias: 'hello',
-      type: 'esriFieldTypeString',
-      sqlType: 'sqlTypeOther',
-      length: 128,
-      domain: null,
-      defaultValue: null
+      defaultValue: null, editable: false, nullable: false
     }])
   })
 })

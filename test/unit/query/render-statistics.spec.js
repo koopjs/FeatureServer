@@ -47,8 +47,8 @@ describe('renderStatisticsResponse', () => {
     })
     createStatisticsFieldsSpy.callCount.should.equal(1)
     createStatisticsFieldsSpy.firstCall.args.should.deepEqual([
-      { statistics: [{ min_precip: 0 }] },
       {
+        statistics: [{ min_precip: 0 }],
         outStatistics: [{
           statisticType: 'MIN',
           onStatisticField: 'total precip',
@@ -81,8 +81,8 @@ describe('renderStatisticsResponse', () => {
     })
     createStatisticsFieldsSpy.callCount.should.equal(1)
     createStatisticsFieldsSpy.firstCall.args.should.deepEqual([
-      { statistics: [{ min_precip: 0 }] },
       {
+        statistics: [{ min_precip: 0 }],
         outStatistics: [{
           statisticType: 'MIN',
           onStatisticField: 'total precip',

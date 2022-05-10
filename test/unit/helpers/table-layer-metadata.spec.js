@@ -96,7 +96,7 @@ describe('TableLayerMetadata', () => {
         fields: ['fields']
       })
       createLayerMetadataFieldsSpy.callCount.should.equal(1)
-      createLayerMetadataFieldsSpy.firstCall.args.should.deepEqual([geojson, {}])
+      createLayerMetadataFieldsSpy.firstCall.args.should.deepEqual([geojson])
     })
 
     it('defers to "layerId" option for "id"', () => {
