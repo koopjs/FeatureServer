@@ -10,9 +10,6 @@ const polyData = require('./fixtures/polygon.json')
 const budgetTable = require('./fixtures/budget-table.json')
 const dateInMeta = require('./fixtures/date-with-metadata.json')
 const dateNoMeta = require('./fixtures/date-no-metadata.json')
-const statsDateInMeta = require('./fixtures/stats-date-with-metadata.json')
-const statsDateNoMeta = require('./fixtures/stats-date-no-metadata.json')
-const statsDateInMetaValue = require('./fixtures/stats-date-with-metadata-value.json')
 const oneOfEach = require('./fixtures/one-of-each.json')
 const fullySpecified = require('./fixtures/fully-specified-metadata.json')
 const offsetApplied = require('./fixtures/offset-applied.json')
@@ -337,6 +334,7 @@ describe('Query operations', () => {
             }
           ]
         }, {
+          groupByFieldsForStatistics: 'FACUSE',
           outStatistics: [{
             statisticType: 'sum',
             onStatisticField: 'Student Count',
@@ -405,19 +403,19 @@ describe('Query operations', () => {
           fields: [
             {
               name: 'TOTAL_STUD_SUM',
-              type: 'esriFieldTypeInteger',
+              type: 'esriFieldTypeDouble',
               alias: 'TOTAL_STUD_SUM',
               domain: null,
               defaultValue: null,
-              sqlType: 'sqlTypeOther'
+              sqlType: 'sqlTypeFloat'
             },
             {
               name: 'ZIP_CODE_COUNT',
-              type: 'esriFieldTypeInteger',
+              type: 'esriFieldTypeDouble',
               alias: 'ZIP_CODE_COUNT',
               domain: null,
               defaultValue: null,
-              sqlType: 'sqlTypeOther'
+              sqlType: 'sqlTypeFloat'
             }
           ],
           features: [
@@ -432,19 +430,84 @@ describe('Query operations', () => {
       })
 
       it('should respect metadata when converting a date string type to a date type', () => {
-        const response = FeatureServer.query(statsDateInMeta)
+        const response = FeatureServer.query({
+          type: 'FeatureCollection',
+          statistics: [
+            {
+              dateField: '2017-06-16T01:58:36.179Z'
+            }
+          ],
+          metadata: {
+            fields: [
+              {
+                name: 'dateField',
+                type: 'Date'
+              }
+            ]
+          }
+        })
         response.features[0].attributes.dateField.should.equal(1497578316179)
         response.fields[0].type.should.equal('esriFieldTypeDate')
       })
 
       it('should convert a date string type to a date type', () => {
-        const response = FeatureServer.query(statsDateNoMeta)
+        const response = FeatureServer.query({
+          type: 'FeatureCollection',
+          statistics: [
+            {
+              dateField: '2017-06-16T01:58:36.179Z'
+            }
+          ]
+        })
         response.features[0].attributes.dateField.should.equal(1497578316179)
         response.fields[0].type.should.equal('esriFieldTypeDate')
       })
 
       it('should respect metadata when date field is passed in', () => {
-        const response = FeatureServer.query(statsDateInMetaValue, {
+        const response = FeatureServer.query({
+          type: 'FeatureCollection',
+          statistics: [
+            {
+              dateField: 1497578316179
+            }
+          ],
+          metadata: {
+            fields: [
+              {
+                name: 'dateField',
+                type: 'Date'
+              }
+            ]
+          }
+        }, {
+          outStatistics: [
+            {
+              statisticType: 'MIN',
+              onStatisticField: 'dateField'
+            }
+          ]
+        })
+        response.features[0].attributes.dateField.should.equal(1497578316179)
+        response.fields[0].type.should.equal('esriFieldTypeDate')
+      })
+
+      it('should respect metadata when date field is passed in and custom stat label', () => {
+        const response = FeatureServer.query({
+          type: 'FeatureCollection',
+          statistics: [
+            {
+              some_new_label: 1497578316179
+            }
+          ],
+          metadata: {
+            fields: [
+              {
+                name: 'dateField',
+                type: 'Date'
+              }
+            ]
+          }
+        }, {
           outStatistics: [
             {
               statisticType: 'MIN',
@@ -453,7 +516,7 @@ describe('Query operations', () => {
             }
           ]
         })
-        response.features[0].attributes.dateField.should.equal(1497578316179)
+        response.features[0].attributes.some_new_label.should.equal(1497578316179)
         response.fields[0].type.should.equal('esriFieldTypeDate')
       })
     })
