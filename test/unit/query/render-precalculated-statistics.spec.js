@@ -7,7 +7,7 @@ const createStatisticsFieldsSpy = sinon.spy(function () {
 })
 
 const fields = {
-  StatisticsFieldsBuilder: {
+  StatisticsFields: {
     create: createStatisticsFieldsSpy
   }
 }

@@ -7,7 +7,7 @@ const createLayerMetadataFieldsSpy = sinon.spy(function () {
   return ['fields']
 })
 const fields = {
-  LayerFieldsBuilder: {
+  LayerFields: {
     create: createLayerMetadataFieldsSpy
   }
 }
