@@ -195,7 +195,7 @@ describe('ObjectIdFieldFromFieldDefinition', () => {
   })
 })
 
-describe('StatiticsField', () => {
+describe('StatisticsField', () => {
   it('should produce expected instance', () => {
     const result = new StatisticField('foo')
     result.should.deepEqual({
@@ -209,7 +209,7 @@ describe('StatiticsField', () => {
   })
 })
 
-describe('StatiticsDateField', () => {
+describe('StatisticsDateField', () => {
   it('should produce expected instance', () => {
     const result = new StatisticDateField('foo')
     result.should.deepEqual({
