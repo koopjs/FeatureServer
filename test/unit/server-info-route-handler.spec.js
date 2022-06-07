@@ -1,6 +1,8 @@
 const should = require('should') // eslint-disable-line
 const sinon = require('sinon')
 const proxyquire = require('proxyquire')
+const CURRENT_VERSION = 10.51
+const FULL_VERSION = '10.5.1'
 
 describe('server info', () => {
   it('empty geojson should use and result in defaults', () => {
@@ -40,7 +42,9 @@ describe('server info', () => {
       fullExtent: 'full-extent',
       layers: [],
       tables: [],
-      relationships: []
+      relationships: [],
+      currentVersion: CURRENT_VERSION,
+      fullVersion: FULL_VERSION
     })
 
     getCollectionCrs.notCalled.should.equal(true)
@@ -111,7 +115,9 @@ describe('server info', () => {
         maxScale: 0,
         geometryType: undefined
       }],
-      relationships: []
+      relationships: [],
+      currentVersion: CURRENT_VERSION,
+      fullVersion: FULL_VERSION
     })
   })
 
@@ -168,7 +174,9 @@ describe('server info', () => {
         maxScale: 0,
         geometryType: undefined
       }],
-      relationships: []
+      relationships: [],
+      currentVersion: CURRENT_VERSION,
+      fullVersion: FULL_VERSION
     })
   })
 
@@ -251,7 +259,9 @@ describe('server info', () => {
         subLayerIds: null
       }],
       tables: [],
-      relationships: []
+      relationships: [],
+      currentVersion: CURRENT_VERSION,
+      fullVersion: FULL_VERSION
     })
   })
 
@@ -387,7 +397,9 @@ describe('server info', () => {
         maxScale: 0,
         geometryType: undefined
       }],
-      relationships: []
+      relationships: [],
+      currentVersion: CURRENT_VERSION,
+      fullVersion: FULL_VERSION
     })
   })
 
@@ -504,7 +516,98 @@ describe('server info', () => {
         geometryType: 'esriGeometryPoint'
       }],
       tables: [],
-      relationships: []
+      relationships: [],
+      currentVersion: CURRENT_VERSION,
+      fullVersion: FULL_VERSION
+    })
+  })
+
+  it('should use req.app.locals.config.featureServer for version', () => {
+    const simpleCollectionFixture = { type: 'FeatureCollection', crs: { type: 'name', properties: { name: 'urn:ogc:def:crs:OGC:1.3:CRS84' } }, features: [{ type: 'Feature', properties: {}, geometry: { type: 'Point', coordinates: [-100, 40] } }, { type: 'Feature', properties: {}, geometry: { type: 'Point', coordinates: [-101, 41] } }, { type: 'Feature', properties: {}, geometry: { type: 'Point', coordinates: [-99, 39] } }] }
+
+    const getCollectionCrs = sinon.spy(function () { return 4326 })
+    const getGeometryTypeFromGeojson = sinon.spy(function () { return 'esriGeometryPoint' })
+    const normalizeSpatialReference = sinon.spy(function () { return { wkid: 4326, latestWkid: 4326 } })
+    const normalizeExtent = sinon.spy()
+    const normalizeInputData = sinon.spy(function (input) {
+      return { tables: [], layers: [input], relationships: [] }
+    })
+    const serverInfoHandler = proxyquire('../../lib/server-info-route-handler', {
+      './helpers': { getCollectionCrs, getGeometryTypeFromGeojson, normalizeSpatialReference, normalizeExtent, normalizeInputData },
+      './defaults': {
+        serverMetadata: {
+          foo: 'bar',
+          maxRecordCount: 'max-record-count',
+          serviceDescription: 'service-description',
+          copyrightText: 'copyright-text',
+          spatialReference: 'spatial-reference',
+          fullExtent: 'full-extent',
+          initialExtent: 'initial-extent',
+          layers: [],
+          tables: []
+        }
+      }
+    })
+
+    const options = {
+      app: { locals: { config: { featureServer: { currentVersion: 11.01, fullVersion: '11.0.1' } } } }
+    }
+    const serverInfo = serverInfoHandler(simpleCollectionFixture, options)
+
+    normalizeExtent.notCalled.should.equal(true)
+    normalizeInputData.calledOnce.should.equal(true)
+    getCollectionCrs.calledOnce.should.equal(true)
+    getCollectionCrs.firstCall.args.should.deepEqual([simpleCollectionFixture])
+    getGeometryTypeFromGeojson.calledOnce.should.equal(true)
+    getGeometryTypeFromGeojson.firstCall.args.should.deepEqual([simpleCollectionFixture])
+    normalizeSpatialReference.calledOnce.should.equal(true)
+    normalizeSpatialReference.firstCall.args.should.deepEqual([4326])
+
+    serverInfo.should.deepEqual({
+      foo: 'bar',
+      maxRecordCount: 'max-record-count',
+      serviceDescription: 'service-description',
+      copyrightText: 'copyright-text',
+      hasStaticData: false,
+      supportsRelationshipsResource: false,
+      spatialReference: {
+        wkid: 4326,
+        latestWkid: 4326
+      },
+      initialExtent: {
+        xmin: -101,
+        xmax: -99,
+        ymin: 39,
+        ymax: 41,
+        spatialReference: {
+          wkid: 4326,
+          latestWkid: 4326
+        }
+      },
+      fullExtent: {
+        xmin: -101,
+        xmax: -99,
+        ymin: 39,
+        ymax: 41,
+        spatialReference: {
+          wkid: 4326,
+          latestWkid: 4326
+        }
+      },
+      layers: [{
+        defaultVisibility: true,
+        geometryType: 'esriGeometryPoint',
+        id: 0,
+        maxScale: 0,
+        minScale: 0,
+        name: 'Layer_0',
+        parentLayerId: -1,
+        subLayerIds: null
+      }],
+      tables: [],
+      relationships: [],
+      currentVersion: 11.01,
+      fullVersion: '11.0.1'
     })
   })
 
@@ -645,7 +748,9 @@ describe('server info', () => {
       }, {
         id: 1,
         name: 'Relationship_1'
-      }]
+      }],
+      currentVersion: CURRENT_VERSION,
+      fullVersion: FULL_VERSION
     })
   })
 })
