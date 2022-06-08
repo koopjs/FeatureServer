@@ -22,7 +22,7 @@ describe('Info operations', () => {
           tokenServicesUrl: 'http://localhost/provider/generateToken'
         }
       }
-      const restInfo = FeatureServer.restInfo(req, supplementalRestInfo)
+      const restInfo = FeatureServer.restInfo(supplementalRestInfo, req)
       restInfo.should.have.property('currentVersion', 10.51)
       restInfo.should.have.property('authInfo')
       restInfo.authInfo.should.have.property('isTokenBasedSecurity', true)

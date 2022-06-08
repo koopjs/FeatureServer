@@ -250,7 +250,9 @@ describe('TableLayerMetadata', () => {
         templates: ['templates'],
         timeInfo: { time: 'June of 44' },
         maxRecordCount: 9999,
-        defaultVisibility: false
+        defaultVisibility: false,
+        currentVersion: 90.99,
+        fullVersion: '90.9.9'
       })
 
       tableLayerMetadata.should.deepEqual({
@@ -264,9 +266,24 @@ describe('TableLayerMetadata', () => {
         timeInfo: { time: 'June of 44' },
         maxRecordCount: 9999,
         defaultVisibility: false,
-        currentVersion: CURRENT_VERSION,
-        fullVersion: FULL_VERSION
+        currentVersion: 90.99,
+        fullVersion: '90.9.9'
       })
+    })
+  })
+
+  it('static method "normalizeInput" should create expected geojson and default options', () => {
+    const { geojson, options } = TableLayerMetadata.normalizeInput({
+      features: ['feature']
+    }, {
+      params: { layer: '99' }
+    })
+    geojson.should.deepEqual({ features: ['feature'] })
+    options.should.deepEqual({
+      capabilities: {},
+      layerId: '99',
+      currentVersion: CURRENT_VERSION,
+      fullVersion: FULL_VERSION
     })
   })
 
@@ -281,7 +298,8 @@ describe('TableLayerMetadata', () => {
         world: 'hellow'
       }
     }, {
-      params: { layer: '99' }
+      params: { layer: '99' },
+      app: { locals: { config: { featureServer: { currentVersion: 90.99, fullVersion: '90.9.9' } } } }
     })
     geojson.should.deepEqual({ features: ['feature'] })
     options.should.deepEqual({
@@ -291,8 +309,8 @@ describe('TableLayerMetadata', () => {
         list: 'list,of,stuff',
         world: 'hellow'
       },
-      currentVersion: CURRENT_VERSION,
-      fullVersion: FULL_VERSION
+      currentVersion: 90.99,
+      fullVersion: '90.9.9'
     })
   })
 

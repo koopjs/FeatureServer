@@ -209,11 +209,11 @@ describe('Route module unit tests', () => {
       restInfoSpy.calledOnce.should.equal(true)
       restInfoSpy.firstCall.args.should.deepEqual([
         {
+          metadata: { maxRecordCount: 2000 }
+        }, {
           params: {},
           query: { limit: 2000 },
           url: '/rest/info'
-        }, {
-          metadata: { maxRecordCount: 2000 }
         }
       ])
 
@@ -246,12 +246,12 @@ describe('Route module unit tests', () => {
       restInfoSpy.calledOnce.should.equal(true)
       restInfoSpy.firstCall.args.should.deepEqual([
         {
+          metadata: { maxRecordCount: 2000 }
+        },
+        {
           params: {},
           query: { limit: 2000 },
           url: '/rest/info'
-        },
-        {
-          metadata: { maxRecordCount: 2000 }
         }
       ])
 

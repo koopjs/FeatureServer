@@ -8,7 +8,7 @@ describe('rest/info handler', () => {
         locals: {}
       }
     }
-    const result = restInfo(req)
+    const result = restInfo({}, req)
     result.should.deepEqual({
       currentVersion: 10.51,
       fullVersion: '10.5.1'
@@ -26,7 +26,7 @@ describe('rest/info handler', () => {
         locals: {}
       }
     }
-    const result = restInfo(req, data)
+    const result = restInfo(data, req)
     result.should.deepEqual({
       currentVersion: 10.51,
       fullVersion: '10.5.1',
@@ -49,7 +49,7 @@ describe('rest/info handler', () => {
         }
       }
     }
-    const result = restInfo(req)
+    const result = restInfo({}, req)
     result.should.deepEqual({
       currentVersion: 10.81,
       fullVersion: '10.8.1'
