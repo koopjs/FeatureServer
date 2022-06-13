@@ -35,7 +35,32 @@ routes.forEach(route => {
 })
 ```
 
-### Version Configuration
+### Setting defaults at runtime
+FeatureServer allows several defaults to be set at runtime via Express's `app.locals` method.  Specifically, you will need to set:
+
+```js
+app.locals.config = {
+  featureServer: {
+    // define default here
+  }
+}
+```
+
+If you are using FeatureServer as part of a Koop instance, the equivalent of Express's `app.locals` is `koop.server.locals`.
+
+The follow properties can be set at runtime with the noted method:
+
+```js
+app.locals.config = {
+  featureServer: {
+    currentVersion: <feature-server version you are mocking>, // default 10.51
+    fullVersion: <feature-server version you are mocking>, // default '10.5.1'
+    serviceDescription: <the default service description>,
+    description: <the default layer description>
+  }
+}
+```
+#### Version
 By default, the service and layer metadata endpoints will respond with the following version attributes:
 ```json
 currentVersion: 10.51,
@@ -52,9 +77,8 @@ app.locals.config = {
   }
 }
 ```
-Note, if you are using FeatureServer as part of the Koop platform, the equivalent of Express's `app.locals` is `koop.server.locals`.
 
-
+#### Service Description
 ## API
 * [FeatureServer.route](#FeatureServer.route)
 * [FeatureServer.query](#FeatureServer.query)
