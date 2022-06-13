@@ -53,32 +53,14 @@ The follow properties can be set at runtime with the noted method:
 ```js
 app.locals.config = {
   featureServer: {
-    currentVersion: <feature-server version you are mocking>, // default 10.51
-    fullVersion: <feature-server version you are mocking>, // default '10.5.1'
-    serviceDescription: <the default service description>,
-    description: <the default layer description>
-  }
-}
-```
-#### Version
-By default, the service and layer metadata endpoints will respond with the following version attributes:
-```json
-currentVersion: 10.51,
-fullVersion: '10.5.1'
-```
-
-You can alter these defaults by setting properties on Express's `app.locals`:
-
-```js
-app.locals.config = {
-  featureServer: {
-    currentVersion: 10.81,
-    fullVersion: '10.8.1'
+    currentVersion: 11.01, // defaults to 10.51
+    fullVersion: '11.0.1', // defaults to '10.5.1'
+    serviceDescription: 'default service description',
+    description: 'default layer description'
   }
 }
 ```
 
-#### Service Description
 ## API
 * [FeatureServer.route](#FeatureServer.route)
 * [FeatureServer.query](#FeatureServer.query)
