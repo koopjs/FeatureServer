@@ -1,20 +1,21 @@
 /* global describe, it, beforeEach */
 const _ = require('lodash')
+const should = require('should') // eslint-disable-line
 // const assert = require('assert')
 const snow = require('./fixtures/snow.json')
 const treesSubset = require('./fixtures/treesSubset.json')
-const generateRenderer = require('../../lib/generateRenderer')
-const { createClassBreakInfos, createUniqueValueInfos } = require('../../lib/generateRenderer/createClassificationInfos')
-const { createColorRamp } = require('../../lib/generateRenderer/colorRamps')
+const generateRenderer = require('../../lib/generate-renderer')
+const { createClassBreakInfos, createUniqueValueInfos } = require('../../lib/generate-renderer/createClassificationInfos')
+const { createColorRamp } = require('../../lib/generate-renderer/colorRamps')
 
-const inputBreaks = require('./fixtures/generateRenderer/inputBreaks.json')
-const algorithmicRamp = require('./fixtures/generateRenderer/ramp-algorithmic.json')
-const multipartRamp = require('./fixtures/generateRenderer/ramp-multipart.json')
-const classBreaksDef = require('./fixtures/generateRenderer/classBreaksDef.json')
-const uniqueValueDef = require('./fixtures/generateRenderer/uniqueValueDef')
-const classBreakInfos = require('./fixtures/generateRenderer/classBreakInfos.json')
-const uniqueValueInfos = require('./fixtures/generateRenderer/uniqueValueInfos.json')
-const ProviderStatsClassBreaks = require('./fixtures/generateRenderer/provider-statistics-with-classBreaks.json')
+const inputBreaks = require('./fixtures/generate-renderer/inputBreaks.json')
+const algorithmicRamp = require('./fixtures/generate-renderer/ramp-algorithmic.json')
+const multipartRamp = require('./fixtures/generate-renderer/ramp-multipart.json')
+const classBreaksDef = require('./fixtures/generate-renderer/classBreaksDef.json')
+const uniqueValueDef = require('./fixtures/generate-renderer/uniqueValueDef')
+const classBreakInfos = require('./fixtures/generate-renderer/classBreakInfos.json')
+const uniqueValueInfos = require('./fixtures/generate-renderer/uniqueValueInfos.json')
+const ProviderStatsClassBreaks = require('./fixtures/generate-renderer/provider-statistics-with-classBreaks.json')
 
 describe('when a class breaks classification passed in', () => {
   let data

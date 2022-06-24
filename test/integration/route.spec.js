@@ -6,7 +6,7 @@ const should = require('should')
 const _ = require('lodash')
 const snow = require('./fixtures/snow.json')
 const noGeom = require('./fixtures/no-geometry.json')
-const ProviderStatsClassBreaks = require('./fixtures/generateRenderer/provider-statistics-with-classBreaks.json')
+const ProviderStatsClassBreaks = require('./fixtures/generate-renderer/provider-statistics-with-classBreaks.json')
 const relatedData = require('./fixtures/relatedData.json')
 const app = express()
 
