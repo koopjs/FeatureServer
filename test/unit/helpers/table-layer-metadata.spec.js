@@ -162,7 +162,6 @@ describe('TableLayerMetadata', () => {
       })
     })
 
-
     it('"hasStaticData" option used if a boolean value', () => {
       const tableLayerMetadata = new TableLayerMetadata()
       tableLayerMetadata.mixinOverrides({}, { hasStaticData: true })
