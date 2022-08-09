@@ -8,7 +8,7 @@ describe('generate-render', () => {
       return 'class-break-infos'
     })
     const generateRenderer = proxyquire('../../../lib/generate-renderer', {
-      './createClassificationInfos' : {
+      './createClassificationInfos': {
         createClassBreakInfos: createClassificationInfosSpy
       }
     })
@@ -36,25 +36,66 @@ describe('generate-render', () => {
     ])
   })
 
-  it.skip('should calculate breaks and use classBreaksDef for renderer', () => {
+  it('should calculate breaks and use classBreaksDef for renderer', () => {
     const winnowSpy = sinon.spy(function () {
       return [[0, 10], [11, 20], [21, 30]]
     })
 
     const getGeometrySpy = sinon.spy(function () {
-      return ''
+      return 'esriGeometryPoint'
+    })
+
+    const createClassificationInfosSpy = sinon.spy(function () {
+      return 'class-break-infos'
     })
 
     const generateRenderer = proxyquire('../../../lib/generate-renderer', {
-      'winnow': {
+      winnow: {
         query: winnowSpy
       },
       '../helpers': {
         getGeometryTypeFromGeojson: getGeometrySpy
       },
-      './createClassificationInfos' : {
+      './createClassificationInfos': {
         createClassBreakInfos: createClassificationInfosSpy
       }
     })
+
+    const result = generateRenderer({ features: ['feature'] }, {
+      classificationDef: {
+        type: 'classBreaksDef',
+        classificationField: 'classification-field',
+        classificationMethod: 'classification-method'
+      }
+    })
+
+    result.should.deepEqual({
+      type: 'classBreaks',
+      field: 'classification-field',
+      classificationMethod: 'classification-method',
+      minValue: 0,
+      classBreakInfos: 'class-break-infos'
+    })
+
+    createClassificationInfosSpy.calledOnce.should.equal(true)
+    createClassificationInfosSpy.firstCall.args.should.deepEqual([
+      [[0, 10], [11, 20], [21, 30]],
+      {
+        type: 'classBreaksDef',
+        classificationField: 'classification-field',
+        classificationMethod: 'classification-method'
+      },
+      'esriGeometryPoint'
+    ])
+    getGeometrySpy.calledOnce.should.equal(true)
+    getGeometrySpy.firstCall.args.should.deepEqual([{ features: ['feature'] }])
+    winnowSpy.calledOnce.should.equal(true)
+    winnowSpy.firstCall.args.should.deepEqual([{ features: ['feature'] }, {
+      classificationDef: {
+        type: 'classBreaksDef',
+        classificationField: 'classification-field',
+        classificationMethod: 'classification-method'
+      }
+    }])
   })
 })
