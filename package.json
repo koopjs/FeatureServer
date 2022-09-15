@@ -8,6 +8,7 @@
   },
   "scripts": {
     "test": "standard && mocha 'test/**/*.spec.js' --recursive -t 5000",
+    "test:cov": "nyc --reporter=html mocha 'test/**/*.spec.js' ",
     "test:cov-unit": "nyc --reporter=html mocha 'test/unit/**/*.spec.js' ",
     "fix": "standard --fix"
   },

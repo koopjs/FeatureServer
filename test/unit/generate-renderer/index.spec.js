@@ -204,13 +204,14 @@ describe('generate-renderer', () => {
         '../helpers': {
           getGeometryTypeFromGeojson: getGeometrySpy,
         },
+        './validate-classification-definition': () => { throw new Error('invalid classification definition') }
       });
 
       try {
         generateRenderer({ features: ['feature'] }, {});
         should.fail('should have thrown error');
       } catch (error) {
-        error.message.should.equal('invalid classification type: ');
+        error.message.should.equal('invalid classification definition');
       }
     });
 
@@ -227,19 +228,12 @@ describe('generate-renderer', () => {
         return undefined;
       });
 
-      const createClassificationInfosSpy = sinon.spy(function () {
-        return 'class-break-infos';
-      });
-
       const generateRenderer = proxyquire('../../../lib/generate-renderer', {
         winnow: {
           query: winnowSpy,
         },
         '../helpers': {
           getGeometryTypeFromGeojson: getGeometrySpy,
-        },
-        './createClassificationInfos': {
-          createClassBreakInfos: createClassificationInfosSpy,
         },
         './validate-classification-definition': () => {
           return true;
