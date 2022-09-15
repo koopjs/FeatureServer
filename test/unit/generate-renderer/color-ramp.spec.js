@@ -1,11 +1,10 @@
 /* global describe, it */
-const _ = require('lodash')
 const should = require('should'); // eslint-disable-line
 const {
   createColorRamp
 } = require('../../../lib/generate-renderer/color-ramp')
 
-const breaks = [
+const classification = [
   [80, 147],
   [147, 174],
   [174, 195],
@@ -24,16 +23,16 @@ describe('when creating a color ramp that', () => {
     })
 
     it('should throw an error on invalid type option', () => {
-      createColorRamp.bind(null, { breaks, type: 'foo' }).should.throw()
+      createColorRamp.bind(null, { classification, type: 'foo' }).should.throw()
     })
 
     it('should throw an error on multipart type with color-ramps', () => {
-      createColorRamp.bind(null, { breaks, type: 'multipart' }).should.throw()
+      createColorRamp.bind(null, { classification, type: 'multipart' }).should.throw()
     })
 
     it('should return correct hsv color ramp', () => {
       const response = createColorRamp({
-        breaks,
+        classification,
         type: 'algorithmic',
         fromColor: [0, 255, 0],
         toColor: [0, 0, 255],
@@ -54,7 +53,7 @@ describe('when creating a color ramp that', () => {
 
     it('should return correct lab color ramp', () => {
       const response = createColorRamp({
-        breaks,
+        classification,
         type: 'algorithmic',
         fromColor: [0, 255, 0],
         toColor: [0, 0, 255],
@@ -75,7 +74,7 @@ describe('when creating a color ramp that', () => {
 
     it('should return correct lch color ramp', () => {
       const response = createColorRamp({
-        breaks,
+        classification,
         type: 'algorithmic',
         fromColor: [0, 255, 0],
         toColor: [0, 0, 255],
@@ -118,7 +117,7 @@ describe('when creating a color ramp that', () => {
           }
         ]
       }
-      const response = createColorRamp({ breaks, ...multipartRamp })
+      const response = createColorRamp({ classification, ...multipartRamp })
       response.should.deepEqual([
         [
           [0, 255, 0],

@@ -1,52 +1,52 @@
 const should = require('should'); // eslint-disable-line
-const proxyquire = require('proxyquire');
-const sinon = require('sinon');
+const proxyquire = require('proxyquire')
+const sinon = require('sinon')
 
 describe('generate-renderer', () => {
   it('should handle empty data', () => {
-    const generateRenderer = require('../../../lib/generate-renderer');
+    const generateRenderer = require('../../../lib/generate-renderer')
 
-    const result = generateRenderer();
+    const result = generateRenderer()
 
-    result.should.deepEqual({});
-  });
+    result.should.deepEqual({})
+  })
 
   describe('with pre-calculated statistics', () => {
     it('should render precalculated statistics', () => {
       const getGeometrySpy = sinon.spy(function () {
-        return 'esriGeometryPoint';
-      });
+        return 'esriGeometryPoint'
+      })
 
       const createSymbolSpy = sinon.spy(function () {
-        return 'symbol';
-      });
+        return 'symbol'
+      })
 
       const createColorRampSpy = sinon.spy(function () {
-        return ['color-1', 'color-2'];
-      });
+        return ['color-1', 'color-2']
+      })
 
       const generateRenderer = proxyquire('../../../lib/generate-renderer', {
         '../helpers': {
-          getGeometryTypeFromGeojson: getGeometrySpy,
+          getGeometryTypeFromGeojson: getGeometrySpy
         },
         './create-symbol': {
-          createSymbol: createSymbolSpy,
+          createSymbol: createSymbolSpy
         },
         './color-ramp': {
-          createColorRamp: createColorRampSpy,
-        },
-      });
+          createColorRamp: createColorRampSpy
+        }
+      })
 
       const data = {
         statistics: {
           classBreaks: [
             [0, 10],
             [21, 30],
-            [11, 20],
-          ],
-        },
-      };
-      const result = generateRenderer(data);
+            [11, 20]
+          ]
+        }
+      }
+      const result = generateRenderer(data)
 
       result.should.deepEqual({
         type: 'classBreaks',
@@ -59,79 +59,79 @@ describe('generate-renderer', () => {
             classMaxValue: 10,
             label: '0-10',
             description: '',
-            symbol: 'symbol',
+            symbol: 'symbol'
           },
           {
             classMinValue: 11,
             classMaxValue: 20,
             label: '11-20',
             description: '',
-            symbol: 'symbol',
+            symbol: 'symbol'
           },
           {
             classMinValue: 21,
             classMaxValue: 30,
             label: '21-30',
             description: '',
-            symbol: undefined,
-          },
-        ],
-      });
+            symbol: undefined
+          }
+        ]
+      })
 
-      getGeometrySpy.calledOnce.should.equal(true);
-      getGeometrySpy.firstCall.args.should.deepEqual([data]);
-      createColorRampSpy.calledOnce.should.equal(true);
+      getGeometrySpy.calledOnce.should.equal(true)
+      getGeometrySpy.firstCall.args.should.deepEqual([data])
+      createColorRampSpy.calledOnce.should.equal(true)
       createColorRampSpy.firstCall.args.should.deepEqual([
-        { breaks: data.statistics.classBreaks },
-      ]);
-      createSymbolSpy.calledTwice.should.equal(true);
+        { classification: data.statistics.classBreaks }
+      ])
+      createSymbolSpy.calledTwice.should.equal(true)
       createSymbolSpy.firstCall.args.should.deepEqual([
         undefined,
         'color-1',
-        'esriGeometryPoint',
-      ]);
+        'esriGeometryPoint'
+      ])
       createSymbolSpy.secondCall.args.should.deepEqual([
         undefined,
         'color-2',
-        'esriGeometryPoint',
-      ]);
-    });
+        'esriGeometryPoint'
+      ])
+    })
 
     it('should render precalculated statistics with default geometry type', () => {
       const getGeometrySpy = sinon.spy(function () {
-        return;
-      });
+
+      })
 
       const createSymbolSpy = sinon.spy(function () {
-        return 'symbol';
-      });
+        return 'symbol'
+      })
 
       const createColorRampSpy = sinon.spy(function () {
-        return ['color-1', 'color-2'];
-      });
+        return ['color-1', 'color-2']
+      })
 
       const generateRenderer = proxyquire('../../../lib/generate-renderer', {
         '../helpers': {
-          getGeometryTypeFromGeojson: getGeometrySpy,
+          getGeometryTypeFromGeojson: getGeometrySpy
         },
         './create-symbol': {
-          createSymbol: createSymbolSpy,
+          createSymbol: createSymbolSpy
         },
         './color-ramp': {
-          createColorRamp: createColorRampSpy,
-        },
-      });
+          createColorRamp: createColorRampSpy
+        }
+      })
 
       const data = {
         statistics: {
           classBreaks: [
             [0, 10],
             [21, 30],
-            [11, 20],
-          ],
-        },
-      };
-      const result = generateRenderer(data);
+            [11, 20]
+          ]
+        }
+      }
+      const result = generateRenderer(data)
 
       result.should.deepEqual({
         type: 'classBreaks',
@@ -144,44 +144,44 @@ describe('generate-renderer', () => {
             classMaxValue: 10,
             label: '0-10',
             description: '',
-            symbol: 'symbol',
+            symbol: 'symbol'
           },
           {
             classMinValue: 11,
             classMaxValue: 20,
             label: '11-20',
             description: '',
-            symbol: 'symbol',
+            symbol: 'symbol'
           },
           {
             classMinValue: 21,
             classMaxValue: 30,
             label: '21-30',
             description: '',
-            symbol: undefined,
-          },
-        ],
-      });
+            symbol: undefined
+          }
+        ]
+      })
 
-      getGeometrySpy.calledOnce.should.equal(true);
-      getGeometrySpy.firstCall.args.should.deepEqual([data]);
-      createColorRampSpy.calledOnce.should.equal(true);
+      getGeometrySpy.calledOnce.should.equal(true)
+      getGeometrySpy.firstCall.args.should.deepEqual([data])
+      createColorRampSpy.calledOnce.should.equal(true)
       createColorRampSpy.firstCall.args.should.deepEqual([
-        { breaks: data.statistics.classBreaks },
-      ]);
-      createSymbolSpy.calledTwice.should.equal(true);
+        { classification: data.statistics.classBreaks }
+      ])
+      createSymbolSpy.calledTwice.should.equal(true)
       createSymbolSpy.firstCall.args.should.deepEqual([
         undefined,
         'color-1',
-        'esriGeometryPoint',
-      ]);
+        'esriGeometryPoint'
+      ])
       createSymbolSpy.secondCall.args.should.deepEqual([
         undefined,
         'color-2',
-        'esriGeometryPoint',
-      ]);
-    });
-  });
+        'esriGeometryPoint'
+      ])
+    })
+  })
 
   describe('with winnow statistics', () => {
     it('should throw error when no classificationDef provided', () => {
@@ -189,110 +189,65 @@ describe('generate-renderer', () => {
         return [
           [0, 10],
           [11, 20],
-          [21, 30],
-        ];
-      });
+          [21, 30]
+        ]
+      })
 
       const getGeometrySpy = sinon.spy(function () {
-        return 'esriGeometryPoint';
-      });
+        return 'esriGeometryPoint'
+      })
 
       const generateRenderer = proxyquire('../../../lib/generate-renderer', {
         winnow: {
-          query: winnowSpy,
+          query: winnowSpy
         },
         '../helpers': {
-          getGeometryTypeFromGeojson: getGeometrySpy,
+          getGeometryTypeFromGeojson: getGeometrySpy
         },
         './validate-classification-definition': () => { throw new Error('invalid classification definition') }
-      });
+      })
 
       try {
-        generateRenderer({ features: ['feature'] }, {});
-        should.fail('should have thrown error');
+        generateRenderer({ features: ['feature'] }, {})
+        should.fail('should have thrown error')
       } catch (error) {
-        error.message.should.equal('invalid classification definition');
+        error.message.should.equal('invalid classification definition')
       }
-    });
-
-    it('should throw error when unsupported geometry type', () => {
-      const winnowSpy = sinon.spy(function () {
-        return [
-          [0, 10],
-          [11, 20],
-          [21, 30],
-        ];
-      });
-
-      const getGeometrySpy = sinon.spy(function () {
-        return undefined;
-      });
-
-      const generateRenderer = proxyquire('../../../lib/generate-renderer', {
-        winnow: {
-          query: winnowSpy,
-        },
-        '../helpers': {
-          getGeometryTypeFromGeojson: getGeometrySpy,
-        },
-        './validate-classification-definition': () => {
-          return true;
-        },
-      });
-
-      try {
-        generateRenderer(
-          { features: ['feature'] },
-          {
-            classificationDef: {
-              type: 'classBreaksDef',
-              classificationField: 'classification-field',
-              classificationMethod: 'classification-method',
-            },
-          }
-        );
-        should.fail('should have thrown error');
-      } catch (error) {
-        error.message.should.equal(
-          'Dataset geometry type is not supported for renderers.'
-        );
-        error.code.should.equal(400);
-      }
-    });
+    })
 
     it('should calculate breaks and use classBreaksDef for renderer', () => {
       const winnowSpy = sinon.spy(function () {
         return [
           [0, 10],
           [11, 20],
-          [21, 30],
-        ];
-      });
+          [21, 30]
+        ]
+      })
 
       const getGeometrySpy = sinon.spy(function () {
-        return 'esriGeometryPoint';
-      });
+        return 'esriGeometryPoint'
+      })
 
       const createSymbolSpy = sinon.spy(function () {
-        return 'symbol';
-      });
+        return 'symbol'
+      })
 
       const createColorRampSpy = sinon.spy(function () {
-        return ['color-1', 'color-2'];
-      });
+        return ['color-1', 'color-2']
+      })
 
       const generateRenderer = proxyquire('../../../lib/generate-renderer', {
         winnow: {
-          query: winnowSpy,
+          query: winnowSpy
         },
         '../helpers': {
-          getGeometryTypeFromGeojson: getGeometrySpy,
+          getGeometryTypeFromGeojson: getGeometrySpy
         },
         './color-ramp': {
-          createColorRamp: createColorRampSpy,
+          createColorRamp: createColorRampSpy
         },
-        './create-symbol': { createSymbol: createSymbolSpy },
-      });
+        './create-symbol': { createSymbol: createSymbolSpy }
+      })
 
       const result = generateRenderer(
         { features: ['feature'] },
@@ -300,10 +255,10 @@ describe('generate-renderer', () => {
           classificationDef: {
             type: 'classBreaksDef',
             classificationField: 'classification-field',
-            classificationMethod: 'classification-method',
-          },
+            classificationMethod: 'classification-method'
+          }
         }
-      );
+      )
 
       result.should.deepEqual({
         type: 'classBreaks',
@@ -316,86 +271,85 @@ describe('generate-renderer', () => {
             classMaxValue: 10,
             label: '0-10',
             description: '',
-            symbol: 'symbol',
+            symbol: 'symbol'
           },
           {
             classMinValue: 11,
             classMaxValue: 20,
             label: '11-20',
             description: '',
-            symbol: 'symbol',
+            symbol: 'symbol'
           },
           {
             classMinValue: 21,
             classMaxValue: 30,
             label: '21-30',
             description: '',
-            symbol: undefined,
-          },
-        ],
-      });
+            symbol: undefined
+          }
+        ]
+      })
 
-      getGeometrySpy.calledOnce.should.equal(true);
+      getGeometrySpy.calledOnce.should.equal(true)
       getGeometrySpy.firstCall.args.should.deepEqual([
-        { features: ['feature'] },
-      ]);
-      winnowSpy.calledOnce.should.equal(true);
+        { features: ['feature'] }
+      ])
+      winnowSpy.calledOnce.should.equal(true)
       winnowSpy.firstCall.args.should.deepEqual([
         { features: ['feature'] },
         {
           classificationDef: {
             type: 'classBreaksDef',
             classificationField: 'classification-field',
-            classificationMethod: 'classification-method',
+            classificationMethod: 'classification-method'
           },
-          geometryType: 'esriGeometryPoint',
-        },
-      ]);
-    });
+          geometryType: 'esriGeometryPoint'
+        }
+      ])
+    })
 
     it('should calculate breaks and use uniqueValueDef for renderer', () => {
       const winnowSpy = sinon.spy(function () {
         return [
           {
             count: 80,
-            Genus: 'MAGNOLIA',
+            Genus: 'MAGNOLIA'
           },
           {
             count: 77,
-            Genus: 'QUERCUS',
+            Genus: 'QUERCUS'
           },
           {
             count: 24,
-            Genus: 'JACARANDA',
-          },
-        ];
-      });
+            Genus: 'JACARANDA'
+          }
+        ]
+      })
 
       const getGeometrySpy = sinon.spy(function () {
-        return 'esriGeometryPoint';
-      });
+        return 'esriGeometryPoint'
+      })
 
       const createSymbolSpy = sinon.spy(function () {
-        return 'symbol';
-      });
+        return 'symbol'
+      })
 
       const createColorRampSpy = sinon.spy(function () {
-        return ['color-1', 'color-2'];
-      });
+        return ['color-1', 'color-2']
+      })
 
       const generateRenderer = proxyquire('../../../lib/generate-renderer', {
         winnow: {
-          query: winnowSpy,
+          query: winnowSpy
         },
         '../helpers': {
-          getGeometryTypeFromGeojson: getGeometrySpy,
+          getGeometryTypeFromGeojson: getGeometrySpy
         },
         './color-ramp': {
-          createColorRamp: createColorRampSpy,
+          createColorRamp: createColorRampSpy
         },
-        './create-symbol': { createSymbol: createSymbolSpy },
-      });
-
+        './create-symbol': { createSymbol: createSymbolSpy }
+      })
 
       const result = generateRenderer(
         { features: ['feature'] },
@@ -403,61 +357,61 @@ describe('generate-renderer', () => {
           classificationDef: {
             type: 'uniqueValueDef',
             uniqueValueFields: ['Genus'],
-            fieldDelimiter: ',',
-          },
+            fieldDelimiter: ','
+          }
         }
-      );
+      )
 
       result.should.deepEqual({
-        type: "uniqueValue",
-        field1: "Genus",
-        field2: "",
-        field3: "",
-        fieldDelimiter: ",",
+        type: 'uniqueValue',
+        field1: 'Genus',
+        field2: '',
+        field3: '',
+        fieldDelimiter: ',',
         defaultSymbol: {
         },
-        defaultLabel: "",
+        defaultLabel: '',
         uniqueValueInfos: [
           {
-            value: "MAGNOLIA",
+            value: 'MAGNOLIA',
             count: 80,
-            label: "MAGNOLIA",
-            description: "",
-            symbol: "symbol",
+            label: 'MAGNOLIA',
+            description: '',
+            symbol: 'symbol'
           },
           {
-            value: "QUERCUS",
+            value: 'QUERCUS',
             count: 77,
-            label: "QUERCUS",
-            description: "",
-            symbol: "symbol",
+            label: 'QUERCUS',
+            description: '',
+            symbol: 'symbol'
           },
           {
-            value: "JACARANDA",
+            value: 'JACARANDA',
             count: 24,
-            label: "JACARANDA",
-            description: "",
-            symbol: undefined,
-          },
-        ],
-      });
+            label: 'JACARANDA',
+            description: '',
+            symbol: undefined
+          }
+        ]
+      })
 
-      getGeometrySpy.calledOnce.should.equal(true);
+      getGeometrySpy.calledOnce.should.equal(true)
       getGeometrySpy.firstCall.args.should.deepEqual([
-        { features: ['feature'] },
-      ]);
-      winnowSpy.calledOnce.should.equal(true);
+        { features: ['feature'] }
+      ])
+      winnowSpy.calledOnce.should.equal(true)
       winnowSpy.firstCall.args.should.deepEqual([
         { features: ['feature'] },
         {
           classificationDef: {
             type: 'uniqueValueDef',
             fieldDelimiter: ',',
-            uniqueValueFields: ['Genus'],
+            uniqueValueFields: ['Genus']
           },
-          geometryType: 'esriGeometryPoint',
-        },
-      ]);
-    });
-  });
-});
+          geometryType: 'esriGeometryPoint'
+        }
+      ])
+    })
+  })
+})
