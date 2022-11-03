@@ -215,7 +215,8 @@ describe('Info operations', () => {
             {
               name: 'test',
               type: 'String',
-              length: 1000
+              length: 1000,
+              editable: true
             }
           ]
         }
