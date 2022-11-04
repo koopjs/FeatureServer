@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+### Fixed
+- Allow field definitions to set editable and nullable properties
+
 ## [4.1.0] - 09-15-2022
 ### Added
 - Set hasZ from metadata setting when present
