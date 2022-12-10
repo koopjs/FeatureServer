@@ -1,10 +1,13 @@
 # FeatureServer
 
-*An open source implementation of the GeoServices specification*
+## DEPRECATED - now migrated to a package in the [Koop monorepo](https://github.com/koopjs/koop/).  Update any `npm` usage to `@koopjs/featureserver`.
 
+[![No Maintenance Intended](http://unmaintained.tech/badge.svg)](http://unmaintained.tech/)
 [![npm][npm-image]][npm-url]
 [![travis][travis-image]][travis-url]
 [![Greenkeeper badge][greenkeeper-image]][greenkeeper-url]
+
+*An open source implementation of the GeoServices specification*
 
 ## Usage
 
