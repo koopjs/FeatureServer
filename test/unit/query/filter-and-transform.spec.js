@@ -32,18 +32,18 @@ describe('filterAndTransform', () => {
 
     describe('should standardize parameters', () => {
       it('should convert "returnDistinctValues" to "distinct"', () => {
-        const result = filterAndTransform({ features: [{}] }, { returnDistinctValues: true });
+        const result = filterAndTransform({ features: [{}] }, { returnDistinctValues: true })
         result.should.deepEqual({
           features: 'expected-result'
-        });
-        filterAndTransformSpy.callCount.should.equal(1);
+        })
+        filterAndTransformSpy.callCount.should.equal(1)
         filterAndTransformSpy.firstCall.args.should.deepEqual([
           { features: [{}] },
           { inputCrs: 4326, toEsri: true, distinct: true }
-        ]);
-      });
-    });
-    
+        ])
+      })
+    })
+
     describe('should set toEsri:false and pass to filter/transform', () => {
       it('should set toEsri:false when requested format is geojson', () => {
         const result = filterAndTransform({ features: [{}] }, { f: 'geojson' })
