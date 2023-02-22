@@ -44,7 +44,7 @@
     "should-sinon": "0.0.6",
     "sinon": "^9.2.3",
     "standard": "^14.3.0",
-    "supertest": "^4.0.0"
+    "supertest": "^6.0.0"
   },
   "standard": {
     "globals": [
